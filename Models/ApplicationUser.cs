@@ -9,5 +9,6 @@ namespace Promises.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        public List<Promise> Promises { get; set; }
     }
 }
