@@ -13,13 +13,17 @@ using Microsoft.Extensions.Options;
 using Promises.Models;
 using Promises.Models.AccountViewModels;
 using Promises.Services;
+using Promises.Extensions;
 
 namespace Promises.Controllers
 {
+
     [Authorize]
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -65,8 +69,7 @@ namespace Promises.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    //return RedirectToLocal(returnUrl);
-                    return RedirectToAction(nameof(CabinetController.Index), "Cabinet");
+                    return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -456,7 +459,7 @@ namespace Promises.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(CabinetController.Index), typeof(CabinetController).UrlName());
             }
         }
 
