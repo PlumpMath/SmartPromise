@@ -1,7 +1,23 @@
 ﻿@using Promises.Views.Cabinet
+@model ManagePromisesViewModel
 @{
     ViewData["Title"] = "Manage promises";
     ViewData.AddActivePage(CabinetNavPages.ManagePromises);
 }
 
 <h2>@ViewData["Title"]</h2>
+
+@if (Model.Promises != null && Model.Promises.Count != 0)
+{
+    <ul class="nav nav-pills nav-stacked">
+        @foreach (var promise in Model.Promises)
+        {
+            <li>promise.Content</li>
+        }
+    </ul>
+}
+else
+{
+    <h3>There is no promises yet :(</h3>
+}
+

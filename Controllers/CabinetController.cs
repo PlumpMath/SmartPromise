@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Promises.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Promises.Models.CabinetViewModels;
 
 namespace Promises.Controllers
 {
@@ -30,9 +31,11 @@ namespace Promises.Controllers
             return View();
         }
 
-        public IActionResult ManagePromises()
+        public async Task<IActionResult> ManagePromises()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            var model = new ManagePromisesViewModel{ Promises = user.Promises };
+            return View(model);
         }
     }
 }

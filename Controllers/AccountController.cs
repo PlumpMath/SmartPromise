@@ -224,7 +224,8 @@ namespace Promises.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var promises = new List<Promise> { new Promise { Content = "Climb on elbrus" }, new Promise { Content = "Get a million" } };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Promises =  promises };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
