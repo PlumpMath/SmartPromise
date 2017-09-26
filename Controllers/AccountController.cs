@@ -65,7 +65,8 @@ namespace Promises.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction(nameof(CabinetController.Index), "Cabinet");
                 }
                 if (result.RequiresTwoFactor)
                 {
