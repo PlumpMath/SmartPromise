@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Promises.Data;
 using Promises.Models;
 using Promises.Services;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Promises.Abstract;
+using Promises.Concrete;
 
 namespace Promises
 {
@@ -26,11 +29,16 @@ namespace Promises
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<UserIdentityDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddTransient<IPromiseRepository, EFPromiseRepository>();
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add application services.

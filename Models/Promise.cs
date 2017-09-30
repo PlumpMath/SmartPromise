@@ -8,8 +8,7 @@ namespace Promises.Models
 {
     public class Promise
     {
-        [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Content { get; set; }
     }
 }

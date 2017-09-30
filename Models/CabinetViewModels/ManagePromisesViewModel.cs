@@ -9,7 +9,7 @@ namespace Promises.Models.CabinetViewModels
     public class ManagePromisesViewModel
     {
         [Required]
-        public List<Promise> Promises { get; set; }
+        public IEnumerable<Promise> Promises { get; set; }
 
         //public string StatusMessage { get; set; }
     }
