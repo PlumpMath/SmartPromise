@@ -4,12 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Promises.Models
+namespace Promises.Models.CabinetViewModels
 {
-    public class Promise
+    public class PromiseCreationModel
     {
-        public Guid Id { get; set; }
-        public string UserId { get; set; }
+        [Required]
         public string Content { get; set; }
     }
 }

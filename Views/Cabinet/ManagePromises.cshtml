@@ -7,17 +7,39 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@if (Model.Promises != null && Model.Promises.Count != 0)
+@if (Model.Promises != null)
 {
-    <ul class="nav nav-pills nav-stacked">
-        @foreach (var promise in Model.Promises)
-        {
-            <li>promise.Content</li>
-        }
-    </ul>
+    <p>
+        <a asp-action="CreatePromise">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    "Content"
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Promises)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-else
-{
-    <h3>There is no promises yet :(</h3>
-}
+
+
+
+
 

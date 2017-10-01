@@ -14,7 +14,6 @@ namespace Promises.Views.Cabinet
         public static string Index => "Index";
 
         public static string ManagePromises => "ManagePromises";
-        
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 

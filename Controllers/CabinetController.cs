@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Promises.Models.CabinetViewModels;
 using Promises.Abstract;
+using Microsoft.EntityFrameworkCore;
 
 namespace Promises.Controllers
 {
@@ -37,16 +38,42 @@ namespace Promises.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePromise(PromiseCreationModel promise)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var user = await _userManager.GetUserAsync(HttpContext.User);
+                    var userId = user.Id;
+                    _promiseRepository.Add(new Promise { Content = promise.Content, UserId = userId });
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
+            }
+            return View(promise);
+        }
+
+        public IActionResult CreatePromise()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> ManagePromises()
         {
-            var users = _userManager.Users;
-            
-
-            //var user = await _userManager.FindByIdAsync(User.Identity.GGetUserId());
-            //var user = await _userManager.FindByIdAsync(User.Identity.AuthenticationType);
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = user.Id;
+            var promises = _promiseRepository.Promises.Where(p => p.UserId == userId);
             
-            var promises = new List<Promise> { new Promise { Content = "Climb on elbrus" }, new Promise { Content = "Get a million" } };
+            //var promises = new List<Promise> { new Promise { Content = "Climb on elbrus" }, new Promise { Content = "Get a million" } };
             var model = new ManagePromisesViewModel{ Promises = promises };
             return View(model);
         }
