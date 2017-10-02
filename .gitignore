@@ -290,4 +290,4 @@ __pycache__/
 #Custome ignores
 wwwroot/lib
 migrations
-*.db
+#*.db
