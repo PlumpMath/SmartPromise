@@ -13,11 +13,6 @@ namespace Promises.Data
             : base(options)
         { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=app.db");
-        }
-
         public DbSet<Promise> Promises { get; set; }
     }
 }

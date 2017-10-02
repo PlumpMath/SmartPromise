@@ -32,11 +32,18 @@ namespace Promises
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<UserIdentityDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("UsersDatabse")));
+                options.UseSqlServer(Configuration.GetConnectionString("UsersDatabase")));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("ApplicationDatabase")));
+
+            /*
+            services.AddDbContext<UserIdentityDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("UsersDatabase")));
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("ApplicationDatabase")));
-
+                */
             services.AddTransient<IPromiseRepository, EFPromiseRepository>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()

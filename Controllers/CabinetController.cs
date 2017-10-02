@@ -28,7 +28,6 @@ namespace Promises.Controllers
           
         {
             _promiseRepository = promiseRepository;
-            _promiseRepository.Add(new Promise { Content = "Hello, world" });
             _userManager = userManager;
             _signInManager = signInManager;
         }
