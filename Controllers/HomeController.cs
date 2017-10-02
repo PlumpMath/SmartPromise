@@ -5,14 +5,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Promises.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Promises.Extensions;
 
 namespace Promises.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public HomeController(SignInManager<ApplicationUser> signInManager)
+
+        {
+            _signInManager = signInManager;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            if (_signInManager.IsSignedIn(this.User))
+            {
+                return RedirectToAction(nameof(CabinetController.Index), typeof(CabinetController).UrlName());
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public IActionResult About()
