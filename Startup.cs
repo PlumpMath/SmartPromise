@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Promises.Data;
 using Promises.Models;
 using Promises.Services;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Promises.Abstract;
 using Promises.Concrete;
 
@@ -46,6 +41,8 @@ namespace Promises
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            services.AddSignalR();
+
             services.AddMvc();
         }
 
@@ -65,6 +62,8 @@ namespace Promises
             app.UseStaticFiles();
 
             app.UseAuthentication();
+            
+            app.UseSignalR();
 
             app.UseMvc(routes =>
             {
