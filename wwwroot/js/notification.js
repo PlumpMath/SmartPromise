@@ -1,10 +1,18 @@
 ﻿console.log("Notifications rendering")
 let add_notification_button_id = "#_add_notification_button"
 let connection = $.hubConnection()
-let hub = connection.createHubProxy('notification');
+let hub = connection.createHubProxy('notification')
+let notification_counter = 0
+let notification_list_id = '#_notifications_list'
+let notification_counter_id = '#_notification_counter'
+
+function changeCounter() {
+    ++notification_counter
+    $(notification_counter_id).attr("data-count", notification_counter.toString())
+}
 
 function addNotification() {
-    $('#_notifications_list').append(`
+    $(notification_list_id).append(`
         <li class="notification">
             <div class="media" >
                 <div class="media-left">
@@ -28,7 +36,7 @@ function addNotification() {
         </li >`)
 }
 
-hub.on('Notify', msg => addNotification())
+hub.on('Notify', msg => { addNotification(); changeCounter() })
 
 connection.start().done(function () {
     $(document).ready(function () {
