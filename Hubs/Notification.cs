@@ -8,8 +8,6 @@ namespace Promises.Hubs
     [HubName("notification")]
     public class Notification : Hub
     {
-        private const int SEC_IN_MSEC = 1000;
-
         public void Notify()
         {
             Clients.Client(Context.ConnectionId).notify();

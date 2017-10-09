@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Promises.Abstract;
 using Promises.Models;
 using Microsoft.AspNetCore.SignalR.Hubs;
+using System;
 
 namespace Promises.Hubs
 {
@@ -16,18 +17,27 @@ namespace Promises.Hubs
             int i = 0;
         }
 
-        public override async Task OnConnected()
+        public override Task OnConnected()
         {
             //await Clients.Client(Context.ConnectionId).InvokeAsync("SetUsersOnline", await GetUsersOnline());
-            await Clients.Client(Context.ConnectionId).InvokeAsync("OnConnected", "You've connected");
-            await base.OnConnected();
+            Clients.Client(Context.ConnectionId).Invoke("OnConnected", "You've connected");
+            base.OnConnected();
+            return Task.CompletedTask;
         }
 
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            Clients.Client(Context.ConnectionId).Invoke("OnDisconnected", "You've disconected");
+            base.OnDisconnected(stopCalled);
+            return Task.CompletedTask;
+        }
+        /*
         public override async Task OnDisconnected(bool stopCalled)
         {
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnDisconnected", "You've disconected");
             await base.OnDisconnected(stopCalled);
         }
+        */
 
         public override Task OnUsersJoined(UserDetails[] users)
         {
@@ -39,9 +49,13 @@ namespace Promises.Hubs
             return Clients.Client(Context.ConnectionId).InvokeAsync("UsersLeft", users);
         }
 
-        public async Task Send(string message)
+        public void Send(string message)
         {
-            await Clients.All.InvokeAsync("Send", Context.User.Identity.Name, message);
+            Clients.All.Invoke("Send", 
+                message,
+                Context.User.Identity.Name,
+                DateTime.Now.ToString("MM/dd/yyyy h:mm tt")
+            );
         }
     }
 }
