@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace Promises.Hubs
 {
+    [Authorize]
     [HubName("notification")]
     public class NotificationHub : Hub
     {
