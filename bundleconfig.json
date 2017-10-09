@@ -2,16 +2,9 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
-    "outputFileName": "wwwroot/css/notification.min.css",
-    // An array of relative input file paths. Globbing patterns supported
-    "inputFiles": [
-      "wwwroot/css/notification.css"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/js/notification.min.js",
     "inputFiles": [
-      "wwwroot/js/notification.js"
+        "wwwroot/js/notification.js"
     ],
     // Optionally specify minification options
     "minify": {

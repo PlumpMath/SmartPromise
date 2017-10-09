@@ -66,6 +66,11 @@ namespace Promises.Controllers
             return View();
         }
 
+        public IActionResult GlobalChat()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> ManagePromises()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);

@@ -1,4 +1,5 @@
-﻿console.log("Notifications rendering")
+﻿console.log("______________Notification.js______________")
+
 let add_notification_button_id = "#_add_notification_button"
 let connection = $.hubConnection()
 let hub = connection.createHubProxy('notification')

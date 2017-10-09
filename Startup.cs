@@ -9,6 +9,7 @@ using Promises.Models;
 using Promises.Services;
 using Promises.Abstract;
 using Promises.Concrete;
+using Promises.Hubs;
 
 namespace Promises
 {
@@ -40,6 +41,8 @@ namespace Promises
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddSingleton<IUserTracker<Chat>, InMemoryUserTracker<Chat>>();
 
             services.AddSignalR();
 

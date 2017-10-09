@@ -15,9 +15,13 @@ namespace Promises.Views.Cabinet
 
         public static string ManagePromises => "ManagePromises";
 
+        public static string GlobalChat => "GlobalChat";
+
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string ManagePromisesNavClass(ViewContext viewContext) => PageNavClass(viewContext, ManagePromises);
+
+        public static string GlobalChatClass(ViewContext viewContext) => PageNavClass(viewContext, GlobalChat);
 
         public static string PageNavClass(ViewContext viewContext, string page)
         {

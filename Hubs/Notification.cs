@@ -6,7 +6,7 @@ namespace Promises.Hubs
 {
     [Authorize]
     [HubName("notification")]
-    public class NotificationHub : Hub
+    public class Notification : Hub
     {
         private const int SEC_IN_MSEC = 1000;
 
