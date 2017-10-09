@@ -38,3 +38,4 @@ $(document).ready(function () {
 });
 
 connection.start()
+    .done(console.log("Connected"))
