@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Hubs;
+using System.Threading;
 
-
-namespace WebApplication1.Hubs
+namespace Promises.Hubs
 {
     [HubName("notification")]
     public class NotificationHub : Hub
     {
-        public void Join()
+        private const int SEC_IN_MSEC = 1000;
+
+        public void Notify()
         {
-            Clients.All.join($"{Context.ConnectionId} has joned to room");
+            Clients.Client(Context.ConnectionId).notify();
+            //Clients.All.join($"{Context.ConnectionId} has joned to room");
         }
     }
 }

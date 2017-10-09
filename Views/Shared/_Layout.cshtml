@@ -8,6 +8,8 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-dropmenu/dist/stylesheets/bootstrap-dropmenu.css"/>
+        <link rel="stylesheet" href="~/lib/bootstrap-notifications/dist/stylesheets/bootstrap-notifications.css"/>
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -29,7 +31,8 @@
                 </button>
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Promises</a>
             </div>
-            <div class="navbar-collapse collapse">
+
+            <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
@@ -37,6 +40,7 @@
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
+
         </div>
     </nav>
     <div class="container body-content">
