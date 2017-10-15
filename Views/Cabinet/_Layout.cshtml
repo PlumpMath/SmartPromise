@@ -16,7 +16,7 @@
 
 @section Scripts {
     <script type="text/javascript" src="~/js/notification.js"></script>
-    @if (ViewData["ActivePage"].ToString() == @CabinetNavPages.GlobalChat)
+    @if (ViewData["ActivePage"] != null && ViewData["ActivePage"].ToString() == @CabinetNavPages.GlobalChat)
     {
         <script type="text/javascript" src="~/js/chat.js"></script>
     }

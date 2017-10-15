@@ -37,6 +37,11 @@ namespace Promises.Controllers
             return View();
         }
 
+        public IActionResult Friends()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePromise(PromiseCreationModel promise)
