@@ -1,7 +1,16 @@
 ﻿@using Promises.Views.Cabinet
+@model FriendsModel
 @{
     ViewData["Title"] = "Friends";
     ViewData.AddActivePage(CabinetNavPages.Friends);
 }
 
-<h1>Friends</h1>
+@if (Model.Users != null)
+{
+    <h1>All users</h1>
+    <div id="_friends_list" class="list-group">
+        @foreach(var user in Model.Users) {
+            <a href="#" class="list-group-item">@user.Email</a>
+        }
+    </div>
+}

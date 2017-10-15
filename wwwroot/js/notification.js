@@ -1,19 +1,21 @@
-﻿console.log("______________Notification.js______________")
+﻿(function() {
 
-let add_notification_button_id = "#_add_notification_button"
-let connection = $.hubConnection()
-let hub = connection.createHubProxy('notification')
-let notification_counter = 0
-let notification_list_id = '#_notifications_list'
-let notification_counter_id = '#_notification_counter'
+    console.log("______________Notification.js______________")
 
-function changeCounter() {
-    ++notification_counter
-    $(notification_counter_id).attr("data-count", notification_counter.toString())
-}
+    let add_notification_button_id = "#_add_notification_button"
+    let connection = $.hubConnection()
+    let hub = connection.createHubProxy('notification')
+    let notification_counter = 0
+    let notification_list_id = '#_notifications_list'
+    let notification_counter_id = '#_notification_counter'
 
-function addNotification() {
-    $(notification_list_id).append(`
+    function changeCounter() {
+        ++notification_counter
+        $(notification_counter_id).attr("data-count", notification_counter.toString())
+    }
+
+    function addNotification() {
+        $(notification_list_id).append(`
         <li class="notification">
             <div class="media" >
                 <div class="media-left">
@@ -35,14 +37,15 @@ function addNotification() {
                 </div>
             </div>
         </li >`)
-}
+    }
 
-hub.on('Notify', msg => { addNotification(); changeCounter() })
+    hub.on('Notify', msg => { addNotification(); changeCounter() })
 
-connection.start().done(function () {
-    $(document).ready(function () {
-        $(add_notification_button_id).click(function () {
-            hub.invoke('Notify')
+    connection.start().done(function () {
+        $(document).ready(function () {
+            $(add_notification_button_id).click(function () {
+                hub.invoke('Notify')
+            })
         })
     })
-})
+})()
