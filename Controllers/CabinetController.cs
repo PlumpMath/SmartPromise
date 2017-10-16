@@ -80,6 +80,20 @@ namespace Promises.Controllers
             return View();
         }
 
+        [HttpGet("{email?}")]
+        public IActionResult FindByEmail(string email = "")
+        {
+            var foundUsers = _userManager.Users
+                .Where(u => u.Email.StartsWith(email))
+                .Select(u => u.Email);
+
+            if (foundUsers == null)
+            {
+                return NotFound();
+            }
+            return new ObjectResult(foundUsers);
+        }
+
         public async Task<IActionResult> ManagePromises()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);

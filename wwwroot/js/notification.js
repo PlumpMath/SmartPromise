@@ -1,6 +1,6 @@
 ﻿(function() {
 
-    console.log("______________Notification.js______________")
+    console.log("______________notification.js______________")
 
     let add_notification_button_id = "#_add_notification_button"
     let connection = $.hubConnection()

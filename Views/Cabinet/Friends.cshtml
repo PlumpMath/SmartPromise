@@ -7,10 +7,30 @@
 
 @if (Model.Users != null)
 {
-    <h1>All users</h1>
+    <style type="text/css">
+        .input-style {
+            width: 100%;
+            align-self: center;
+        }
+    </style>
+
+    <h1>All users ever registered</h1>
+    
+    <p>
+        <input class="input-style" id="_find_input" type="text" placeholder=" Type an email to find" />
+    </p>
+
     <div id="_friends_list" class="list-group">
-        @foreach(var user in Model.Users) {
-            <a href="#" class="list-group-item">@user.Email</a>
+        @foreach (var user in Model.Users)
+        {
+            <a href="#" class="list-group-item clearfix" onclick="alert('Action1 -> Details');">
+                @user.Email
+                <span class="pull-right">
+                    <span class="btn btn-xs btn-default" onclick="alert('Action1 -> Play'); event.stopPropagation();">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </span>
+                </span>
+            </a>
         }
     </div>
 }

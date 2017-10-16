@@ -9,15 +9,15 @@ namespace Promises.Views.Cabinet
 {
     public static class CabinetNavPages
     {
-        public static string ActivePageKey => "ActivePage";
+        public const string ActivePageKey = "ActivePage";
 
-        public static string Index => "Index";
+        public const string Index = "Index";
 
-        public static string ManagePromises => "ManagePromises";
+        public const string ManagePromises = "ManagePromises";
 
-        public static string GlobalChat => "GlobalChat";
+        public const string GlobalChat = "GlobalChat";
 
-        public static string Friends => "Friends";
+        public const string Friends = "Friends";
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
