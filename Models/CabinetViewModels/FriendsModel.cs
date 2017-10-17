@@ -6,7 +6,9 @@ namespace Promises.Models.CabinetViewModels
     public class User
     {
         [Required]
-        public string Email { get; set; }        
+        public string Email { get; set; }
+        [Required]
+        public string Id { get; set; }
     }
     
     public class FriendsModel

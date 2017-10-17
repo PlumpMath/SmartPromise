@@ -13,9 +13,7 @@ namespace Promises.Hubs
     {
         public Chat(IUserTracker<Chat> userTracker)
             : base(userTracker)
-        {
-            int i = 0;
-        }
+        {}
 
         public override Task OnConnected()
         {

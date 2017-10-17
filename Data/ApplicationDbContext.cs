@@ -13,6 +13,13 @@ namespace Promises.Data
             : base(options)
         { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Friends>()
+                .HasKey(c => new { c.FriendId, c.UserId });
+        }
+
         public DbSet<Promise> Promises { get; set; }
+        public DbSet<Friends> Friends { get; set; }
     }
 }

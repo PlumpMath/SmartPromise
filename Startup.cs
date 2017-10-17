@@ -34,6 +34,7 @@ namespace Promises
                 options.UseSqlServer(Configuration.GetConnectionString("ApplicationDatabase")));
             
             services.AddTransient<IPromiseRepository, EFPromiseRepository>();
+            services.AddTransient<IFriendsRepository, EFFriendsRepository>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserIdentityDbContext>()

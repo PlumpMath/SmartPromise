@@ -20,16 +20,18 @@ namespace Promises.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IPromiseRepository _promiseRepository;
+        private readonly IFriendsRepository _friendsRepository;
 
         public CabinetController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
-          IPromiseRepository promiseRepository)
-          
+          IPromiseRepository promiseRepository,
+          IFriendsRepository friendsRepository)
         {
             _promiseRepository = promiseRepository;
             _userManager = userManager;
             _signInManager = signInManager;
+            _friendsRepository = friendsRepository;
         }
 
         public IActionResult Index()
@@ -39,8 +41,8 @@ namespace Promises.Controllers
 
         public IActionResult Friends()
         {
-            FriendsModel model = new FriendsModel { Users = 
-                _userManager.Users.Select(u => new User { Email = u.Email }).AsEnumerable()
+            FriendsModel model = new FriendsModel { Users =
+                _userManager.Users.Select(u => new User { Email = u.Email, Id = u.Id }).AsEnumerable()
             };
 
             return View(model);
@@ -81,11 +83,11 @@ namespace Promises.Controllers
         }
 
         [HttpGet("{email?}")]
-        public IActionResult FindByEmail(string email = "")
+        public IActionResult FindByEmail(string email = default(string))
         {
             var foundUsers = _userManager.Users
-                .Where(u => u.Email.StartsWith(email))
-                .Select(u => u.Email);
+                .Where(u => email == default(string) || u.Email.StartsWith(email))
+                .Select(u => new User { Email = u.Email, Id = u.Id });
 
             if (foundUsers == null)
             {
@@ -94,13 +96,38 @@ namespace Promises.Controllers
             return new ObjectResult(foundUsers);
         }
 
+        [HttpGet("{FriendUserId}")]
+        public IActionResult AddFriend(string FriendUserId)
+        {
+            if (!IsThereUser(FriendUserId))
+                return NotFound();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            _friendsRepository.AddFriend(userId, FriendUserId);
+            return Ok();
+        }
+
+        private bool IsThereUser(string id)
+        {
+            return default(ApplicationUser) != _userManager.Users.FirstOrDefault(u => u.Id == id);
+        }
+        [HttpGet("{FriendUserId}")]
+        public IActionResult RemoveFriend(string FriendUserId)
+        {
+            if (!IsThereUser(FriendUserId))
+                return NotFound();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            _friendsRepository.RemoveFriend(userId, FriendUserId);
+            return Ok();
+        }
+
         public async Task<IActionResult> ManagePromises()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var userId = user.Id;
             var promises = _promiseRepository.Promises.Where(p => p.UserId == userId);
             
-            //var promises = new List<Promise> { new Promise { Content = "Climb on elbrus" }, new Promise { Content = "Get a million" } };
             var model = new ManagePromisesViewModel{ Promises = promises };
             return View(model);
         }

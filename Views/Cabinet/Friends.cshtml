@@ -21,16 +21,19 @@
     </p>
 
     <div id="_friends_list" class="list-group">
-        @foreach (var user in Model.Users)
-        {
-            <a href="#" class="list-group-item clearfix" onclick="alert('Action1 -> Details');">
-                @user.Email
-                <span class="pull-right">
-                    <span class="btn btn-xs btn-default" onclick="alert('Action1 -> Play'); event.stopPropagation();">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        @{/*
+            @foreach (var user in Model.Users)
+            {
+                <a href="#" class="list-group-item clearfix" onclick="alert('Action1 -> Details');">
+                    @user.Email
+                    <span class="pull-right">
+                        <span class="btn btn-xs btn-default" onclick="alert('Action1 -> Play'); event.stopPropagation();">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </span>
                     </span>
-                </span>
-            </a>
+                </a>
+            }
+           */
         }
     </div>
 }
