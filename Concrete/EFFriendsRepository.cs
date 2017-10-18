@@ -41,8 +41,13 @@ namespace Promises.Concrete
                     UserId = UserId,
                     FriendId = UserFriendId,
                     Status = FriendStatus.ACCEPTED
-                });    
+                });
+                _applicationContext.SaveChanges();
             }
+            else return;
+
+            //TODO : USE TRIGGER INSTEAD OF THIS
+            AddFriend(UserFriendId, UserId);
         }
 
         public IEnumerable<string> GetFriends(string UserId)
@@ -53,11 +58,22 @@ namespace Promises.Concrete
         public void RemoveFriend(string UserId, string UserFriendId)
         {
             var res = Find(UserId, UserFriendId);
+            
             if (res != null)
             {
                 _applicationContext.Friends.Remove(res);
                 _applicationContext.SaveChanges();
             }
+            else return;
+
+            //TODO : USE TRIGGER INSTEAD OF THIS
+            RemoveFriend(UserFriendId, UserId);
+        }
+
+        public bool AreFriends(string UserId, string UserFriendId)
+        {
+            return default(Friends) != Find(UserId, UserFriendId) 
+                && default(Friends) != Find(UserFriendId, UserId);
         }
     }
 }

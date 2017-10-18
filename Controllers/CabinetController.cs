@@ -81,19 +81,41 @@ namespace Promises.Controllers
         {
             return View();
         }
-
+        
         [HttpGet("{email?}")]
-        public IActionResult FindByEmail(string email = default(string))
+        public IActionResult FindByEmail(string email = default(string))    
         {
-            var foundUsers = _userManager.Users
-                .Where(u => email == default(string) || u.Email.StartsWith(email))
+            var userId = _userManager.GetUserId(HttpContext.User);
+
+            //TODO: make User table
+            var friends = _userManager.Users
+                .Where(u =>
+                    _friendsRepository.AreFriends(u.Id, userId) &&
+                    (email == default(string) || u.Email.StartsWith(email))
+                )
                 .Select(u => new User { Email = u.Email, Id = u.Id });
 
-            if (foundUsers == null)
+
+            //other users except his friends
+            var foundOtherUsers = _userManager.Users
+                .Where(u => 
+                    !_friendsRepository.AreFriends(u.Id, userId) && 
+                    (email == default(string) || u.Email.StartsWith(email))
+                )
+                .Select(u => new User { Email = u.Email, Id = u.Id });
+
+            if (foundOtherUsers == null)
             {
                 return NotFound();
             }
-            return new ObjectResult(foundUsers);
+
+            var model = new FriendsModel
+            {
+                Friends = friends,
+                Users = foundOtherUsers
+            };
+
+            return new ObjectResult(model);
         }
 
         [HttpGet("{FriendUserId}")]

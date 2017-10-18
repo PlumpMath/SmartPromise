@@ -11,5 +11,6 @@ namespace Promises.Abstract
         IEnumerable<string> GetFriends(string UserId);
         void AddFriend(string UserId, string UserFriendId);
         void RemoveFriend(string UserId, string UserFriendId);
+        bool AreFriends(string UserId, string UserFriendId);
     }
 }

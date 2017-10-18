@@ -8,19 +8,38 @@
 @if (Model.Users != null)
 {
     <style type="text/css">
-        .input-style {
-            width: 100%;
-            align-self: center;
+        .input-style[type=text] {
+            margin-top: 20px;
+            width: 60%;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: white;
+            background-image: url('searchicon.png');
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            padding: 6px 10px 6px 20px;
+            -webkit-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
         }
+
+        .input-style[type=text]:focus {
+            width: 100%;
+        }
+
     </style>
 
-    <h1>All users ever registered</h1>
-    
     <p>
-        <input class="input-style" id="_find_input" type="text" placeholder=" Type an email to find" />
+        <input class="input-style" id="_find_input" type="text" placeholder=" Type email to find a person" />
     </p>
 
+    <h4>Friends</h4>
     <div id="_friends_list" class="list-group">
+    </div>
+  
+    <h4>Other users</h4>
+    <div id="_other_users_list" class="list-group">
         @{/*
             @foreach (var user in Model.Users)
             {

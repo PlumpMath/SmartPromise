@@ -3,16 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Promises.Models.CabinetViewModels
 {
-    public class User
-    {
-        [Required]
-        public string Email { get; set; }
-        [Required]
-        public string Id { get; set; }
-    }
-    
     public class FriendsModel
     {
+        public IEnumerable<User> Friends { get; set; }
+
         [Required]
         public IEnumerable<User> Users { get; set; } 
     }
