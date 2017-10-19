@@ -41,11 +41,7 @@ namespace Promises.Controllers
 
         public IActionResult Friends()
         {
-            FriendsModel model = new FriendsModel { Users =
-                _userManager.Users.Select(u => new User { Email = u.Email, Id = u.Id }).AsEnumerable()
-            };
-
-            return View(model);
+            return View();
         }
 
         [HttpPost]

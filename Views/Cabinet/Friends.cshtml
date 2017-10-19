@@ -1,58 +1,40 @@
 ﻿@using Promises.Views.Cabinet
-@model FriendsModel
 @{
     ViewData["Title"] = "Friends";
     ViewData.AddActivePage(CabinetNavPages.Friends);
 }
 
-@if (Model.Users != null)
-{
-    <style type="text/css">
-        .input-style[type=text] {
-            margin-top: 20px;
-            width: 60%;
-            box-sizing: border-box;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            font-size: 13px;
-            background-color: white;
-            background-image: url('searchicon.png');
-            background-position: 10px 10px;
-            background-repeat: no-repeat;
-            padding: 6px 10px 6px 20px;
-            -webkit-transition: width 0.4s ease-in-out;
-            transition: width 0.4s ease-in-out;
-        }
+<link rel="stylesheet" type="text/css" href="~/css/loader.css">
+<style type="text/css">
+    .input-style[type=text] {
+        margin-top: 20px;
+        width: 60%;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        font-size: 13px;
+        background-color: white;
+        background-image: url('searchicon.png');
+        background-position: 10px 10px;
+        background-repeat: no-repeat;
+        padding: 6px 10px 6px 20px;
+        -webkit-transition: width 0.4s ease-in-out;
+        transition: width 0.4s ease-in-out;
+    }
 
-        .input-style[type=text]:focus {
-            width: 100%;
-        }
+    .input-style[type=text]:focus {
+        width: 100%;
+    }
 
-    </style>
+</style>
 
     <p>
         <input class="input-style" id="_find_input" type="text" placeholder=" Type email to find a person" />
     </p>
 
-    <h4>Friends</h4>
-    <div id="_friends_list" class="list-group">
-    </div>
-  
-    <h4>Other users</h4>
-    <div id="_other_users_list" class="list-group">
-        @{/*
-            @foreach (var user in Model.Users)
-            {
-                <a href="#" class="list-group-item clearfix" onclick="alert('Action1 -> Details');">
-                    @user.Email
-                    <span class="pull-right">
-                        <span class="btn btn-xs btn-default" onclick="alert('Action1 -> Play'); event.stopPropagation();">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                        </span>
-                    </span>
-                </a>
-            }
-           */
-        }
-    </div>
-}
+<h4>Friends</h4>
+<div id="_loader_id"></div>
+<div id="_friends_list" class="list-group"></div>
+
+<h4>Other users</h4>
+<div id="_other_users_list" class="list-group"></div>

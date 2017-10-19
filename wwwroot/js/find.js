@@ -8,10 +8,24 @@
     let method_AddFriend = '/AddFriend/'
     let method_RemoveFriend = '/RemoveFriend/'
     let controller = '/Cabinet'
+    let loader_id = "#_loader_id"
 
     function clearLists() {
         $(other_users_list_id).empty()
         $(friends_list_id).empty()
+    }
+
+    function showLoader() {
+        if (!$(loader_id).hasClass("loader")) {
+            clearLists()
+            $(loader_id).addClass("loader")
+        }
+    }
+
+    function hideLoader() {
+        if ($(loader_id).hasClass("loader")) {
+            $(loader_id).removeClass("loader")
+        }
     }
 
     function appendItem(email, id, list_id, icon) {
@@ -71,7 +85,8 @@
                 console.log(res)
                 let otherUsers = res.users
 
-                clearLists()
+                hideLoader()
+                //clearLists()
                 otherUsers.forEach(
                     v => {
                         //create button
@@ -95,10 +110,12 @@
     }
 
     $(find_input_id).on('input', function () {
+        showLoader()
         GetUsers($(find_input_id).val())
         /*console.log($(find_input_id).val())*/
     })
 
+    showLoader()
     //requests for all records in database
     GetUsers("")
 
