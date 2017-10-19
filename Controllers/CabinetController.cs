@@ -39,6 +39,11 @@ namespace Promises.Controllers
             return View();
         }
 
+        public IActionResult Messages()
+        {
+            return View();
+        }
+
         public IActionResult Friends()
         {
             return View();

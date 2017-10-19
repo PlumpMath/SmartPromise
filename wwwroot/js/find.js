@@ -30,6 +30,8 @@
     }
 
     function hideLoader() {
+        clearLists()
+
         if ($(friends_loader_id).hasClass("loader")) {
             $(friends_loader_id).removeClass("loader")
         }
@@ -97,7 +99,6 @@
                 let otherUsers = res.users
 
                 hideLoader()
-                //clearLists()
                 otherUsers.forEach(
                     v => {
                         //create button
