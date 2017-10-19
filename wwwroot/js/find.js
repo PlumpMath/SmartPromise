@@ -8,7 +8,9 @@
     let method_AddFriend = '/AddFriend/'
     let method_RemoveFriend = '/RemoveFriend/'
     let controller = '/Cabinet'
-    let loader_id = "#_loader_id"
+    let friends_loader_id = "#_friends_loader_id"
+    let others_loader_id = "#_others_loader_id"
+
 
     function clearLists() {
         $(other_users_list_id).empty()
@@ -16,15 +18,24 @@
     }
 
     function showLoader() {
-        if (!$(loader_id).hasClass("loader")) {
-            clearLists()
-            $(loader_id).addClass("loader")
+        clearLists()
+
+        if (!$(friends_loader_id).hasClass("loader")) {
+            $(friends_loader_id).addClass("loader")
+        }
+
+        if (!$(others_loader_id).hasClass("loader")) {
+            $(others_loader_id).addClass("loader")
         }
     }
 
     function hideLoader() {
-        if ($(loader_id).hasClass("loader")) {
-            $(loader_id).removeClass("loader")
+        if ($(friends_loader_id).hasClass("loader")) {
+            $(friends_loader_id).removeClass("loader")
+        }
+
+        if ($(others_loader_id).hasClass("loader")) {
+            $(others_loader_id).removeClass("loader")
         }
     }
 
@@ -82,7 +93,7 @@
 
         $.get(controller + method_FindByEmail + param,
             function (res) {
-                console.log(res)
+                //console.log(res)
                 let otherUsers = res.users
 
                 hideLoader()
