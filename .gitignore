@@ -288,6 +288,8 @@ __pycache__/
 *.xsd.cs
 
 #Custome ignores
-wwwroot/lib
+wwwroot/lib/*
+!wwwroot/lib/signalr-client
+
 migrations
 #*.db
