@@ -9,7 +9,7 @@ namespace Promises.Models
 {
     public enum FriendStatus { WAITING = 0, ACCEPTED = 1 };
 
-    public class Friends
+    public class Friend
     {
         [Key, Column(Order = 0)]
         public string UserId { get; set; }

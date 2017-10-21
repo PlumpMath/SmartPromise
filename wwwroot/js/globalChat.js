@@ -1,5 +1,5 @@
 ﻿(function () {
-    console.log("______________chat.js______________")
+    console.log("______________globalChat.js______________")
 
     let connection = $.hubConnection()
     let hub = connection.createHubProxy('chat')

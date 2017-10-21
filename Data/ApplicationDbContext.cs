@@ -15,11 +15,15 @@ namespace Promises.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Friends>()
-                .HasKey(c => new { c.FriendId, c.UserId });
+            modelBuilder.Entity<Friend>()
+                .HasKey(f => new { f.FriendId, f.UserId });
+
+            modelBuilder.Entity<Message>()
+                .HasKey(m => new { m.SenderId , m.ReceiverId, m.ServerDateUtc });
         }
 
+        public DbSet<Message> Messages { get; set; } 
         public DbSet<Promise> Promises { get; set; }
-        public DbSet<Friends> Friends { get; set; }
+        public DbSet<Friend> Friends { get; set; }
     }
 }

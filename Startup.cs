@@ -35,6 +35,7 @@ namespace Promises
             
             services.AddTransient<IPromiseRepository, EFPromiseRepository>();
             services.AddTransient<IFriendsRepository, EFFriendsRepository>();
+            services.AddTransient<IMessagesRepository, EFMessagesRepository>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserIdentityDbContext>()

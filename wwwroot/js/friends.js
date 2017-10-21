@@ -1,5 +1,5 @@
 ﻿(function () {
-    console.log("______________find.js______________")
+    console.log("______________friends.js______________")
 
     let find_input_id = '#_find_input'
     let other_users_list_id = '#_other_users_list'

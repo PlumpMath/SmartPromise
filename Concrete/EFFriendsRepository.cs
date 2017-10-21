@@ -12,7 +12,7 @@ namespace Promises.Concrete
     {
         private readonly ApplicationDbContext _applicationContext;
 
-        private IEnumerable<Friends> Friends
+        private IEnumerable<Friend> Friends
         {
             get
             {
@@ -20,7 +20,7 @@ namespace Promises.Concrete
             }
         }
 
-        private Friends Find(string UserId, string UserFriendId)
+        private Friend Find(string UserId, string UserFriendId)
         {
             //it's guaranteed to return only one result, because the both parameters are used as a combined primary key
             return Friends.FirstOrDefault(u => u.UserId == UserId && u.FriendId == UserFriendId);
@@ -36,7 +36,7 @@ namespace Promises.Concrete
             var res = Find(UserId, UserFriendId);
             if (res == null)
             {
-                _applicationContext.Friends.Add(new Friends
+                _applicationContext.Friends.Add(new Friend
                 {
                     UserId = UserId,
                     FriendId = UserFriendId,
@@ -72,8 +72,8 @@ namespace Promises.Concrete
 
         public bool AreFriends(string UserId, string UserFriendId)
         {
-            return default(Friends) != Find(UserId, UserFriendId) 
-                && default(Friends) != Find(UserFriendId, UserId);
+            return default(Friend) != Find(UserId, UserFriendId) 
+                && default(Friend) != Find(UserFriendId, UserId);
         }
     }
 }
