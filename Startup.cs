@@ -32,11 +32,11 @@ namespace Promises
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ApplicationDatabase")));
-            
-            services.AddTransient<IPromiseRepository, EFPromiseRepository>();
-            services.AddTransient<IFriendsRepository, EFFriendsRepository>();
-            services.AddTransient<IMessagesRepository, EFMessagesRepository>();
 
+            services.AddScoped<IPromiseRepository, EFPromiseRepository>();
+            services.AddScoped<IFriendsRepository, EFFriendsRepository>();
+            services.AddScoped<IMessagesRepository, EFMessagesRepository>();
+            
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders();
@@ -44,7 +44,9 @@ namespace Promises
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddSingleton<IUserTracker<Chat>, InMemoryUserTracker<Chat>>();
+            services.AddSingleton(typeof(IUserTracker), typeof(InMemoryUserTracker));
+
+            //services.AddScoped<Chat>(p => new Chat(p.GetRequiredService<InMemoryUserTracker<Chat>>()));
 
             services.AddSignalR();
 
@@ -70,7 +72,11 @@ namespace Promises
 
             app.UseAuthentication();
             
-            app.UseSignalR();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Chat>("chat");
+                routes.MapHub<Notification>("notification");
+            });
 
             app.UseMvc(routes =>
             {

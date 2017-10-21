@@ -1,8 +1,8 @@
 ﻿(function () {
     console.log("______________globalChat.js______________")
 
-    let connection = $.hubConnection()
-    let hub = connection.createHubProxy('chat')
+    let connection = new signalR.HubConnection('/chat');
+
     let chat_id = "#_chat_id"
     let send_message_btn_id = '#_send_message_btn'
     let message_input_id = '#_message_input'
@@ -11,7 +11,7 @@
     function SendMessage() {
         let msg = $.trim($(message_input_id).val())
         console.log(msg)
-        hub.invoke('Send', msg)
+        connection.invoke('Send', msg)
     }
 
     function ClearInput() {
@@ -44,13 +44,16 @@
         console.log(msg)
     }
 
-    hub.on('OnConnected', msg => OnConnected(msg))
-    hub.on('OnDisconnected', msg => OnDisconnected(msg))
-    hub.on('Send', (msg, author, time) => { AddMessage(msg, author, time) })
+    connection.on('OnConnected', msg => OnConnected(msg))
+    connection.on('OnDisconnected', msg => OnDisconnected(msg))
+    connection.on('Send', (msg, author, time) => { AddMessage(msg, author, time) })
 
-    connection.start().done(function () {
-        $(document).ready(function () {
-            $(send_message_btn_id).click(() => { SendMessage(); ClearInput() })
-        })
-    })
+    connection.start().then(() =>
+        $(document).ready(() =>
+            $(send_message_btn_id).click(() => {
+                SendMessage()
+                ClearInput()
+            })
+        )
+    )
 })()

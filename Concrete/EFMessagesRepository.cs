@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Promises.Data;
 using Promises.Models;
 
@@ -10,6 +9,8 @@ namespace Promises.Concrete
 {
     public class EFMessagesRepository : IMessagesRepository
     {
+        public event Action<Message> OnMessageAdded;
+
         private readonly ApplicationDbContext _applicationContext;
 
         private IEnumerable<Message> Messages
@@ -27,17 +28,23 @@ namespace Promises.Concrete
 
         public void AddMessage(string senderId, string recieverId, string content, DateTime userDatelLocal)
         {
-            _applicationContext.Messages.Add(new Message
+            try
             {
-                SenderId = senderId,
-                ReceiverId = recieverId,
-                Content = content,
-                ServerDateUtc = DateTime.UtcNow,
-                UserDateLocal = userDatelLocal,
-                IsUnread = false
-            });
-            _applicationContext.SaveChanges();
-            throw new NotImplementedException();
+                var message = new Message
+                {
+                    SenderId = senderId,
+                    ReceiverId = recieverId,
+                    Content = content,
+                    ServerDateUtc = DateTime.UtcNow,
+                    UserDateLocal = userDatelLocal,
+                    IsUnread = false
+                };
+                _applicationContext.Messages.Add(message);
+                _applicationContext.SaveChanges();
+                OnMessageAdded(message);
+            }
+            catch (Exception)
+            {}
         }
 
         public Message FindLastMessage(string userOneId, string userTwoId)

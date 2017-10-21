@@ -3,8 +3,8 @@
     console.log("______________notification.js______________")
 
     let add_notification_button_id = "#_add_notification_button"
-    let connection = $.hubConnection()
-    let hub = connection.createHubProxy('notification')
+    
+    let connection = new signalR.HubConnection('/notification');
     let notification_counter = 0
     let notification_list_id = '#_notifications_list'
     let notification_counter_id = '#_notification_counter'
@@ -39,12 +39,12 @@
         </li >`)
     }
 
-    hub.on('Notify', msg => { addNotification(); changeCounter() })
+    connection.on('Notify', msg => { addNotification(); changeCounter() })
 
-    connection.start().done(function () {
+    connection.start().then(function () {
         $(document).ready(function () {
             $(add_notification_button_id).click(function () {
-                hub.invoke('Notify')
+                connection.invoke('Notify')
             })
         })
     })

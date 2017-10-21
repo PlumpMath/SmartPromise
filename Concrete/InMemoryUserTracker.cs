@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Hubs;
 using Promises.Abstract;
 using Promises.Models;
 
 namespace Promises.Concrete
 {
-    public class InMemoryUserTracker<THub> : IUserTracker<THub>
+    public class InMemoryUserTracker : IUserTracker
     {
+
         private readonly ConcurrentDictionary<HubConnectionContext, UserDetails> _usersOnline
             = new ConcurrentDictionary<HubConnectionContext, UserDetails>();
 

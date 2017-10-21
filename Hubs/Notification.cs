@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Hubs;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Promises.Hubs
 {
     [Authorize]
-    [HubName("notification")]
     public class Notification : Hub
     {
-        public void Notify()
+        public async Task Notify()
         {
-            Clients.Client(Context.ConnectionId).notify();
+            await Clients.Client(Context.ConnectionId).InvokeAsync("Notify");
             //Clients.All.join($"{Context.ConnectionId} has joned to room");
         }
     }

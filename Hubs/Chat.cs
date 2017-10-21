@@ -2,32 +2,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Promises.Abstract;
 using Promises.Models;
-using Microsoft.AspNetCore.SignalR.Hubs;
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Promises.Hubs
 {
     [Authorize]
-    [HubName("chat")]
     public class Chat : HubWithPresence
     {
-        public Chat(IUserTracker<Chat> userTracker)
-            : base(userTracker)
-        {}
 
-        public override Task OnConnected()
+        public Chat(IUserTracker userTracker)
+            : base(userTracker)
         {
-            //await Clients.Client(Context.ConnectionId).InvokeAsync("SetUsersOnline", await GetUsersOnline());
-            Clients.Client(Context.ConnectionId).Invoke("OnConnected", "You've connected");
-            base.OnConnected();
-            return Task.CompletedTask;
         }
 
-        public override Task OnDisconnected(bool stopCalled)
+        
+        public override async Task OnConnectedAsync()
         {
-            Clients.Client(Context.ConnectionId).Invoke("OnDisconnected", "You've disconected");
-            base.OnDisconnected(stopCalled);
-            return Task.CompletedTask;
+            //await Clients.Client(Context.ConnectionId).InvokeAsync("SetUsersOnline", await GetUsersOnline());
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnConnected", "You've connected");
+
+            await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnDisconnected", "You've disconected");
+
+            await base.OnDisconnectedAsync(exception);
         }
         /*
         public override async Task OnDisconnected(bool stopCalled)
@@ -42,14 +45,14 @@ namespace Promises.Hubs
             return Clients.Client(Context.ConnectionId).InvokeAsync("UsersJoined", users);
         }
 
-        public override Task OnUsersLeft(UserDetails[] users)
+        public override async Task OnUsersLeft(UserDetails[] users)
         {
-            return Clients.Client(Context.ConnectionId).InvokeAsync("UsersLeft", users);
+            await Clients.Client(Context.ConnectionId).InvokeAsync("UsersLeft", users);
         }
 
-        public void Send(string message)
+        public async Task Send(string message)
         {
-            Clients.All.Invoke("Send", 
+            await Clients.All.InvokeAsync("Send", 
                 message,
                 Context.User.Identity.Name,
                 DateTime.Now.ToString("MM/dd/yyyy h:mm tt")

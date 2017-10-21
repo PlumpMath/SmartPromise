@@ -8,9 +8,9 @@ namespace Promises.Hubs
 {
     public class HubWithPresence : Hub
     {
-        private IUserTracker<HubWithPresence> _userTracker;
+        private IUserTracker _userTracker;
 
-        public HubWithPresence(IUserTracker<HubWithPresence> userTracker)
+        public HubWithPresence(IUserTracker userTracker)
         {
             _userTracker = userTracker;
         }
