@@ -11,12 +11,19 @@ namespace Promises.Hubs
     [Authorize]
     public class Chat : HubWithPresence
     {
+        IMessagesRepository _messagesRepository;
 
-        public Chat(IUserTracker userTracker)
+        public Chat(IUserTracker userTracker, IMessagesRepository messagesRepository)
             : base(userTracker)
         {
+            _messagesRepository = messagesRepository;
+            _messagesRepository.OnMessageAdded += OnMessageAdded;
         }
 
+        public async void OnMessageAdded(Message message)
+        {
+
+        }
         
         public override async Task OnConnectedAsync()
         {
@@ -32,13 +39,6 @@ namespace Promises.Hubs
 
             await base.OnDisconnectedAsync(exception);
         }
-        /*
-        public override async Task OnDisconnected(bool stopCalled)
-        {
-            await Clients.Client(Context.ConnectionId).InvokeAsync("OnDisconnected", "You've disconected");
-            await base.OnDisconnected(stopCalled);
-        }
-        */
 
         public override Task OnUsersJoined(UserDetails[] users)
         {
