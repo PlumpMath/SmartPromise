@@ -20,6 +20,10 @@ namespace Promises.Models
         public DateTime ServerDateUtc { get; set; }
 
         [Required]
+        public string SenderEmail { get; set; }
+        [Required]
+        public string ReceiverEmail { get; set; }
+        [Required]
         public DateTime UserDateLocal { get; set; }
         [Required]
         public string Content { get; set; }

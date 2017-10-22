@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Promises.Data;
 using Promises.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Promises.Concrete
 {
@@ -12,6 +13,7 @@ namespace Promises.Concrete
         public event Action<Message> OnMessageAdded;
 
         private readonly ApplicationDbContext _applicationContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private IEnumerable<Message> Messages
         {
@@ -21,19 +23,31 @@ namespace Promises.Concrete
             }
         }
 
-        public EFMessagesRepository(ApplicationDbContext applicationContext)
+        public IEnumerable<Message> GetLastMessagesHistory(string userId)
         {
+            return _userManager.Users
+                .Select(u => FindLastMessage(userId, u.Id))
+                .Where(u => u != default(Message));
+        }
+
+        public EFMessagesRepository(
+            ApplicationDbContext applicationContext, 
+            UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
             _applicationContext = applicationContext;
         }
 
-        public void AddMessage(string senderId, string recieverId, string content, DateTime userDatelLocal)
+        public void AddMessage(User sender, User reciever, string content, DateTime userDatelLocal)
         {
             try
             {
                 var message = new Message
                 {
-                    SenderId = senderId,
-                    ReceiverId = recieverId,
+                    SenderId = sender.Id,
+                    ReceiverId = reciever.Id,
+                    SenderEmail = sender.Email,
+                    ReceiverEmail = reciever.Email,
                     Content = content,
                     ServerDateUtc = DateTime.UtcNow,
                     UserDateLocal = userDatelLocal,

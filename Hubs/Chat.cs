@@ -84,41 +84,45 @@ namespace Promises.Hubs
         {
             var owner = await _userManager.GetUserAsync(Context.User);
             var ownerId = owner.Id;
-
-
+            
             var history = _messagesRepository.GetMessageHistory(ownerId, personId, MESSAGES_AMOUNT.ALL).ToList();
-
-
-            //very bad, email property should be written in Message object
-            //replace all the reciever id and sender id with their emails respectively
-            history.ForEach(m => m.ReceiverId = _userManager.Users.Where(v => v.Id == m.ReceiverId).Select(v => v.Email).FirstOrDefault());
-            history.ForEach(m => m.SenderId = _userManager.Users.Where(v => v.Id == m.SenderId).Select(v => v.Email).FirstOrDefault());
-
+            
             var result = JsonConvert.SerializeObject(history);
             
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnGetHistory", result);
         }
 
-        public async Task SendTo(string userId, string message, string localDate)
+        public async Task SendTo(string recieverId, string message, string localDate)
         {
             var posixTime = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc);
             var localDateParsed = posixTime.AddMilliseconds(Convert.ToInt64(localDate));
             
-            var owner = await _userManager.GetUserAsync(Context.User);
-            var ownerId = owner.Id;
-            var ownerEmail = await _userManager.GetEmailAsync(owner);
+            var senderUser = await _userManager.GetUserAsync(Context.User);
+            var senderId = senderUser.Id;
+            var senderEmail = await _userManager.GetEmailAsync(senderUser);
+            var recieverEmail = _userManager.Users.Where(u => u.Id == recieverId).FirstOrDefault().Email;
 
-            DateTime localTime = DateTime.Now;//DateTime.Parse(localDate);
+            DateTime localTime = DateTime.Now;
 
-            _messagesRepository.AddMessage(ownerId, userId, message, localDateParsed);
+            var reciever = new User {
+                Id = recieverId,
+                Email = recieverEmail
+            };
+            var sender = new User {
+                Id = senderId,
+                Email = senderEmail  
+            };
+
+            _messagesRepository.AddMessage(sender, reciever, message, localDateParsed);
 
             var onlineUsers = await GetUsersOnline();
 
             var onlineExceptId = onlineUsers
-                .Where(u => u.Owner.Id != ownerId && u.Owner.Id != userId)
+                .Where(u => u.Owner.Id != senderId && u.Owner.Id != recieverId)
                 .Select(u => u.ConnectionId).ToList();
 
-            await Clients.AllExcept(onlineExceptId).InvokeAsync("SendTo", ownerEmail, message, localDateParsed.ToString());
+            await Clients.AllExcept(onlineExceptId)
+                .InvokeAsync("SendTo", senderEmail, message, localDateParsed.ToString());
         }
 
         public async Task Send(string message)

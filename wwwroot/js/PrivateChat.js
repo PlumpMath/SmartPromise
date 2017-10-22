@@ -66,7 +66,7 @@
         let historyArr = JSON.parse(history)
         console.log(history)
 
-        historyArr.forEach(v => AddMessage(v.Content, v.SenderId, ParseDate(v.UserDateLocal)))
+        historyArr.forEach(v => AddMessage(v.Content, v.SenderEmail, ParseDate(v.UserDateLocal)))
     }
 
     connection.on(`OnGetHistory`, history => OnGetHistory(history))

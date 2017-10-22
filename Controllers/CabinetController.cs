@@ -98,7 +98,16 @@ namespace Promises.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult GetLastMessagesHistory()
+        {
+            var userId = _userManager.GetUserId(HttpContext.User);
+            var history = _messagesRepository.GetLastMessagesHistory(userId).ToList();
+            
+            return new OkObjectResult(history);
+        }
+
         [HttpGet("{email?}")]
         public IActionResult FindByEmail(string email = default(string))    
         {
@@ -145,31 +154,13 @@ namespace Promises.Controllers
             _friendsRepository.AddFriend(userId, friendUserId);
             return Ok();
         }
-
-        /*
-        [HttpGet("{recieverId}/{content}/{dateLocal}")]
-        public IActionResult SendPrivateMessage(string recieverId, string content, string dateLocal)
-        {
-            try
-            {
-                var dateLocalParsed = DateTime.Parse(dateLocal);
-                var senderId = _userManager.GetUserId(HttpContext.User);
-                _messagesRepository.AddMessage(senderId, recieverId, content, dateLocalParsed);
-                return Ok();
-            }
-            catch (Exception err)
-            {
-                return NotFound(err);
-            }
-        }*/
-
-
+        
         [HttpGet]
         public IActionResult GetLastMessageInHistory(string personId)
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var message = _messagesRepository.FindLastMessage(userId, personId);
-            
+
             return new OkObjectResult(message);
         }
 
@@ -178,7 +169,7 @@ namespace Promises.Controllers
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var history = _messagesRepository.GetMessageHistory(userId, personId, MESSAGES_AMOUNT.ALL);
-
+            
             return new OkObjectResult(history);
         }
         

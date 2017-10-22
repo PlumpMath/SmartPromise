@@ -13,8 +13,9 @@ namespace Promises.Abstract
     {
         event Action<Message> OnMessageAdded;
         
-        void AddMessage(string senderId, string recieverId, string content, DateTime userDatelLocal);
+        void AddMessage(User sender, User reciever, string content, DateTime userDatelLocal);
         Message FindLastMessage(string personOneId, string personTwoId);
+        IEnumerable<Message> GetLastMessagesHistory(string userId);
         IEnumerable<Message> GetMessageHistory(string personOneId, string personTwoId, MESSAGES_AMOUNT amount);
     }
 }
