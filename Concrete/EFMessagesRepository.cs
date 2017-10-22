@@ -63,7 +63,9 @@ namespace Promises.Concrete
 
         public Message FindLastMessage(string userOneId, string userTwoId)
         {
-            return GetMessageHistory(userOneId, userTwoId).OrderBy(m => m.ServerDateUtc).FirstOrDefault();
+            return GetMessageHistory(userOneId, userTwoId)
+                .OrderByDescending(m => m.ServerDateUtc)
+                .FirstOrDefault();
         }
 
         private Int32 GetAmount(MESSAGES_AMOUNT amount)
