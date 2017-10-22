@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Promises.Hubs
 {
@@ -77,6 +78,25 @@ namespace Promises.Hubs
         {
             await Task.CompletedTask;
             //await Clients.Client(Context.ConnectionId).InvokeAsync("UsersLeft", users);
+        }
+
+        public async Task OnGetHistory(string personId)
+        {
+            var owner = await _userManager.GetUserAsync(Context.User);
+            var ownerId = owner.Id;
+
+
+            var history = _messagesRepository.GetMessageHistory(ownerId, personId, MESSAGES_AMOUNT.ALL).ToList();
+
+
+            //very bad, email property should be written in Message object
+            //replace all the reciever id and sender id with their emails respectively
+            history.ForEach(m => m.ReceiverId = _userManager.Users.Where(v => v.Id == m.ReceiverId).Select(v => v.Email).FirstOrDefault());
+            history.ForEach(m => m.SenderId = _userManager.Users.Where(v => v.Id == m.SenderId).Select(v => v.Email).FirstOrDefault());
+
+            var result = JsonConvert.SerializeObject(history);
+            
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnGetHistory", result);
         }
 
         public async Task SendTo(string userId, string message, string localDate)

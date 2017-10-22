@@ -51,16 +51,36 @@
         console.log(msg)
     }
 
+    function GetHistory(personId) {
+        connection.invoke('OnGetHistory', personId)
+    }
+
+
+    //seconds are written as double, so we delete all after '.' symbol
+    //also there is a redundunt symbol 'T' that also should be edited
+    function ParseDate(date) {
+        return date.substring(0, date.indexOf('.')).replace('T', ' ')
+    }
+
+    function OnGetHistory(history) {
+        let historyArr = JSON.parse(history)
+        console.log(history)
+
+        historyArr.forEach(v => AddMessage(v.Content, v.SenderId, ParseDate(v.UserDateLocal)))
+    }
+
+    connection.on(`OnGetHistory`, history => OnGetHistory(history))
     connection.on('OnConnected', msg => OnConnected(msg))
     connection.on('OnDisconnected', msg => OnDisconnected(msg))
     connection.on('SendTo', (author, msg, time) => { AddMessage(msg, author, time) })
 
     connection.start().then(() =>
-        $(document).ready(() =>
+        $(document).ready(() => {
+            GetHistory(recieverId)
             $(send_message_btn_id).click(() => {
                 SendMessage()
                 ClearInput()
             })
-        )
+        })
     )
 })()
