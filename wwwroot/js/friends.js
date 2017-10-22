@@ -7,6 +7,7 @@
     let method_FindByEmail = '/FindByEmail/'
     let method_AddFriend = '/AddFriend/'
     let method_RemoveFriend = '/RemoveFriend/'
+    let method_PrivateChat = '/PrivateChat/'
     let controller = '/Cabinet'
     let friends_loader_id = "#_friends_loader_id"
     let others_loader_id = "#_others_loader_id"
@@ -40,13 +41,16 @@
             $(others_loader_id).removeClass("loader")
         }
     }
-
+    
     function appendItem(email, id, list_id, icon) {
         $(list_id).append(`
-           <a href="#" id="` + id + `" class="list-group-item clearfix">`
+           <a href="#" class="list-group-item clearfix">`
                 + email +
                 `<span class="pull-right">
-                    <span class="btn btn-xs btn-default">
+                    <span id="` + id + `add_message" class="btn btn-xs btn-default">
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                    </span>
+                    <span id="` + id + `" class="btn btn-xs btn-default">
                         <span class="` +  icon + `" aria-hidden="true"></span>
                     </span>
                 </span>
@@ -58,6 +62,19 @@
         let buttonId = "#" + id
         $(buttonId).click(function () {
             AddFriend(id)
+        })
+    }
+
+    function moveToPrivateChat(id, email) {
+        window.location.href = url.replace('__id__', id).replace('__email__', email);
+    }
+
+    function addClickHandlerMessage(id, email) {
+        console.log(id + "  "  + email)
+        let buttonId = "#" + id + "add_message"
+        $(buttonId).click(function () {
+            console.log("clicked")
+            moveToPrivateChat(id, email)
         })
     }
 
@@ -106,6 +123,7 @@
                         //add listener to it
                         //append is synchrounious so it's legal
                         addClickHandlerAdd(v.id)
+                        addClickHandlerMessage(v.id, v.email)
                     }
                 )
 
@@ -114,6 +132,7 @@
                     v => {
                         appendItem(v.email, v.id, friends_list_id, minus_icon)
                         addClickHandlerRemove(v.id)
+                        addClickHandlerMessage(v.id, v.email)
                     }
                 )
 

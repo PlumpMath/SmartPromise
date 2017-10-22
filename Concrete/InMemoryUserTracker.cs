@@ -18,13 +18,13 @@ namespace Promises.Concrete
         public event Action<UserDetails[]> UsersJoined;
         public event Action<UserDetails[]> UsersLeft;
 
-        public Task<IEnumerable<UserDetails>> UsersOnline()
-            => Task.FromResult(_usersOnline.Values.AsEnumerable());
+        public Task<IQueryable<UserDetails>> UsersOnline()
+            => Task.FromResult(_usersOnline.Values.AsQueryable());
 
         public Task AddUser(HubConnectionContext connection, UserDetails userDetails)
         {
             _usersOnline.TryAdd(connection, userDetails);
-            UsersJoined(new[] { userDetails });
+            //UsersJoined(new[] { userDetails });
 
             return Task.CompletedTask;
         }
@@ -33,7 +33,7 @@ namespace Promises.Concrete
         {
             if (_usersOnline.TryRemove(connection, out var userDetails))
             {
-                UsersLeft(new[] { userDetails });
+                //UsersLeft(new[] { userDetails });
             }
 
             return Task.CompletedTask;

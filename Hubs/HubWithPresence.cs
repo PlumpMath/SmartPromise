@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Promises.Models;
 using Promises.Abstract;
+using System.Linq;
 
 namespace Promises.Hubs
 {
@@ -15,7 +16,7 @@ namespace Promises.Hubs
             _userTracker = userTracker;
         }
 
-        public Task<IEnumerable<UserDetails>> GetUsersOnline()
+        public Task<IQueryable<UserDetails>> GetUsersOnline()
         {
             return _userTracker.UsersOnline();
         }

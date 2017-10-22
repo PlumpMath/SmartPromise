@@ -45,11 +45,26 @@ namespace Promises.Controllers
             return View();
         }
 
+        [HttpGet("{personId}/{personEmail}")]
+        public async Task<IActionResult> PrivateChat(string personId, string personEmail)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var userId = user.Id;
+            var userEmail = await _userManager.GetEmailAsync(user);
+
+            var model = new PrivateChatViewModel
+            {
+                OwnerUserId = new User { Id = userId, Email = userEmail },
+                UserId = new User { Id = personId, Email = personEmail },
+            };
+            return View(model);
+        }
+
         public IActionResult Friends()
         {
             return View();
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePromise(PromiseCreationModel promise)
@@ -131,6 +146,7 @@ namespace Promises.Controllers
             return Ok();
         }
 
+        /*
         [HttpGet("{recieverId}/{content}/{dateLocal}")]
         public IActionResult SendPrivateMessage(string recieverId, string content, string dateLocal)
         {
@@ -145,7 +161,8 @@ namespace Promises.Controllers
             {
                 return NotFound(err);
             }
-        }
+        }*/
+
 
         [HttpGet]
         public IActionResult GetLastMessageInHistory(string personId)

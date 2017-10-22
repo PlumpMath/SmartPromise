@@ -11,6 +11,8 @@ namespace Promises.Views.Cabinet
     {
         public const string ActivePageKey = "ActivePage";
 
+        public const string PrivateChat = "PrivateChat";
+
         public const string Messages = "Messages";
 
         public const string Index = "Index";
@@ -23,6 +25,8 @@ namespace Promises.Views.Cabinet
         public static string MessagesClass(ViewContext viewContext) => PageNavClass(viewContext, Messages);
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
+
+        public static string PrivateChatNavClass(ViewContext viewContext) => PageNavClass(viewContext, GlobalChat);
 
         public static string ManagePromisesNavClass(ViewContext viewContext) => PageNavClass(viewContext, ManagePromises);
 

@@ -1,0 +1,46 @@
+﻿@using Promises.Views.Cabinet
+@model PrivateChatViewModel
+@{
+    ViewData["Title"] = "PrivateChat";
+    ViewData.AddActivePage(CabinetNavPages.PrivateChat);
+}
+
+<h4>PrivateChat with @Model.UserId.Email</h4>
+
+<!--/ Now we are able to read model from JavaSctipr -->
+<script type="text/javascript">let model = @Html.Raw(Json.Serialize(Model))</script>
+
+
+<link rel="stylesheet" type="text/css" href="~/css/chat.css">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-xs-12 col-lg-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="accordion">
+                    <span class="glyphicon glyphicon-comment"></span> Chat
+                    <div class="btn-group pull-right">
+                        
+                    </div>
+                </div>
+                <div class="panel-collapse" id="collapseOne">
+                    <div class="panel-body">
+                        <ul id="_chat_id" class="chat"></ul>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input id="_message_input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                            <span class="input-group-btn">
+                                <button class="btn btn-warning btn-sm" id="_send_message_btn">
+                                    Send
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

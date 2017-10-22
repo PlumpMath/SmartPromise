@@ -1,14 +1,12 @@
-﻿namespace Promises.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Promises.Models
 {
     public class UserDetails
     {
-        public UserDetails(string connectionId, string name)
-        {
-            ConnectionId = connectionId;
-            Name = name;
-        }
-
-        public string ConnectionId { get; }
-        public string Name { get; }
+        [Required]
+        public string ConnectionId { get; set; }
+        [Required]
+        public User Owner { get; set; }
     }
 }
