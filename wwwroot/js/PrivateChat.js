@@ -25,10 +25,11 @@
         $(message_input_id).val("")
     }
 
-    function AddMessage(msg, author, time) {
+    function AddMessage(msg, author, time, isUnread) {
+        console.log(isUnread)
         console.log("Adding message")
         $(chat_id).append(`
-        <li class="right clearfix">
+        <li class="right clearfix ` + (isUnread? "unread-message" : "") +`">
             <span class="chat-img pull-right">
                 <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
             </span>
@@ -66,7 +67,7 @@
         let historyArr = JSON.parse(history)
         console.log(history)
 
-        historyArr.forEach(v => AddMessage(v.Content, v.SenderEmail, ParseDate(v.UserDateLocal)))
+        historyArr.forEach(v => AddMessage(v.Content, v.SenderEmail, ParseDate(v.UserDateLocal), v.IsUnread))
     }
 
     connection.on(`OnGetHistory`, history => OnGetHistory(history))

@@ -91,5 +91,16 @@ namespace Promises.Concrete
                 (m.SenderId == userOneId && m.ReceiverId == userTwoId) ||
                 (m.SenderId == userTwoId && m.ReceiverId == userOneId)).Take(GetAmount(amount));
         }
+
+        public void MarkAsRead(string personOneId, string personTwoId)
+        {
+            GetMessageHistory(personOneId, personTwoId).ToList().ForEach(m => {
+                m.IsUnread = false;
+                _applicationContext.Attach(m);
+                _applicationContext.Entry(m).Property(u => u.IsUnread).IsModified = true;
+            });
+
+            _applicationContext.SaveChanges();
+        }
     }
 }
