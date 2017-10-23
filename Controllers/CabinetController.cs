@@ -58,11 +58,12 @@ namespace Promises.Controllers
                 UserId = new User { Id = personId, Email = personEmail },
             };
             //personId == receiverId
+            
             var lastMessage = _messagesRepository.FindLastMessage(personId, userId);
 
             if (lastMessage.IsUnread == true && lastMessage.SenderId != userId)
             {
-                _messagesRepository.MarkAsRead(personId, userId);
+                _messagesRepository.MarkHistoryAsRead(personId, userId);
             }
 
             return View(model);

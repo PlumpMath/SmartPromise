@@ -8,12 +8,15 @@ using Microsoft.AspNetCore.Identity;
 using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Promises.Hubs
 {
     [Authorize]
     public class Chat : HubWithPresence
     {
+        private IHubContext<Chat> _hubContext;
         private readonly IMessagesRepository _messagesRepository;
         private readonly IUserTracker _userTracker;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,10 +29,11 @@ namespace Promises.Hubs
             _userTracker = userTracker;
             _messagesRepository = messagesRepository;
             _userManager = userManager;
-            _messagesRepository.OnMessageAdded += OnMessageAdded;
+
+            _messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead;
         }
 
-        public async void OnMessageAdded(Message message)
+        public void OnMessageHistoryRead()
         {
             int i = 0;
         }
@@ -50,7 +54,6 @@ namespace Promises.Hubs
                 }
             };
             
-            //await Clients.Client(Context.ConnectionId).InvokeAsync("SetUsersOnline", await GetUsersOnline());
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnConnected", "You've connected");
 
             await base.OnConnectedAsync();
@@ -60,7 +63,6 @@ namespace Promises.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnDisconnected", "You've disconected");
 
             await base.OnDisconnectedAsync(exception);
@@ -71,13 +73,11 @@ namespace Promises.Hubs
         public override async Task OnUsersJoined(UserDetails[] users)
         {
             await Task.CompletedTask;
-            //return Clients.Client(Context.ConnectionId).InvokeAsync("UsersJoined", users);
         }
 
         public override async Task OnUsersLeft(UserDetails[] users)
         {
             await Task.CompletedTask;
-            //await Clients.Client(Context.ConnectionId).InvokeAsync("UsersLeft", users);
         }
 
         public async Task OnGetHistory(string personId)
@@ -85,11 +85,22 @@ namespace Promises.Hubs
             var owner = await _userManager.GetUserAsync(Context.User);
             var ownerId = owner.Id;
             
-            var history = _messagesRepository.GetMessageHistory(ownerId, personId, MESSAGES_AMOUNT.ALL).ToList();
+            var history = _messagesRepository
+                .GetMessageHistory(ownerId, personId, MESSAGES_AMOUNT.ALL)
+                .OrderBy(m => m.ServerDateUtc)
+                .ToList();
             
             var result = JsonConvert.SerializeObject(history);
             
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnGetHistory", result);
+        }
+
+        //returns connection id if it's online otherwise returns null
+        private async Task<string> GetConnectionId(string receiverId)
+        {
+            var onlineUsers = await _userTracker.UsersOnline();
+            var connection = onlineUsers.FirstOrDefault(u => u.Owner.Id == receiverId);
+            return connection?.ConnectionId;
         }
 
         public async Task SendTo(string recieverId, string message, string localDate)
@@ -113,7 +124,10 @@ namespace Promises.Hubs
                 Email = senderEmail  
             };
 
-            _messagesRepository.AddMessage(sender, reciever, message, localDateParsed);
+            var receiverConId = await GetConnectionId(recieverId);
+            var isUnread = receiverConId == null;
+
+            var mes = _messagesRepository.AddMessage(sender, reciever, message, localDateParsed, isUnread);
 
             var onlineUsers = await GetUsersOnline();
 
@@ -122,7 +136,7 @@ namespace Promises.Hubs
                 .Select(u => u.ConnectionId).ToList();
 
             await Clients.AllExcept(onlineExceptId)
-                .InvokeAsync("SendTo", senderEmail, message, localDateParsed.ToString());
+                .InvokeAsync("SendTo", JsonConvert.SerializeObject(mes));
         }
 
         public async Task Send(string message)

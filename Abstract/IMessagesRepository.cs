@@ -12,11 +12,12 @@ namespace Promises.Abstract
     public interface IMessagesRepository
     {
         event Action<Message> OnMessageAdded;
+        event Action OnMessageHistoryRead;
         
-        void AddMessage(User sender, User reciever, string content, DateTime userDatelLocal);
+        Message AddMessage(User sender, User reciever, string content, DateTime userDatelLocal, bool isUnread = true);
         Message FindLastMessage(string personOneId, string personTwoId);
         IEnumerable<Message> GetLastMessagesHistory(string userId);
         IEnumerable<Message> GetMessageHistory(string personOneId, string personTwoId, MESSAGES_AMOUNT amount);
-        void MarkAsRead(string personOneId, string personTwoId);
+        void MarkHistoryAsRead(string personOneId, string personTwoId);
     }
 }

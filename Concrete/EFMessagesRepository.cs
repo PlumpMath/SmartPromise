@@ -11,6 +11,7 @@ namespace Promises.Concrete
     public class EFMessagesRepository : IMessagesRepository
     {
         public event Action<Message> OnMessageAdded;
+        public event Action OnMessageHistoryRead;
 
         private readonly ApplicationDbContext _applicationContext;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -38,7 +39,10 @@ namespace Promises.Concrete
             _applicationContext = applicationContext;
         }
 
-        public void AddMessage(User sender, User reciever, string content, DateTime userDatelLocal)
+        public Message AddMessage(
+            User sender, User reciever, 
+            string content, DateTime userDatelLocal, 
+            bool isUnread = true)
         {
             try
             {
@@ -51,14 +55,18 @@ namespace Promises.Concrete
                     Content = content,
                     ServerDateUtc = DateTime.UtcNow,
                     UserDateLocal = userDatelLocal,
-                    IsUnread = true
+                    IsUnread = isUnread
                 };
                 _applicationContext.Messages.Add(message);
                 _applicationContext.SaveChanges();
-                OnMessageAdded(message);
+                //OnMessageAdded(message);
+                return message;
             }
             catch (Exception)
-            {}
+            {
+                return null;
+            }
+            
         }
 
         public Message FindLastMessage(string userOneId, string userTwoId)
@@ -92,7 +100,7 @@ namespace Promises.Concrete
                 (m.SenderId == userTwoId && m.ReceiverId == userOneId)).Take(GetAmount(amount));
         }
 
-        public void MarkAsRead(string personOneId, string personTwoId)
+        public void MarkHistoryAsRead(string personOneId, string personTwoId)
         {
             GetMessageHistory(personOneId, personTwoId).ToList().ForEach(m => {
                 m.IsUnread = false;
@@ -101,6 +109,7 @@ namespace Promises.Concrete
             });
 
             _applicationContext.SaveChanges();
+            OnMessageHistoryRead?.Invoke();
         }
     }
 }

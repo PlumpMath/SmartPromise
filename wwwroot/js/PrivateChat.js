@@ -73,8 +73,12 @@
     connection.on(`OnGetHistory`, history => OnGetHistory(history))
     connection.on('OnConnected', msg => OnConnected(msg))
     connection.on('OnDisconnected', msg => OnDisconnected(msg))
-    connection.on('SendTo', (author, msg, time) => { AddMessage(msg, author, time) })
-
+    connection.on('SendTo', (mes) => {
+        let mes_obj = JSON.parse(mes)
+        AddMessage(mes_obj.Content, mes_obj.SenderEmail, ParseDate(mes_obj.UserDateLocal), mes_obj.IsUnread)
+    })
+    connection.on('OnMessageHistoryRead', () => console.log("Read"))
+    
     connection.start().then(() =>
         $(document).ready(() => {
             GetHistory(recieverId)
