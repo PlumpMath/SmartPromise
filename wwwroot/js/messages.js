@@ -38,9 +38,11 @@
     }
 
     //add href instead of click handler? much simpler
-    function appendItem(senderEmail, receiverEmail, message, list_id, button_id) {
+    function appendItem(senderEmail, receiverEmail, message, list_id, button_id, isUnread) {
+        
         $(list_id).append(`
-           <a id="` + button_id +`add_message" class="list-group-item clearfix">` + `
+           <a id="` + button_id + `add_message" class="list-group-item clearfix ` +
+            (isUnread ? "unread-message" : "") + `">` + `
                 <div class="text-center">` + message + `</div>` +
             `   <span class="pull-left">
                     <span class="btn btn-xs btn-default">`
@@ -72,7 +74,8 @@
                     res.forEach(v => {
                         let recepientId = GetRecepientId(user, v)
 
-                        appendItem(v.senderEmail, v.receiverEmail, v.content, messages_list_id, recepientId)
+                        appendItem(v.senderEmail, v.receiverEmail, v.content,
+                            messages_list_id, recepientId, v.isUnread)
                         addClickHandlerMessage(recepientId, GetRecepientEmail(user, v))
                         //addClickHandlerMessage(v.)
                     })

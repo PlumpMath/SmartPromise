@@ -51,7 +51,7 @@ namespace Promises.Concrete
                     Content = content,
                     ServerDateUtc = DateTime.UtcNow,
                     UserDateLocal = userDatelLocal,
-                    IsUnread = false
+                    IsUnread = true
                 };
                 _applicationContext.Messages.Add(message);
                 _applicationContext.SaveChanges();

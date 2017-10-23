@@ -110,7 +110,9 @@ namespace Promises.Controllers
         public IActionResult GetLastMessagesHistory()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
-            var history = _messagesRepository.GetLastMessagesHistory(userId).ToList();
+            var history = _messagesRepository.GetLastMessagesHistory(userId)
+                .OrderByDescending(m => m.ServerDateUtc)
+                .ToList();
             
             return new OkObjectResult(history);
         }
