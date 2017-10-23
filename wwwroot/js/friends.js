@@ -12,6 +12,16 @@
     let friends_loader_id = "#_friends_loader_id"
     let others_loader_id = "#_others_loader_id"
 
+    function MakeFind(friends_list, others_list) {
+        let friends_copy = [...friends_list]
+        let others_copy = [...others_list]
+        return function (findString, filtered) {
+            
+            filtered.friends = friends_copy.filter(v => v.email.startsWith(findString))
+            filtered.others = others_copy.filter(v => v.email.startsWith(findString))
+
+        }
+    }
 
     function clearLists() {
         $(other_users_list_id).empty()
@@ -89,8 +99,9 @@
         $.get(controller + method_AddFriend + param,
             function () {
                 console.log("Friend has been added")
+                showLoader()
                 //can be optimisized
-                GetUsers($(find_input_id).val())
+                OnUsersReceived($(find_input_id).val())
             })
             .fail(function (err) { console.log(err) })
     }
@@ -100,54 +111,67 @@
             function () {
                 console.log("Friend has been removed")
                 //can be optimisized
-                GetUsers($(find_input_id).val())
+                showLoader()
+                OnUsersReceived($(find_input_id).val())
             })
             .fail(function (err) { console.log(err) })
     }
 
-    function GetUsers(param) {
+    function ShowLists(otherUsers, friends) {
 
         let minus_icon = "glyphicon glyphicon-minus"
         let plus_icon = "glyphicon glyphicon-plus"
+        clearLists()
 
+        otherUsers.forEach(
+            v => {
+                //create button
+                appendItem(v.email, v.id, other_users_list_id, plus_icon);
+                //add listener to it
+                //append is synchrounious so it's legal
+                addClickHandlerAdd(v.id)
+                addClickHandlerMessage(v.id, v.email)
+            }
+        )
+
+        friends.forEach(
+            v => {
+                appendItem(v.email, v.id, friends_list_id, minus_icon)
+                addClickHandlerRemove(v.id)
+                addClickHandlerMessage(v.id, v.email)
+            }
+        )
+    }
+
+    function OnUsersReceived(param) {
+        
         $.get(controller + method_FindByEmail + param,
             function (res) {
                 //console.log(res)
-                let otherUsers = res.users
-
+                let Find = MakeFind(res.friends, res.users)
                 hideLoader()
-                otherUsers.forEach(
-                    v => {
-                        //create button
-                        appendItem(v.email, v.id, other_users_list_id, plus_icon);
-                        //add listener to it
-                        //append is synchrounious so it's legal
-                        addClickHandlerAdd(v.id)
-                        addClickHandlerMessage(v.id, v.email)
-                    }
-                )
+                
+                $(find_input_id).on('input', function () {
+                    console.log($(find_input_id).val())
 
-                let friends = res.friends
-                friends.forEach(
-                    v => {
-                        appendItem(v.email, v.id, friends_list_id, minus_icon)
-                        addClickHandlerRemove(v.id)
-                        addClickHandlerMessage(v.id, v.email)
-                    }
-                )
+                    let filtered = {}
+                    
+                    Find($(find_input_id).val(), filtered)
 
+                    let otherUsers = filtered.others
+                    let friends = filtered.friends
+
+                    ShowLists(otherUsers, friends)
+                    /*console.log($(find_input_id).val())*/
+                })
+
+                ShowLists(res.users, res.friends)
             })
             .fail(function (err) { console.log(err) })
     }
-
-    $(find_input_id).on('input', function () {
-        showLoader()
-        GetUsers($(find_input_id).val())
-        /*console.log($(find_input_id).val())*/
-    })
-
+    
     showLoader()
     //requests for all records in database
-    GetUsers("")
+    OnUsersReceived("")
 
 })()
