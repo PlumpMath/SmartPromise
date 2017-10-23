@@ -100,6 +100,13 @@ namespace Promises.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GetMyUserInfo()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            return new OkObjectResult(user);
+        }
+
+        [HttpGet]
         public IActionResult GetLastMessagesHistory()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
