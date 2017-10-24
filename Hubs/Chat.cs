@@ -10,6 +10,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
+using Promises.Concrete;
 
 namespace Promises.Hubs
 {
@@ -20,22 +21,23 @@ namespace Promises.Hubs
         private readonly IMessagesRepository _messagesRepository;
         private readonly IUserTracker _userTracker;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly INotificator<Chat, IMessagesRepository> _notificator;
 
         public Chat(IUserTracker userTracker, 
             IMessagesRepository messagesRepository,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            INotificator<Chat, IMessagesRepository> notificator)
             : base(userTracker)
         {
             _userTracker = userTracker;
             _messagesRepository = messagesRepository;
             _userManager = userManager;
-
-            _messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead;
+            _notificator = notificator;
         }
 
-        public void OnMessageHistoryRead()
+        public async Task OnMessageHistoryRead()
         {
-            int i = 0;
+            await Clients.All.InvokeAsync("OnMessageHistoryRead");
         }
 
         public override async Task OnConnectedAsync()
@@ -53,16 +55,21 @@ namespace Promises.Hubs
                     Id = ownerId
                 }
             };
-            
-            await Clients.Client(Context.ConnectionId).InvokeAsync("OnConnected", "You've connected");
 
+            _notificator.AddConnection(Context.Connection);
+
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnConnected", "You've connected");
+                
+            await _userTracker.AddUser(Context.Connection, userDetails);
+            
             await base.OnConnectedAsync();
 
-            await _userTracker.AddUser(Context.Connection, userDetails);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            _notificator.RemoveConnection(Context.Connection);
+
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnDisconnected", "You've disconected");
 
             await base.OnDisconnectedAsync(exception);

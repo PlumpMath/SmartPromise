@@ -33,19 +33,23 @@ namespace Promises
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ApplicationDatabase")));
 
-            services.AddScoped<IPromiseRepository, EFPromiseRepository>();
-            services.AddScoped<IFriendsRepository, EFFriendsRepository>();
-            services.AddScoped<IMessagesRepository, EFMessagesRepository>();
+            services.AddTransient<IPromiseRepository, EFPromiseRepository>();
+            services.AddTransient<IFriendsRepository, EFFriendsRepository>();
+            services.AddTransient<IMessagesRepository, EFMessagesRepository>();
             
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
+
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            services.AddSingleton(typeof(DefaultNotificator<,>), typeof(DefaultNotificator<,>));
+            services.AddSingleton(typeof(INotificator<Chat, IMessagesRepository>), typeof(NotificatorChatMessages));
             services.AddSingleton(typeof(IUserTracker), typeof(InMemoryUserTracker));
-
+            
             //services.AddScoped<Chat>(p => new Chat(p.GetRequiredService<InMemoryUserTracker<Chat>>()));
 
             services.AddSignalR();

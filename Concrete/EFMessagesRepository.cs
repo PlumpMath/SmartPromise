@@ -5,14 +5,16 @@ using System.Linq;
 using Promises.Data;
 using Promises.Models;
 using Microsoft.AspNetCore.Identity;
+using Promises.Hubs;
 
 namespace Promises.Concrete
 {
-    public class EFMessagesRepository : IMessagesRepository
+    public class EFMessagesRepository : IMessagesRepository, IDisposable
     {
         public event Action<Message> OnMessageAdded;
         public event Action OnMessageHistoryRead;
 
+        private readonly INotificator<Chat, IMessagesRepository> _notificator;
         private readonly ApplicationDbContext _applicationContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -33,12 +35,16 @@ namespace Promises.Concrete
 
         public EFMessagesRepository(
             ApplicationDbContext applicationContext, 
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            INotificator<Chat, IMessagesRepository> notificator)
         {
             _userManager = userManager;
             _applicationContext = applicationContext;
-        }
+            _notificator = notificator;
 
+            _notificator.Subscribe(this);
+        }
+        
         public Message AddMessage(
             User sender, User reciever, 
             string content, DateTime userDatelLocal, 
@@ -59,7 +65,7 @@ namespace Promises.Concrete
                 };
                 _applicationContext.Messages.Add(message);
                 _applicationContext.SaveChanges();
-                //OnMessageAdded(message);
+                OnMessageAdded?.Invoke(message);
                 return message;
             }
             catch (Exception)
@@ -109,7 +115,14 @@ namespace Promises.Concrete
             });
 
             _applicationContext.SaveChanges();
+            //_notificationManager.OnMessageHistoryRead();
+            //OnMessageHistoryRead()
             OnMessageHistoryRead?.Invoke();
+        }
+
+        public void Dispose()
+        {
+            _notificator.Unsubscribe(this);
         }
     }
 }

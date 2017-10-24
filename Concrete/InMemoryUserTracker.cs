@@ -24,7 +24,7 @@ namespace Promises.Concrete
         public Task AddUser(HubConnectionContext connection, UserDetails userDetails)
         {
             _usersOnline.TryAdd(connection, userDetails);
-            //UsersJoined(new[] { userDetails });
+            UsersJoined?.Invoke(new[] { userDetails });
 
             return Task.CompletedTask;
         }
@@ -33,7 +33,7 @@ namespace Promises.Concrete
         {
             if (_usersOnline.TryRemove(connection, out var userDetails))
             {
-                //UsersLeft(new[] { userDetails });
+                UsersLeft?.Invoke(new[] { userDetails });
             }
 
             return Task.CompletedTask;
