@@ -35,9 +35,20 @@ namespace Promises.Hubs
             _notificator = notificator;
         }
 
-        public async Task OnMessageHistoryRead()
+        public async Task OnMessageHistoryRead(string personOneId, string personTwoId)
         {
-            await Clients.All.InvokeAsync("OnMessageHistoryRead");
+            var onlineUsers = await _userTracker.UsersOnline();
+            var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
+            var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
+
+            if (personOneConId != null)
+            {
+                await Clients.Client(personOneConId).InvokeAsync("OnMessageHistoryRead");
+            }
+            if (personTwoConId != null)
+            {
+                await Clients.Client(personTwoConId).InvokeAsync("OnMessageHistoryRead");
+            }
         }
 
         public override async Task OnConnectedAsync()

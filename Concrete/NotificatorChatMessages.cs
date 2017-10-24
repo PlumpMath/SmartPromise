@@ -13,17 +13,12 @@ namespace Promises.Concrete
 {
     public class NotificatorChatMessages : DefaultNotificator<Chat, IMessagesRepository>
     {
-        private readonly IUserTracker _userTracker;
         
         public NotificatorChatMessages(
-            IUserTracker userTracker, 
             IServiceScopeFactory serviceScopeFactory,
             IServiceProvider serviceProvider
         ) : base(serviceScopeFactory, serviceProvider)
-        {
-            _userTracker = userTracker;
-            //_messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead;
-        }
+        {}
         
         public override void Subscribe(IMessagesRepository messagesRepository)
         {
@@ -42,9 +37,9 @@ namespace Promises.Concrete
             await Notify(hub => hub.Send(message));
         }
 
-        public async void OnMessageHistoryRead()
+        public async void OnMessageHistoryRead(string personOneId, string personTwoId)
         {
-            await Notify(hub => hub.OnMessageHistoryRead());    
+            await Notify(hub => hub.OnMessageHistoryRead(personOneId, personTwoId));    
         }
     }
 }

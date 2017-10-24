@@ -63,6 +63,17 @@
         return date.substring(0, date.indexOf('.')).replace('T', ' ')
     }
 
+    function MarkAllMessagesAsRead() {
+        $(chat_id).each(function () {
+            $(this).find('li').each(function () {
+                if ($(this).hasClass("unread-message")) {
+                    console.log("removing")
+                    $(this).removeClass("unread-message")
+                }
+            })
+        })
+    }
+
     function OnGetHistory(history) {
         let historyArr = JSON.parse(history)
         console.log(history)
@@ -77,7 +88,7 @@
         let mes_obj = JSON.parse(mes)
         AddMessage(mes_obj.Content, mes_obj.SenderEmail, ParseDate(mes_obj.UserDateLocal), mes_obj.IsUnread)
     })
-    connection.on('OnMessageHistoryRead', () => console.log("Read"))
+    connection.on('OnMessageHistoryRead', () => MarkAllMessagesAsRead())
     
     connection.start().then(() =>
         $(document).ready(() => {

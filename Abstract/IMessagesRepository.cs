@@ -12,7 +12,8 @@ namespace Promises.Abstract
     public interface IMessagesRepository
     {
         event Action<Message> OnMessageAdded;
-        event Action OnMessageHistoryRead;
+        //Todo: User and User as parameters
+        event Action<string, string> OnMessageHistoryRead;
         
         Message AddMessage(User sender, User reciever, string content, DateTime userDatelLocal, bool isUnread = true);
         Message FindLastMessage(string personOneId, string personTwoId);

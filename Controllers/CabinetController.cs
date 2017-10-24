@@ -61,7 +61,7 @@ namespace Promises.Controllers
             
             var lastMessage = _messagesRepository.FindLastMessage(personId, userId);
 
-            if (lastMessage.IsUnread == true && lastMessage.SenderId != userId)
+            if (lastMessage != null && lastMessage.IsUnread == true && lastMessage.SenderId != userId)
             {
                 _messagesRepository.MarkHistoryAsRead(personId, userId);
             }

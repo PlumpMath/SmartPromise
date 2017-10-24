@@ -12,7 +12,7 @@ namespace Promises.Concrete
     public class EFMessagesRepository : IMessagesRepository, IDisposable
     {
         public event Action<Message> OnMessageAdded;
-        public event Action OnMessageHistoryRead;
+        public event Action<string, string> OnMessageHistoryRead;
 
         private readonly INotificator<Chat, IMessagesRepository> _notificator;
         private readonly ApplicationDbContext _applicationContext;
@@ -117,7 +117,7 @@ namespace Promises.Concrete
             _applicationContext.SaveChanges();
             //_notificationManager.OnMessageHistoryRead();
             //OnMessageHistoryRead()
-            OnMessageHistoryRead?.Invoke();
+            OnMessageHistoryRead?.Invoke(personOneId, personTwoId);
         }
 
         public void Dispose()
