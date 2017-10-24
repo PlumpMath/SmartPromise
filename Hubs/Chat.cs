@@ -134,25 +134,20 @@ namespace Promises.Hubs
             var receiverConId = await GetConnectionId(recieverId);
             var isUnread = receiverConId == null;
 
-            var mes = _messagesRepository.AddMessage(sender, reciever, message, localDateParsed, isUnread);
+            _messagesRepository.AddMessage(sender, reciever, message, localDateParsed, isUnread);
+        }
 
+        public async Task Send(Message message)
+        {
             var onlineUsers = await GetUsersOnline();
 
+            //Check they are even online
             var onlineExceptId = onlineUsers
-                .Where(u => u.Owner.Id != senderId && u.Owner.Id != recieverId)
+                .Where(u => u.Owner.Id != message.SenderId && u.Owner.Id != message.ReceiverId)
                 .Select(u => u.ConnectionId).ToList();
 
             await Clients.AllExcept(onlineExceptId)
-                .InvokeAsync("SendTo", JsonConvert.SerializeObject(mes));
-        }
-
-        public async Task Send(string message)
-        {
-            await Clients.All.InvokeAsync("Send", 
-                message,
-                Context.User.Identity.Name,
-                DateTime.Now.ToString("MM/dd/yyyy h:mm tt")
-            );
+                .InvokeAsync("Send", JsonConvert.SerializeObject(message));
         }
     }
 }

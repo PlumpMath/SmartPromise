@@ -73,7 +73,7 @@
     connection.on(`OnGetHistory`, history => OnGetHistory(history))
     connection.on('OnConnected', msg => OnConnected(msg))
     connection.on('OnDisconnected', msg => OnDisconnected(msg))
-    connection.on('SendTo', (mes) => {
+    connection.on('Send', (mes) => {
         let mes_obj = JSON.parse(mes)
         AddMessage(mes_obj.Content, mes_obj.SenderEmail, ParseDate(mes_obj.UserDateLocal), mes_obj.IsUnread)
     })

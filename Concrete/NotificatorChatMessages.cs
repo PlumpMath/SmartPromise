@@ -28,11 +28,18 @@ namespace Promises.Concrete
         public override void Subscribe(IMessagesRepository messagesRepository)
         {
             messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead;
+            messagesRepository.OnMessageAdded += OnMessageAdded;
         }
 
         public override void Unsubscribe(IMessagesRepository messagesRepository)
         {
             messagesRepository.OnMessageHistoryRead -= OnMessageHistoryRead;
+            messagesRepository.OnMessageAdded -= OnMessageAdded;
+        }
+
+        public async void OnMessageAdded(Message message)
+        {
+            await Notify(hub => hub.Send(message));
         }
 
         public async void OnMessageHistoryRead()
