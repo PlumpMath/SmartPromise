@@ -3,7 +3,7 @@
 
     //model passed by server using razor
     if (model !== undefined) {
-        console.log(model)
+        //console.log(model)
     }
 
     let recieverId = model.userId.id
@@ -13,21 +13,23 @@
     let chat_id = "#_chat_id"
     let send_message_btn_id = '#_send_message_btn'
     let message_input_id = '#_message_input'
-
+    let messages_panel_id = '#_messages_panel_id'
+    let ENTER_BUTTON_KEY = 13
 
     function SendMessage() {
+        
         let msg = $.trim($(message_input_id).val())
-        console.log(msg)
+        //console.log(msg)
         connection.invoke('SendTo', recieverId, msg, Date.now().toString())
     }
-
+    
     function ClearInput() {
         $(message_input_id).val("")
     }
 
     function AddMessage(msg, author, time, isUnread) {
-        console.log(isUnread)
-        console.log("Adding message")
+        //console.log(isUnread)
+        //console.log("Adding message")
         $(chat_id).append(`
         <li class="right clearfix ` + (isUnread? "unread-message" : "") +`">
             <span class="chat-img pull-right">
@@ -73,12 +75,18 @@
             })
         })
     }
+    
+    function scrollToBottom() {
+        let element = document.getElementById("_messages_panel_id")
+        element.scrollTop = element.scrollHeight
+    }
 
     function OnGetHistory(history) {
         let historyArr = JSON.parse(history)
-        console.log(history)
+        //console.log(history)
 
         historyArr.forEach(v => AddMessage(v.Content, v.SenderEmail, ParseDate(v.UserDateLocal), v.IsUnread))
+        scrollToBottom()
     }
 
     connection.on(`OnGetHistory`, history => OnGetHistory(history))
@@ -92,8 +100,18 @@
     
     connection.start().then(() =>
         $(document).ready(() => {
+            
+            $(message_input_id).keyup(function (event) {
+                if (event.keyCode === ENTER_BUTTON_KEY) {
+                    $(send_message_btn_id).click()
+                }
+            })
+
+            $(message_input_id).focus()
+
             GetHistory(recieverId)
             $(send_message_btn_id).click(() => {
+                scrollToBottom()
                 SendMessage()
                 ClearInput()
             })
