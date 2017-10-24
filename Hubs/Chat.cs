@@ -35,7 +35,7 @@ namespace Promises.Hubs
             _notificator = notificator;
         }
 
-        public async Task OnMessageHistoryRead(string personOneId, string personTwoId)
+        public async Task OnMessageHistoryRead()
         {
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnMessageHistoryRead");
         }

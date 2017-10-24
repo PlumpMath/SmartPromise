@@ -49,12 +49,52 @@ namespace Promises.Concrete
             throw new NotImplementedException();
         }
 
+        protected async Task NotifyOne(Func<THub, Task> invocation, string connectionId)
+        {
+            var connection = _connections
+                .FirstOrDefault(c => c.ConnectionId == connectionId);
+
+            if (connection == null)
+                return;
+
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var hubActivator = scope.ServiceProvider.GetRequiredService<IHubActivator<THub>>();
+                var hub = hubActivator.Create();
+
+                if (_hubContext == null)
+                {
+                    // Cannot be injected due to circular dependency
+                    _hubContext = _serviceProvider.GetRequiredService<IHubContext<THub>>();
+                }
+
+                hub.Clients = _hubContext.Clients;
+                hub.Context = new HubCallerContext(connection);
+                hub.Groups = _hubContext.Groups;
+
+                try
+                {
+                    await invocation(hub);
+                }
+                catch (Exception ex)
+                {
+                    //_logger.LogWarning(ex, "Presence notification failed.");
+                }
+                finally
+                {
+                    hubActivator.Release(hub);
+                }
+            }
+
+        }
+
+
         protected async Task Notify(Func<THub, Task> invocation, IQueryable<string> excepts = null)
         {
             foreach (var connection in _connections)
             {
                 bool inExcepts = excepts != null && 
-                    excepts.FirstOrDefault(id => id == connection.GetHttpContext().Connection.Id) != null;
+                    excepts.FirstOrDefault(id => id == connection.ConnectionId) != null;
                 if (inExcepts)
                     continue;
 

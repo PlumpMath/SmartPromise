@@ -54,13 +54,10 @@ namespace Promises.Concrete
             var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
             var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
 
-            List<string> excepts = new List<string>();
-            if (personOneId != null)
-                excepts.Add(personOneId);
+            if (personOneConId != null)
+                await NotifyOne(hub => hub.OnMessageHistoryRead(), personOneConId);
             if (personTwoConId != null)
-                excepts.Add(personTwoConId);
-
-            await Notify(hub => hub.OnMessageHistoryRead(personOneId, personTwoId), excepts.AsQueryable());    
+                await NotifyOne(hub => hub.OnMessageHistoryRead(), personTwoConId);
         }
     }
 }
