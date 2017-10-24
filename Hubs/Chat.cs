@@ -19,11 +19,11 @@ namespace Promises.Hubs
     {
         private IHubContext<Chat> _hubContext;
         private readonly IMessagesRepository _messagesRepository;
-        private readonly IUserTracker _userTracker;
+        private readonly IUserTracker<Chat> _userTracker;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly INotificator<Chat, IMessagesRepository> _notificator;
 
-        public Chat(IUserTracker userTracker, 
+        public Chat(IUserTracker<Chat> userTracker, 
             IMessagesRepository messagesRepository,
             UserManager<ApplicationUser> userManager,
             INotificator<Chat, IMessagesRepository> notificator)
@@ -37,18 +37,7 @@ namespace Promises.Hubs
 
         public async Task OnMessageHistoryRead(string personOneId, string personTwoId)
         {
-            var onlineUsers = await _userTracker.UsersOnline();
-            var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
-            var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
-
-            if (personOneConId != null)
-            {
-                await Clients.Client(personOneConId).InvokeAsync("OnMessageHistoryRead");
-            }
-            if (personTwoConId != null)
-            {
-                await Clients.Client(personTwoConId).InvokeAsync("OnMessageHistoryRead");
-            }
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnMessageHistoryRead");
         }
 
         public override async Task OnConnectedAsync()
@@ -74,7 +63,6 @@ namespace Promises.Hubs
             await _userTracker.AddUser(Context.Connection, userDetails);
             
             await base.OnConnectedAsync();
-
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -150,15 +138,7 @@ namespace Promises.Hubs
 
         public async Task Send(Message message)
         {
-            var onlineUsers = await GetUsersOnline();
-
-            //Check they are even online
-            var onlineExceptId = onlineUsers
-                .Where(u => u.Owner.Id != message.SenderId && u.Owner.Id != message.ReceiverId)
-                .Select(u => u.ConnectionId).ToList();
-
-            await Clients.AllExcept(onlineExceptId)
-                .InvokeAsync("Send", JsonConvert.SerializeObject(message));
+            await Clients.Client(Context.ConnectionId).InvokeAsync("Send", JsonConvert.SerializeObject(message));
         }
     }
 }

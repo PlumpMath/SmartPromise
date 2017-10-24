@@ -9,7 +9,7 @@ using Promises.Models;
 
 namespace Promises.Concrete
 {
-    public class InMemoryUserTracker : IUserTracker
+    public class InMemoryUserTracker<THub> : IUserTracker<THub>
     {
 
         private readonly ConcurrentDictionary<HubConnectionContext, UserDetails> _usersOnline

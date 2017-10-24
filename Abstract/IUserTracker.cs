@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Promises.Abstract
 {
-    public interface IUserTracker
+    public interface IUserTracker<out THub>
     {
         Task<IQueryable<UserDetails>> UsersOnline();
         Task AddUser(HubConnectionContext connection, UserDetails userDetails);

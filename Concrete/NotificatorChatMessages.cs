@@ -13,12 +13,16 @@ namespace Promises.Concrete
 {
     public class NotificatorChatMessages : DefaultNotificator<Chat, IMessagesRepository>
     {
-        
+        private readonly IUserTracker<Chat> _userTracker;
+
         public NotificatorChatMessages(
+            IUserTracker<Chat> userTracker, 
             IServiceScopeFactory serviceScopeFactory,
             IServiceProvider serviceProvider
         ) : base(serviceScopeFactory, serviceProvider)
-        {}
+        {
+            _userTracker = userTracker;
+        }
         
         public override void Subscribe(IMessagesRepository messagesRepository)
         {
@@ -34,12 +38,29 @@ namespace Promises.Concrete
 
         public async void OnMessageAdded(Message message)
         {
-            await Notify(hub => hub.Send(message));
+            var onlineUsers = await _userTracker.UsersOnline();
+
+            //Check they are even online
+            var excepts = onlineUsers
+                .Where(u => u.Owner.Id != message.SenderId && u.Owner.Id != message.ReceiverId)
+                .Select(u => u.ConnectionId);
+            
+            await Notify(hub => hub.Send(message), excepts);
         }
 
         public async void OnMessageHistoryRead(string personOneId, string personTwoId)
         {
-            await Notify(hub => hub.OnMessageHistoryRead(personOneId, personTwoId));    
+            var onlineUsers = await _userTracker.UsersOnline();
+            var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
+            var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
+
+            List<string> excepts = new List<string>();
+            if (personOneId != null)
+                excepts.Add(personOneId);
+            if (personTwoConId != null)
+                excepts.Add(personTwoConId);
+
+            await Notify(hub => hub.OnMessageHistoryRead(personOneId, personTwoId), excepts.AsQueryable());    
         }
     }
 }

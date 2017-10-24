@@ -49,10 +49,15 @@ namespace Promises.Concrete
             throw new NotImplementedException();
         }
 
-        protected async Task Notify(Func<THub, Task> invocation)
+        protected async Task Notify(Func<THub, Task> invocation, IQueryable<string> excepts = null)
         {
             foreach (var connection in _connections)
             {
+                bool inExcepts = excepts != null && 
+                    excepts.FirstOrDefault(id => id == connection.GetHttpContext().Connection.Id) != null;
+                if (inExcepts)
+                    continue;
+
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var hubActivator = scope.ServiceProvider.GetRequiredService<IHubActivator<THub>>();
