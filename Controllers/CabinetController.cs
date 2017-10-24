@@ -20,7 +20,7 @@ namespace Promises.Controllers
         private readonly IPromiseRepository _promiseRepository;
         private readonly IFriendsRepository _friendsRepository;
         private readonly IMessagesRepository _messagesRepository;
-
+        
         public CabinetController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,

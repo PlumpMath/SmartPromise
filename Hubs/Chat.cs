@@ -17,7 +17,6 @@ namespace Promises.Hubs
     [Authorize]
     public class Chat : HubWithPresence
     {
-        private IHubContext<Chat> _hubContext;
         private readonly IMessagesRepository _messagesRepository;
         private readonly IUserTracker<Chat> _userTracker;
         private readonly UserManager<ApplicationUser> _userManager;

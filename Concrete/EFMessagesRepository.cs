@@ -13,8 +13,10 @@ namespace Promises.Concrete
     {
         public event Action<Message> OnMessageAdded;
         public event Action<string, string> OnMessageHistoryRead;
+        public event Action<User, User> OnHaveUnread;
 
-        private readonly INotificator<Chat, IMessagesRepository> _notificator;
+        private readonly INotificator<Chat, IMessagesRepository> _notificatorChat;
+        private readonly INotificator<Notification, IMessagesRepository> _notificatorNotification;
         private readonly ApplicationDbContext _applicationContext;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -36,13 +38,16 @@ namespace Promises.Concrete
         public EFMessagesRepository(
             ApplicationDbContext applicationContext, 
             UserManager<ApplicationUser> userManager,
-            INotificator<Chat, IMessagesRepository> notificator)
+            INotificator<Chat, IMessagesRepository> notificatorChat,
+            INotificator<Notification, IMessagesRepository> notificatorNotification)
         {
             _userManager = userManager;
             _applicationContext = applicationContext;
-            _notificator = notificator;
+            _notificatorChat = notificatorChat;
+            _notificatorNotification = notificatorNotification;
 
-            _notificator.Subscribe(this);
+            _notificatorChat.Subscribe(this);
+            _notificatorNotification.Subscribe(this);
         }
         
         public Message AddMessage(
@@ -66,6 +71,10 @@ namespace Promises.Concrete
                 _applicationContext.Messages.Add(message);
                 _applicationContext.SaveChanges();
                 OnMessageAdded?.Invoke(message);
+                if (isUnread)
+                {
+                    OnHaveUnread?.Invoke(reciever, sender);
+                }
                 return message;
             }
             catch (Exception)
@@ -122,7 +131,8 @@ namespace Promises.Concrete
 
         public void Dispose()
         {
-            _notificator.Unsubscribe(this);
+            _notificatorChat.Unsubscribe(this);
+            _notificatorNotification.Unsubscribe(this);
         }
     }
 }

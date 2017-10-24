@@ -48,7 +48,9 @@ namespace Promises
 
             services.AddSingleton(typeof(DefaultNotificator<,>), typeof(DefaultNotificator<,>));
             services.AddSingleton(typeof(INotificator<Chat, IMessagesRepository>), typeof(NotificatorChatMessages));
+            services.AddSingleton(typeof(INotificator<Notification, IMessagesRepository>), typeof(NotificatorNotificationMessages));
             services.AddSingleton(typeof(IUserTracker<>), typeof(InMemoryUserTracker<>));
+
             
             //services.AddScoped<Chat>(p => new Chat(p.GetRequiredService<InMemoryUserTracker<Chat>>()));
 
