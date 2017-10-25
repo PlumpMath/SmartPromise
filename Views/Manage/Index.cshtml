@@ -12,6 +12,7 @@
 
             <div class="form-group">
                 <label asp-for="Avatar"></label>
+                <img src="@Url.Action("GetAvatarImage", "Cabinet")" class="img-responsive img-rounded" alt="Avatar" />
                 <input asp-for="Avatar" multiple/>
             </div>
             
