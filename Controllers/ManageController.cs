@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Promises.Models;
 using Promises.Models.ManageViewModels;
 using Promises.Services;
+using System.IO;
 
 namespace Promises.Controllers
 {
@@ -98,6 +99,20 @@ namespace Promises.Controllers
                 if (!setPhoneResult.Succeeded)
                 {
                     throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
+                }
+            }
+
+            var avatar = user.Avatar;
+            
+            if (model.Avatar != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await model.Avatar.CopyToAsync(memoryStream);
+                    user.Avatar = memoryStream.ToArray();
+                    user.AvatarContentType = model.Avatar.ContentType;
+                    await _userManager.UpdateAsync(user);
+                    
                 }
             }
 

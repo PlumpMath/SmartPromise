@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Promises.Models.CabinetViewModels;
 using Promises.Abstract;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace Promises.Controllers
 {
@@ -43,6 +44,14 @@ namespace Promises.Controllers
         public IActionResult Messages()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<FileStreamResult> GetAvatarImage()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            Stream stream = new MemoryStream(user.Avatar);
+            return new FileStreamResult(stream, user.AvatarContentType);
         }
 
         [HttpGet("{personId}/{personEmail}")]

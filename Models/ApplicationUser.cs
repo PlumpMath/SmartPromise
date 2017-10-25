@@ -10,5 +10,8 @@ namespace Promises.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
+        //todo Make UserAvatarObject instead of this
+        public byte[] Avatar { get; set; }
+        public string AvatarContentType { get; set; }
     }
 }
