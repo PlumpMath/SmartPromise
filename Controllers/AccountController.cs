@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +11,8 @@ using Promises.Models;
 using Promises.Models.AccountViewModels;
 using Promises.Services;
 using Promises.Extensions;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Promises.Controllers
 {
@@ -18,6 +21,10 @@ namespace Promises.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+        private static string DEFAULT_AVATAR_IMAGE = "wwwroot/images/default_avatar_image.jpg";
+        private static string DEFAULT_AVATAR_CONTENT_TYPE = "image/jpeg";
+
+        private readonly IFileProvider _fileProvider;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -27,8 +34,10 @@ namespace Promises.Controllers
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IFileProvider fileProvider)
         {
+            _fileProvider = fileProvider;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -219,7 +228,25 @@ namespace Promises.Controllers
             if (ModelState.IsValid)
             {
                 var promise = new Promise { Content = "Want to be break free!" };
+                
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                IFileInfo fileInfo = _fileProvider.GetFileInfo(DEFAULT_AVATAR_IMAGE);
+                
+                if (fileInfo != null)
+                {
+                    Stream s = fileInfo.CreateReadStream();
+                    if (s != null)
+                    {
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            s.CopyTo(ms);
+                            user.Avatar = ms.ToArray();
+                            user.AvatarContentType = DEFAULT_AVATAR_CONTENT_TYPE;
+                        }
+                    }
+                }
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

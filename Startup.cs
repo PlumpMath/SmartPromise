@@ -10,6 +10,7 @@ using Promises.Services;
 using Promises.Abstract;
 using Promises.Concrete;
 using Promises.Hubs;
+using Microsoft.Extensions.FileProviders;
 
 namespace Promises
 {
@@ -51,7 +52,8 @@ namespace Promises
             services.AddSingleton(typeof(INotificator<Notification, IMessagesRepository>), typeof(NotificatorNotificationMessages));
             services.AddSingleton(typeof(IUserTracker<>), typeof(InMemoryUserTracker<>));
 
-            
+            var physicalProvider = HostingEnvironment.ContentRootFileProvider;
+            services.AddSingleton<IFileProvider>(physicalProvider);
             //services.AddScoped<Chat>(p => new Chat(p.GetRequiredService<InMemoryUserTracker<Chat>>()));
 
             services.AddSignalR();
