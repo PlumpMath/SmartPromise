@@ -62,13 +62,27 @@ namespace Promises.Controllers
         public async Task<IActionResult> PrivateChat(string personId, string personEmail)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            var person = _userManager.Users.FirstOrDefault(u => u.Id == personId);
             var userId = user.Id;
             var userEmail = await _userManager.GetEmailAsync(user);
 
+            var isOwnerOnline = await IsOnline(userId);
+            var isUserOnline = await IsOnline(personId);
+
             var model = new PrivateChatViewModel
             {
-                OwnerUserId = new User { Id = userId, Email = userEmail },
-                UserId = new User { Id = personId, Email = personEmail },
+                OwnerUser = new User {
+                    Id = userId,
+                    Email = userEmail,
+                    IsOnline = isOwnerOnline,
+                    Avatar = user.Avatar
+                },
+                User = new User {
+                    Id = personId,
+                    Email = personEmail,
+                    IsOnline = isUserOnline,
+                    Avatar =  person.Avatar
+                },
             };
             //personId == receiverId
             

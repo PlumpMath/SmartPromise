@@ -2,11 +2,15 @@
     console.log("______________privateChat.js______________")
 
     //model passed by server using razor
-    if (model !== undefined) {
-        //console.log(model)
+    if (model === undefined) {
+        return
     }
 
-    let recieverId = model.userId.id
+    
+    let owner = model.ownerUser
+    let friend = model.user
+
+    console.log(owner)
 
     let connection = new signalR.HubConnection('/chat');
 
@@ -17,23 +21,26 @@
     let ENTER_BUTTON_KEY = 13
 
     function SendMessage() {
-        
         let msg = $.trim($(message_input_id).val())
         //console.log(msg)
-        connection.invoke('SendTo', recieverId, msg, Date.now().toString())
+        connection.invoke('SendTo', friend.id, msg, Date.now().toString())
     }
     
     function ClearInput() {
         $(message_input_id).val("")
     }
 
-    function AddMessage(msg, author, time, isUnread) {
+    function GetImage(byteArray) {
+        return "data:image/png;base64," + byteArray
+    }
+
+    function AddMessage(msg, author, time, isUnread, avatarByteArray) {
         //console.log(isUnread)
         //console.log("Adding message")
         $(chat_id).append(`
         <li class="right clearfix ` + (isUnread? "unread-message" : "") +`">
             <span class="chat-img pull-right">
-                <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" />
+                <img src="` + GetImage(avatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
             </span>
             <div class="chat-body clearfix">
                 <div class="header">
@@ -44,6 +51,10 @@
             `</p>
             </div>
         </li>`)
+    }
+
+    function GetAvatarByteArray(senderId) {
+        return senderId === owner.id ? owner.avatar : friend.avatar
     }
 
     function OnConnected(msg) {
@@ -85,7 +96,13 @@
         let historyArr = JSON.parse(history)
         //console.log(history)
 
-        historyArr.forEach(v => AddMessage(v.Content, v.SenderEmail, ParseDate(v.UserDateLocal), v.IsUnread))
+        historyArr.forEach(v => AddMessage(
+            v.Content,
+            v.SenderEmail,
+            ParseDate(v.UserDateLocal),
+            v.IsUnread,
+            GetAvatarByteArray(v.SenderId))
+        )
         scrollToBottom()
     }
 
@@ -94,7 +111,7 @@
     connection.on('OnDisconnected', msg => OnDisconnected(msg))
     connection.on('Send', (mes) => {
         let mes_obj = JSON.parse(mes)
-        AddMessage(mes_obj.Content, mes_obj.SenderEmail, ParseDate(mes_obj.UserDateLocal), mes_obj.IsUnread)
+        AddMessage(mes_obj.Content, mes_obj.SenderEmail, ParseDate(mes_obj.UserDateLocal), mes_obj.IsUnread, owner.avatar)
     })
     connection.on('OnMessageHistoryRead', () => MarkAllMessagesAsRead())
     
@@ -109,7 +126,7 @@
 
             $(message_input_id).focus()
 
-            GetHistory(recieverId)
+            GetHistory(friend.id)
             $(send_message_btn_id).click(() => {
                 scrollToBottom()
                 SendMessage()

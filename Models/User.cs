@@ -13,6 +13,6 @@ namespace Promises.Models
         [Required]
         public string Id { get; set; }
         public bool IsOnline { get; set; }
-
+        public byte[] Avatar { get; set; }
     }
 }

@@ -5,7 +5,7 @@
     ViewData.AddActivePage(CabinetNavPages.PrivateChat);
 }
 
-<h4>PrivateChat with @Model.UserId.Email</h4>
+<h4>PrivateChat with @Model.User.Email</h4>
 
 <!--/ Now we are able to read model from JavaSctipr -->
 <script type="text/javascript">let model = @Html.Raw(Json.Serialize(Model))</script>
