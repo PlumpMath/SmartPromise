@@ -12,6 +12,10 @@
     let friends_loader_id = "#_friends_loader_id"
     let others_loader_id = "#_others_loader_id"
 
+    function GetImage(byteArray) {
+        return "data:image/png;base64," + byteArray
+    }
+
     function MakeFind(friends_list, others_list) {
         let friends_copy = [...friends_list]
         let others_copy = [...others_list]
@@ -52,11 +56,15 @@
         }
     }
     
-    function appendItem(email, id, list_id, icon, isOnline) {
+    function appendItem(email, id, list_id, icon, isOnline, avatarByteArray) {
+        console.log("HEREHEREHEREHEREHEREHEREHEREHEREHERE")
         $(list_id).append(`
            <a href="#" class="list-group-item clearfix">`
-                + email +
-                `<span class="pull-right">
+            + email +           
+                `<span class="pull-left">
+                    <img src="` + GetImage(avatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
+                </span>
+                <span class="pull-right">
                     <span id="` + id + `add_message" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                     </span>
@@ -127,7 +135,7 @@
         otherUsers.forEach(
             v => {
                 //create button
-                appendItem(v.email, v.id, other_users_list_id, plus_icon, v.isOnline);
+                appendItem(v.email, v.id, other_users_list_id, plus_icon, v.isOnline, v.avatar);
                 //add listener to it
                 //append is synchrounious so it's legal
                 addClickHandlerAdd(v.id)
@@ -137,7 +145,7 @@
 
         friends.forEach(
             v => {
-                appendItem(v.email, v.id, friends_list_id, minus_icon, v.isOnline)
+                appendItem(v.email, v.id, friends_list_id, minus_icon, v.isOnline, v.avatar)
                 addClickHandlerRemove(v.id)
                 addClickHandlerMessage(v.id, v.email)
             }

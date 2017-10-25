@@ -167,10 +167,10 @@ namespace Promises.Controllers
             //TODO: make User table
             var friends = _userManager.Users
                 .Where(u =>
-                    _friendsRepository.AreFriends(u.Id, userId) &&
+                    _friendsRepository.AreFriends(u.Id, userId) && u.Id != userId &&
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id })
+                .Select(u => new User { Email = u.Email, Id = u.Id, Avatar = u.Avatar })
                 .ToList();
 
             friends.ForEach(async u => u.IsOnline = await IsOnline(u.Id));
@@ -178,10 +178,10 @@ namespace Promises.Controllers
             //other users except his friends
             var foundOtherUsers = _userManager.Users
                 .Where(u => 
-                    !_friendsRepository.AreFriends(u.Id, userId) && 
+                    !_friendsRepository.AreFriends(u.Id, userId) && u.Id != userId &&
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id })
+                .Select(u => new User { Email = u.Email, Id = u.Id, Avatar = u.Avatar })
                 .ToList();
 
             foundOtherUsers.ForEach(async u => u.IsOnline = await IsOnline(u.Id));

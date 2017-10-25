@@ -6,7 +6,11 @@
     let method__GetLastMessages = '/GetLastMessagesHistory/'
     let controller_Cabinet = '/Cabinet'
     let method_GetMyUserInfo = '/GetMyUserInfo/'
-    
+
+    function GetImage(byteArray) {
+        return "data:image/png;base64," + byteArray
+    }
+
     function GetMyUserInfo() {
         return new Promise((resolve, reject) => {
             $.get(controller_Cabinet + method_GetMyUserInfo, res => resolve(res))
@@ -38,20 +42,24 @@
     }
 
     //add href instead of click handler? much simpler
-    function appendItem(senderEmail, receiverEmail, message, list_id, button_id, isUnread) {
+    function appendItem(senderEmail, receiverEmail, message, list_id, button_id,
+        isUnread, senderAvatarByteArray, receiverAvatarByteArray) {
         
         $(list_id).append(`
            <a id="` + button_id + `add_message" class="list-group-item clearfix ` +
             (isUnread ? "unread-message" : "") + `">` + `
                 <div class="text-center">` + message + `</div>` +
             `   <span class="pull-left">
+                    <p><img src="` + GetImage(senderAvatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
                     <span class="btn btn-xs btn-default">`
-                        + " Reciever : " + receiverEmail + " " +
+                        + " To : " + receiverEmail + " " +
                     `</span>
                 </span>
                 <span class="pull-right">
+                    <p><img src="` + GetImage(receiverAvatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
+                    
                     <span class="btn btn-xs btn-default">`
-                        + " Sender : " + senderEmail + " " +
+                        + " From : " + senderEmail + " " +
                     `</span>
                 </span>
             </a>
