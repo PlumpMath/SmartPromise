@@ -52,7 +52,7 @@
         }
     }
     
-    function appendItem(email, id, list_id, icon) {
+    function appendItem(email, id, list_id, icon, isOnline) {
         $(list_id).append(`
            <a href="#" class="list-group-item clearfix">`
                 + email +
@@ -63,6 +63,7 @@
                     <span id="` + id + `" class="btn btn-xs btn-default">
                         <span class="` +  icon + `" aria-hidden="true"></span>
                     </span>
+                    <div class="` + (isOnline ? "led-online" : "led-offline") + `"></div>       
                 </span>
             </a>
         `)
@@ -126,7 +127,7 @@
         otherUsers.forEach(
             v => {
                 //create button
-                appendItem(v.email, v.id, other_users_list_id, plus_icon);
+                appendItem(v.email, v.id, other_users_list_id, plus_icon, v.isOnline);
                 //add listener to it
                 //append is synchrounious so it's legal
                 addClickHandlerAdd(v.id)
@@ -136,7 +137,7 @@
 
         friends.forEach(
             v => {
-                appendItem(v.email, v.id, friends_list_id, minus_icon)
+                appendItem(v.email, v.id, friends_list_id, minus_icon, v.isOnline)
                 addClickHandlerRemove(v.id)
                 addClickHandlerMessage(v.id, v.email)
             }
@@ -148,11 +149,15 @@
         $.get(controller + method_FindByEmail + param,
             function (res) {
                 //console.log(res)
+                console.log("____________________")
+                console.log(res)
+                console.log("____________________")
+
                 let Find = MakeFind(res.friends, res.users)
                 hideLoader()
                 
                 $(find_input_id).on('input', function () {
-                    console.log($(find_input_id).val())
+                    //console.log($(find_input_id).val())
 
                     let filtered = {}
                     

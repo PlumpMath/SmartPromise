@@ -12,5 +12,7 @@ namespace Promises.Models
         public string Email { get; set; }
         [Required]
         public string Id { get; set; }
+        public bool IsOnline { get; set; }
+
     }
 }

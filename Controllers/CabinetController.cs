@@ -9,6 +9,7 @@ using Promises.Models.CabinetViewModels;
 using Promises.Abstract;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Promises.Hubs;
 
 namespace Promises.Controllers
 {
@@ -21,19 +22,22 @@ namespace Promises.Controllers
         private readonly IPromiseRepository _promiseRepository;
         private readonly IFriendsRepository _friendsRepository;
         private readonly IMessagesRepository _messagesRepository;
-        
+        private readonly IUserTracker<Notification> _userTracker;
+            
         public CabinetController(
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
           IPromiseRepository promiseRepository,
           IFriendsRepository friendsRepository,
-          IMessagesRepository messagesRepository)
+          IMessagesRepository messagesRepository,
+          IUserTracker<Notification> userTracker)
         {
             _promiseRepository = promiseRepository;
             _userManager = userManager;
             _signInManager = signInManager;
             _friendsRepository = friendsRepository;
             _messagesRepository = messagesRepository;
+            _userTracker = userTracker;
         }
 
         public IActionResult Index()
@@ -135,6 +139,12 @@ namespace Promises.Controllers
             return new OkObjectResult(history);
         }
 
+        private async Task<bool> IsOnline(string userId)
+        {
+            var onlineUsers = await _userTracker.UsersOnline();
+            return onlineUsers.FirstOrDefault(u => u.Owner.Id == userId) != null;
+        }
+
         [HttpGet("{email?}")]
         public IActionResult FindByEmail(string email = default(string))    
         {
@@ -146,8 +156,10 @@ namespace Promises.Controllers
                     _friendsRepository.AreFriends(u.Id, userId) &&
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id });
+                .Select(u => new User { Email = u.Email, Id = u.Id })
+                .ToList();
 
+            friends.ForEach(async u => u.IsOnline = await IsOnline(u.Id));
 
             //other users except his friends
             var foundOtherUsers = _userManager.Users
@@ -155,7 +167,11 @@ namespace Promises.Controllers
                     !_friendsRepository.AreFriends(u.Id, userId) && 
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id });
+                .Select(u => new User { Email = u.Email, Id = u.Id })
+                .ToList();
+
+            foundOtherUsers.ForEach(async u => u.IsOnline = await IsOnline(u.Id));
+
 
             if (foundOtherUsers == null)
             {
