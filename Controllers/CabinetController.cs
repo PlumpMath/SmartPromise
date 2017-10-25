@@ -142,12 +142,27 @@ namespace Promises.Controllers
             return new OkObjectResult(user);
         }
 
+        private User ConstructUser(ApplicationUser appUser)
+        {
+            return appUser == null ? null : 
+                new User {
+                    Id = appUser.Id,
+                    Avatar = appUser.Avatar,
+                    Email = appUser.Email
+                };
+        }
+
         [HttpGet]
         public IActionResult GetLastMessagesHistory()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var history = _messagesRepository.GetLastMessagesHistory(userId)
                 .OrderByDescending(m => m.ServerDateUtc)
+                .Select(m => new ExtendedMessage {
+                    Message = m,
+                    Sender = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == m.SenderId)),
+                    Receiver = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == m.ReceiverId))
+                })
                 .ToList();
             
             return new OkObjectResult(history);
@@ -226,7 +241,7 @@ namespace Promises.Controllers
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var history = _messagesRepository.GetMessageHistory(userId, personId, MESSAGES_AMOUNT.ALL);
-            
+
             return new OkObjectResult(history);
         }
         

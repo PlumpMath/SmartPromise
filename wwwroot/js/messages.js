@@ -79,11 +79,14 @@
             res => {
                 hideLoader()
                 GetMyUserInfo().then(user => {
-                    res.forEach(v => {
+                    res.forEach(res => {
+                        let v = res.message
+                        let sender = res.sender
+                        let receiver = res.receiver
                         let recepientId = GetRecepientId(user, v)
 
                         appendItem(v.senderEmail, v.receiverEmail, v.content,
-                            messages_list_id, recepientId, v.isUnread)
+                            messages_list_id, recepientId, v.isUnread, sender.avatar, receiver.avatar)
                         addClickHandlerMessage(recepientId, GetRecepientEmail(user, v))
                         //addClickHandlerMessage(v.)
                     })
