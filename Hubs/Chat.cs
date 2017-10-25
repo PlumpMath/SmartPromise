@@ -15,7 +15,7 @@ using Promises.Concrete;
 namespace Promises.Hubs
 {
     [Authorize]
-    public class Chat : HubWithPresence
+    public class Chat : Hub
     {
         private readonly IMessagesRepository _messagesRepository;
         private readonly IUserTracker<Chat> _userTracker;
@@ -26,7 +26,6 @@ namespace Promises.Hubs
             IMessagesRepository messagesRepository,
             UserManager<ApplicationUser> userManager,
             INotificator<Chat, IMessagesRepository> notificator)
-            : base(userTracker)
         {
             _userTracker = userTracker;
             _messagesRepository = messagesRepository;
@@ -73,16 +72,6 @@ namespace Promises.Hubs
             await base.OnDisconnectedAsync(exception);
 
             await _userTracker.RemoveUser(Context.Connection);
-        }
-
-        public override async Task OnUsersJoined(UserDetails[] users)
-        {
-            await Task.CompletedTask;
-        }
-
-        public override async Task OnUsersLeft(UserDetails[] users)
-        {
-            await Task.CompletedTask;
         }
 
         public async Task OnGetHistory(string personId)
