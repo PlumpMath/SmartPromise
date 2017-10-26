@@ -3,15 +3,14 @@
 
     console.log("______________notification.js______________")
     
-    let add_notification_button_id = "#_add_notification_button"
-    
-    let unread_messages_count = 0
-    let messages_navigator_id = "#_messages_navigator_id"
-    let notify_gingle_id = "#_notify_gingle_id"
+    const ADD_NOTIFICATION_BUTTON_ID = "#_add_notification_button"
+    const MESSAGES_NAV_ID = "#_messages_nav_id"
+    const GINGLE_ID = "#_gingle_id"
 
+    let unread_messages_count = 0
     
     function UpdateGingle(new_amount) {
-        $(notify_gingle_id).attr("data-count", new_amount)
+        $(GINGLE_ID).attr("data-count", new_amount)
     }
     
     /*
