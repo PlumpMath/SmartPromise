@@ -139,31 +139,28 @@ namespace Promises.Controllers
         public async Task<IActionResult> GetMyUserInfo()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            return new OkObjectResult(user);
+            
+            return new OkObjectResult(new User
+            {
+                Email = user.Email,
+                Id = user.Id                
+            });
         }
 
-        private User ConstructUser(ApplicationUser appUser)
+        [HttpGet("{userId}")]
+        public FileStreamResult GetAvatar(string userId)
         {
-            return appUser == null ? null : 
-                new User {
-                    Id = appUser.Id,
-                    Avatar = appUser.Avatar,
-                    Email = appUser.Email
-                };
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == userId);
+            Stream stream = new MemoryStream(user.Avatar);
+            return new FileStreamResult(stream, user.AvatarContentType);
         }
-
+        
         [HttpGet]
         public IActionResult GetLastMessagesHistory()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             var history = _messagesRepository.GetLastMessagesHistory(userId)
-                .OrderByDescending(m => m.ServerDateUtc)
-                .Select(m => new ExtendedMessage {
-                    Message = m,
-                    Sender = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == m.SenderId)),
-                    Receiver = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == m.ReceiverId))
-                })
-                .ToList();
+                .OrderByDescending(m => m.ServerDateUtc);
             
             return new OkObjectResult(history);
         }

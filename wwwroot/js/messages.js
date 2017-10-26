@@ -1,127 +1,146 @@
 ﻿(function () {
     console.log("______________messages.js______________")
 
-    let messages_list_id = '#_messages_list'
-    let messages_loader_id = "#_messages_loader_id"
-    let method__GetLastMessages = '/GetLastMessagesHistory/'
-    let controller_Cabinet = '/Cabinet'
-    let method_GetMyUserInfo = '/GetMyUserInfo/'
+    //Should be passed by Razor page I think
+    const CONTROLLER_NAME_CABINET = '/Cabinet'
+    const METHOD_GET_LAST_MESSAGES = '/GetLastMessagesHistory/'
+    const METHOD_GET_MY_USER_INFO = '/GetMyUserInfo/'
+    const METHOD_GET_AVATAR = '/GetAvatar'
 
-    function GetImage(byteArray) {
-        return "data:image/png;base64," + byteArray
-    }
+    let Loader = (function () {
+        const LOADER_STYLE = "loader"
+        const LOADER_ID = "#_messages_loader_id"
 
-    function GetMyUserInfo() {
-        return new Promise((resolve, reject) => {
-            $.get(controller_Cabinet + method_GetMyUserInfo, res => resolve(res))
-                .fail(err => reject(err))
-        })
-    } 
-
-    function moveToPrivateChat(id, email) {
-        window.location.href = url.replace('__id__', id).replace('__email__', email);
-    }
-
-    function addClickHandlerMessage(id, email) {
-        console.log(id + "  " + email)
-        let buttonId = "#" + id + "add_message"
-        $(buttonId).click(() => moveToPrivateChat(id, email))
-    }
-    
-    function showLoader() {
-        console.log("gere")
-        if (!$(messages_loader_id).hasClass("loader")) {
-            $(messages_loader_id).addClass("loader")
+        return {
+            Show: () => {
+                if (!$(LOADER_ID).hasClass(LOADER_STYLE)) {
+                    $(LOADER_ID).addClass(LOADER_STYLE)
+                }
+            },
+            Hide: () => {
+                if ($(LOADER_ID).hasClass(LOADER_STYLE)) {
+                    $(LOADER_ID).removeClass(LOADER_STYLE)
+                }        
+            }
         }
+    })()
+
+    function AddIdPrefix(str) {
+        return '#' + str
     }
 
-    function hideLoader() {
-        if ($(messages_loader_id).hasClass("loader")) {
-            $(messages_loader_id).removeClass("loader")
+    let MessagesListManager = (function () {
+        const IMAGE_PREFIX_SENDER = 'S'
+        const IMAGE_PREFIX_RECEIVER = 'R'
+        const ITEM_PREFIX = 'M'
+        const DEFAULT_IMAGE_SRC = ""
+        const MESSAGES_LIST_ID = '#_messages_list'
+
+        function GetOwner() {
+            return new Promise((resolve, reject) => {
+                $.get(CONTROLLER_NAME_CABINET + METHOD_GET_MY_USER_INFO, res => resolve(res))
+                    .fail(err => reject(err))
+            })
         }
-    }
 
-    //add href instead of click handler? much simpler
-    function appendItem(senderEmail, receiverEmail, message, list_id, button_id,
-        isUnread, senderAvatarByteArray, receiverAvatarByteArray, isAppend = true) {
+        function GetFriendId(owner, mes) {
+            return owner.id === mes.senderId ? mes.receiverId : mes.senderId
+        }
 
-        let element = `
-           <a id="` + button_id + `add_message" class="list-group-item clearfix ` +
-            (isUnread ? "unread-message" : "") + `">` + `
-                <div class="text-center">` + message + `</div>` +
-            `   <span class="pull-left">
-                    <p><img src="` + GetImage(senderAvatarByteArray) + `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
-                    <span class="btn btn-xs btn-default">`
-            + " To : " + receiverEmail + " " +
-            `</span>
-                </span>
-                <span class="pull-right">
-                    <p><img src="` + GetImage(receiverAvatarByteArray) + `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
-                    
-                    <span class="btn btn-xs btn-default">`
-            + " From : " + senderEmail + " " +
-            `</span>
-                </span>
-            </a>
-        `
-        isAppend ? $(list_id).append(element) : $(list_id).prepend(element)
-    }
+        function GetFriendEmail(owner, mes) {
+            return owner.id === mes.senderId ? mes.receiverEmail : mes.senderEmail
+        }
 
-    function UpdateItem(sender, receiver, message) {
-        RemoveItem(sender, receiver, message)
-        GetMyUserInfo().then(user => {
-            let recepientId = GetRecepientId(user, message)
+        function HaveChatWithFriend(friendId, friendEmail) {
+            console.log("move")
+            window.location.href = _RAZOR_URL_CABINET_PRIVATE_CHAT
+                .replace('__id__', friendId).replace('__email__', friendEmail);
+        }
 
-            appendItem(sender.email, receiver.email, message.content,
-                messages_list_id, recepientId, message.isUnread, sender.avatar, receiver.avatar, false)
+        function HaveChatOnClick(mes) {
+            let itemId = MessagesListManager.GetItemId(mes)
+            GetOwner().then(owner => {
+                console.log(owner)
+                let friendId = GetFriendId(owner, mes)
+                let friendEmail = GetFriendEmail(owner, mes)
+                console.log(mes.senderEmail + " " + itemId)
+                $(itemId).click(() => HaveChatWithFriend(friendId, friendEmail))
+            })
+        }
 
-            addClickHandlerMessage(recepientId, GetRecepientEmail(user, message))
-        })
-    }
+        //it's unique
+        function GetId(mes) {
+            return mes.senderId.toString() + mes.receiverId.toString() /*mes.serverDateUtc.toString() */
+        }
 
-    function RemoveItem(sender, receiver, message) {
-        let element_id = "#" + sender.id + "add_message"
-        console.log(element_id)
-        $(element_id).remove(element_id)
-    }
+        return {
+            GetItemId: mes => '#' + ITEM_PREFIX + GetId(mes)
+            ,
 
-    function GetRecepientId(user, message_obj) {
-        return user.id === message_obj.senderId ? message_obj.receiverId : message_obj.senderId
-    }
+            GetReceiverImageId: mes => '#' + IMAGE_PREFIX_RECEIVER + GetId(mes)
+            ,
 
-    function GetRecepientEmail(user, message_obj) {
-        return user.id === message_obj.senderId ? message_obj.receiverEmail : message_obj.senderEmail
-    }
+            GetSenderImageId: mes => '#' + IMAGE_PREFIX_SENDER + GetId(mes)
+            ,
+
+            AddItem: (mes, options = { append: true, haveChat: true }) => {
+                let id = GetId(mes)
+                let element = `
+                   <a id="` + ITEM_PREFIX + id + `" class="list-group-item clearfix ` +
+                    (mes.isUnread ? "unread-message" : "") + `">` + `
+                        <div class="text-center">` + mes.content + `</div>` +
+                    `   <span class="pull-left">
+                            <p><img src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", mes.receiverId) +
+                    `" id="` + IMAGE_PREFIX_RECEIVER + id + `" 
+                                alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
+                            <span class="btn btn-xs btn-default">`
+                    + " To : " + mes.receiverEmail + " " +
+                    `</span>
+                        </span>
+                        <span class="pull-right">
+                            <p><img src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", mes.senderId) +
+                    `" id="` + IMAGE_PREFIX_SENDER + id + `" 
+                                alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
+                            <span class="btn btn-xs btn-default">`
+                    + " From : " + mes.senderEmail + " " +
+                    `</span>
+                        </span>
+                    </a>
+                `
+                let list = $(MESSAGES_LIST_ID)
+                options.append ? list.append(element) : list.prepend(element)
+                if (options.haveChat) {
+                    HaveChatOnClick(mes)
+                }
+            },
+
+            RemoveItem: mes => $(MessagesListManager.GetItemId(mes)).remove()
+            ,
+            
+            UpdateItem: mes => {
+                MessagesListManager.RemoveItem(mes)
+                let options = {
+                    append: false,
+                    haveChat: true
+                }
+                MessagesListManager.AddItem(mes, options)
+            }
+        }
+    })()
     
     function GetLastMessagesHistory() {
-        $.get(controller_Cabinet + method__GetLastMessages,
+        $.get(CONTROLLER_NAME_CABINET + METHOD_GET_LAST_MESSAGES,
             res => {
-                hideLoader()
-                GetMyUserInfo().then(user => {
-                    res.forEach(res => {
-                        let v = res.message
-                        let sender = res.sender
-                        let receiver = res.receiver
-                        let recepientId = GetRecepientId(user, v)
-
-                        appendItem(v.senderEmail, v.receiverEmail, v.content,
-                            messages_list_id, recepientId, v.isUnread, sender.avatar, receiver.avatar)
-                        addClickHandlerMessage(recepientId, GetRecepientEmail(user, v))
-                        //addClickHandlerMessage(v.)
-                    })
-                })
-                
+                Loader.Hide()
+                res.forEach(m => MessagesListManager.AddItem(m))
             })
             .fail(err => console.log(err))
     }
 
-    notification_connection.on("OnMessageAdded", res => {
-        var res_obj = JSON.parse(res)
-        console.log(res_obj.sender, res_obj.receiver, res_obj.message)
-        UpdateItem(res_obj.sender, res_obj.receiver, res_obj.message)
-        //RemoveItem(res_obj.sender, res_obj.receiver, res_obj.message)
+    _RAZOR_NOTIFICATION_CONNECTION.on("OnMessageAdded", mes => {
+        MessagesListManager.UpdateItem(JSON.parse(mes))
     })
 
     GetLastMessagesHistory()
-    showLoader()
+    Loader.Show()
 })()

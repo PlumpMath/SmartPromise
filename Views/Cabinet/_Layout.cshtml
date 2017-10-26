@@ -18,8 +18,15 @@
     @{
         //Global var notification
     }
-    <script type="text/javascript">let notification_connection = new signalR.HubConnection('/notification')</script>
+    <script type="text/javascript">
+        let _RAZOR_URL_CABINET_PRIVATE_CHAT = '@Url.Action("PrivateChat", "Cabinet", new { personId = "__id__", personEmail = "__email__" })'
+        let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatar", "Cabinet", new { userId = "__id__"})'
+
+        let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
+        _RAZOR_NOTIFICATION_CONNECTION.start()
+    </script>
     <script type="text/javascript" src="~/js/notification.js"></script>
+
     
     @if (ViewData["ActivePage"] != null)
     {

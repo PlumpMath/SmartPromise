@@ -42,30 +42,15 @@ namespace Promises.Hubs
         {
             await Clients.Client(Context.ConnectionId).InvokeAsync("OnMessageHistoryRead");
         }
-
-        private User ConstructUser(ApplicationUser appUser)
-        {
-            return appUser == null ? null :
-                new User
-                {
-                    Id = appUser.Id,
-                    Avatar = appUser.Avatar,
-                    Email = appUser.Email
-                };
-        }
-
+        
         public async Task OnMessageAdded(Message mes)
         {
-            ExtendedMessage extMes = new ExtendedMessage
+            var serializerSettings = new JsonSerializerSettings
             {
-                Message = mes,
-                Sender = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == mes.SenderId)),
-                Receiver = ConstructUser(_userManager.Users.FirstOrDefault(u => u.Id == mes.ReceiverId))
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
 
-            var serializerSettings = new JsonSerializerSettings();
-            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            var json = JsonConvert.SerializeObject(extMes, serializerSettings);
+            var json = JsonConvert.SerializeObject(mes, serializerSettings);
 
             await Clients.Client(Context.ConnectionId)
                 .InvokeAsync("OnMessageAdded", json);

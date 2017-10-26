@@ -21,14 +21,14 @@
         $(unread_messages_count).text(text)   
     }*/
 
-    notification_connection.on("OnNewUnreadMessage", user => {
+    _RAZOR_NOTIFICATION_CONNECTION.on("OnNewUnreadMessage", user => {
         console.log(JSON.parse(user))
         ++unread_messages_count
         UpdateGingle(unread_messages_count.toString())
         //UpdateNavigator(unread_messages_count.toString())
     })
 
-    notification_connection.on("OnMessageHistoryRead", () => {
+    _RAZOR_NOTIFICATION_CONNECTION.on("OnMessageHistoryRead", () => {
         unread_messages_count = 0
         UpdateGingle(unread_messages_count.toString())
         //UpdateNavigator(unread_messages_count.toString())
@@ -59,10 +59,4 @@
             </div>
         </li >`)
     }
-    
-    notification_connection.start().then(function () {
-        $(document).ready(function () {
-            
-        })
-    })
 })()

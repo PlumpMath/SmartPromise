@@ -85,7 +85,7 @@
     }
 
     function moveToPrivateChat(id, email) {
-        window.location.href = url.replace('__id__', id).replace('__email__', email);
+        window.location.href = _RAZOR_URL_CABINET_PRIVATE_CHAT.replace('__id__', id).replace('__email__', email);
     }
 
     function addClickHandlerMessage(id, email) {
