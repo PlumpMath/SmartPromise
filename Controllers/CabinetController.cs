@@ -58,39 +58,40 @@ namespace Promises.Controllers
             return new FileStreamResult(stream, user.AvatarContentType);
         }
 
-        [HttpGet("{personId}/{personEmail}")]
-        public async Task<IActionResult> PrivateChat(string personId, string personEmail)
+        [HttpGet("{friendId}/{friendEmail}")]
+        public async Task<IActionResult> PrivateChat(string friendId, string friendEmail)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var person = _userManager.Users.FirstOrDefault(u => u.Id == personId);
-            var userId = user.Id;
-            var userEmail = await _userManager.GetEmailAsync(user);
+            var owner = await _userManager.GetUserAsync(HttpContext.User);
+            var friend = _userManager.Users.FirstOrDefault(u => u.Id == friendId);
+            var ownerId = owner.Id;
+            var ownerEmail = await _userManager.GetEmailAsync(owner);
 
-            var isOwnerOnline = await IsOnline(userId);
-            var isUserOnline = await IsOnline(personId);
+            var isOwnerOnline = await IsOnline(ownerId);
+            var isUserOnline = await IsOnline(friendId);
 
             var model = new PrivateChatViewModel
             {
-                OwnerUser = new User {
-                    Id = userId,
-                    Email = userEmail,
+                Owner = new User {
+                    Id = ownerId,
+                    Email = ownerEmail,
                     IsOnline = isOwnerOnline,
-                    Avatar = user.Avatar
+                    Avatar = owner.Avatar,
+                    AvatarContentType = owner.AvatarContentType
                 },
-                User = new User {
-                    Id = personId,
-                    Email = personEmail,
+                Friend = new User {
+                    Id = friendId,
+                    Email = friendEmail,
                     IsOnline = isUserOnline,
-                    Avatar =  person.Avatar
+                    Avatar = friend.Avatar,
+                    AvatarContentType = friend.AvatarContentType
                 },
             };
-            //personId == receiverId
             
-            var lastMessage = _messagesRepository.FindLastMessage(personId, userId);
+            var lastMessage = _messagesRepository.FindLastMessage(friendId, ownerId);
 
-            if (lastMessage != null && lastMessage.IsUnread == true && lastMessage.SenderId != userId)
+            if (lastMessage != null && lastMessage.IsUnread == true && lastMessage.SenderId != ownerId)
             {
-                _messagesRepository.MarkHistoryAsRead(personId, userId);
+                _messagesRepository.MarkHistoryAsRead(friendId, ownerId);
             }
 
             return View(model);

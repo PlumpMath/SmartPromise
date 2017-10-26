@@ -5,10 +5,12 @@
     ViewData.AddActivePage(CabinetNavPages.PrivateChat);
 }
 
-<h4>PrivateChat with @Model.User.Email</h4>
+<h4>PrivateChat with @Model.Friend.Email</h4>
 
 <!--/ Now we are able to read model from JavaSctipr -->
-<script type="text/javascript">let model = @Html.Raw(Json.Serialize(Model))</script>
+<script type="text/javascript">
+    let _RAZOR_PRIVATE_CHAT_VIEW_MODEL = @Html.Raw(Json.Serialize(Model))
+</script>
 
 
 <link rel="stylesheet" type="text/css" href="~/css/chat.css">
@@ -24,8 +26,8 @@
                     </div>
                 </div>
                 <div class="panel-collapse" id="collapseOne">
-                    <div class="panel-body" id="_messages_panel_id">
-                        <ul id="_chat_id" class="chat"></ul>
+                    <div class="panel-body" id="_chat_panel_id">
+                        <ul id="_messages_list_id" class="chat"></ul>
                     </div>
                     <div class="panel-footer">
                         <div class="input-group">

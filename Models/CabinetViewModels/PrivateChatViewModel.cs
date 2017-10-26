@@ -7,7 +7,7 @@ namespace Promises.Models.CabinetViewModels
 {
     public class PrivateChatViewModel
     {
-        public User OwnerUser { get; set; }
-        public User User { get; set; }
+        public User Owner { get; set; }
+        public User Friend { get; set; }
     }
 }

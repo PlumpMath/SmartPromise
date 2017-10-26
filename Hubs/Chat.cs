@@ -3,14 +3,13 @@ using Promises.Abstract;
 using Promises.Models;
 using System;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 using System.Linq;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using Promises.Concrete;
+using Newtonsoft.Json.Serialization;
 
 namespace Promises.Hubs
 {
@@ -83,10 +82,13 @@ namespace Promises.Hubs
                 .GetMessageHistory(ownerId, personId, MESSAGES_AMOUNT.ALL)
                 .OrderBy(m => m.ServerDateUtc)
                 .ToList();
+
             
-            var result = JsonConvert.SerializeObject(history);
-            
-            await Clients.Client(Context.ConnectionId).InvokeAsync("OnGetHistory", result);
+            var json = JsonConvert.SerializeObject(history, new JsonSerializerSettings {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
+            await Clients.Client(Context.ConnectionId).InvokeAsync("OnGetHistory", json);
         }
 
         //returns connection id if it's online otherwise returns null
@@ -126,7 +128,11 @@ namespace Promises.Hubs
 
         public async Task Send(Message message)
         {
-            await Clients.Client(Context.ConnectionId).InvokeAsync("Send", JsonConvert.SerializeObject(message));
+            var json = JsonConvert.SerializeObject(message, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+            await Clients.Client(Context.ConnectionId).InvokeAsync("Send", json);
         }
     }
 }

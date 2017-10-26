@@ -14,5 +14,6 @@ namespace Promises.Models
         public string Id { get; set; }
         public bool IsOnline { get; set; }
         public byte[] Avatar { get; set; }
+        public string AvatarContentType { get; set; }
     }
 }

@@ -4,14 +4,14 @@
     const FIND_INPUT_ID = '#_find_input'
     const OTHERS_LIST_ID = '#_other_users_list'
     const FRIENDS_LIST_ID = '#_friends_list'
+    const FRIENDS_LOADER_ID = "#_friends_loader_id"
+    const OTHERS_LOADER_ID = "#_others_loader_id"
 
-    let METHOD_FIND_BY_EMAIL = '/FindByEmail/'
-    let METHOD_ADD_FRIEND = '/AddFriend/'
-    let METHOD_REMOVE_FRIEND = '/RemoveFriend/'
-    let CONTROLLER_NAME_CABINET = '/Cabinet'
-    let FRIENDS_LOADER_ID = "#_friends_loader_id"
-    let OTHERS_LOADER_ID = "#_others_loader_id"
-
+    const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
+    const METHOD_ADD_FRIEND = '/AddFriend/'
+    const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
+    const CONTROLLER_NAME_CABINET = '/Cabinet'
+    
     function ShowLoaders() {
         Loader(OTHERS_LOADER_ID).Show()
         Loader(FRIENDS_LOADER_ID).Show()

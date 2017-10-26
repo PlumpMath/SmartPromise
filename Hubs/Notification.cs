@@ -34,8 +34,13 @@ namespace Promises.Hubs
         //TODO it would be great to make them private and notificator to be a friend of this class
         public async Task NotifyHaveUnread(User from)
         {
+            var json = JsonConvert.SerializeObject(from, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+
             await Clients.Client(Context.ConnectionId)
-                .InvokeAsync("OnNewUnreadMessage", JsonConvert.SerializeObject(from));
+                .InvokeAsync("OnNewUnreadMessage", json);
         }
 
         public async Task OnMessageHistoryRead()
@@ -45,12 +50,10 @@ namespace Promises.Hubs
         
         public async Task OnMessageAdded(Message mes)
         {
-            var serializerSettings = new JsonSerializerSettings
+            var json = JsonConvert.SerializeObject(mes, new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-
-            var json = JsonConvert.SerializeObject(mes, serializerSettings);
+            });
 
             await Clients.Client(Context.ConnectionId)
                 .InvokeAsync("OnMessageAdded", json);
