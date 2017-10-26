@@ -15,14 +15,16 @@
 </div>
 
 @section Scripts {
+    @{
+        //Global var notification
+    }
+    <script type="text/javascript">let notification_connection = new signalR.HubConnection('/notification')</script>
     <script type="text/javascript" src="~/js/notification.js"></script>
+    
     @if (ViewData["ActivePage"] != null)
     {
         switch (ViewData["ActivePage"].ToString())
         {
-            case @CabinetNavPages.GlobalChat:
-                <script type="text/javascript" src="~/js/globalChat.js"></script>
-                break;
             case @CabinetNavPages.Friends:
                 <script type="text/javascript" src="~/js/friends.js"></script>
                 break;

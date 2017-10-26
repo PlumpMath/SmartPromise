@@ -1,10 +1,10 @@
-﻿(function() {
+﻿
+(function () {
 
     console.log("______________notification.js______________")
     
     let add_notification_button_id = "#_add_notification_button"
     
-    let connection = new signalR.HubConnection('/notification');
     let unread_messages_count = 0
     let messages_navigator_id = "#_messages_navigator_id"
     let notify_gingle_id = "#_notify_gingle_id"
@@ -21,14 +21,14 @@
         $(unread_messages_count).text(text)   
     }*/
 
-    connection.on("OnNewUnreadMessage", user => {
+    notification_connection.on("OnNewUnreadMessage", user => {
         console.log(JSON.parse(user))
         ++unread_messages_count
         UpdateGingle(unread_messages_count.toString())
         //UpdateNavigator(unread_messages_count.toString())
     })
 
-    connection.on("OnMessageHistoryRead", () => {
+    notification_connection.on("OnMessageHistoryRead", () => {
         unread_messages_count = 0
         UpdateGingle(unread_messages_count.toString())
         //UpdateNavigator(unread_messages_count.toString())
@@ -60,7 +60,7 @@
         </li >`)
     }
     
-    connection.start().then(function () {
+    notification_connection.start().then(function () {
         $(document).ready(function () {
             
         })

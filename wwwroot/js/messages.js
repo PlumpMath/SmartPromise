@@ -43,27 +43,46 @@
 
     //add href instead of click handler? much simpler
     function appendItem(senderEmail, receiverEmail, message, list_id, button_id,
-        isUnread, senderAvatarByteArray, receiverAvatarByteArray) {
-        
-        $(list_id).append(`
+        isUnread, senderAvatarByteArray, receiverAvatarByteArray, isAppend = true) {
+
+        let element = `
            <a id="` + button_id + `add_message" class="list-group-item clearfix ` +
             (isUnread ? "unread-message" : "") + `">` + `
                 <div class="text-center">` + message + `</div>` +
             `   <span class="pull-left">
-                    <p><img src="` + GetImage(senderAvatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
+                    <p><img src="` + GetImage(senderAvatarByteArray) + `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
                     <span class="btn btn-xs btn-default">`
-                        + " To : " + receiverEmail + " " +
-                    `</span>
+            + " To : " + receiverEmail + " " +
+            `</span>
                 </span>
                 <span class="pull-right">
-                    <p><img src="` + GetImage(receiverAvatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
+                    <p><img src="` + GetImage(receiverAvatarByteArray) + `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/></p>
                     
                     <span class="btn btn-xs btn-default">`
-                        + " From : " + senderEmail + " " +
-                    `</span>
+            + " From : " + senderEmail + " " +
+            `</span>
                 </span>
             </a>
-        `)
+        `
+        isAppend ? $(list_id).append(element) : $(list_id).prepend(element)
+    }
+
+    function UpdateItem(sender, receiver, message) {
+        RemoveItem(sender, receiver, message)
+        GetMyUserInfo().then(user => {
+            let recepientId = GetRecepientId(user, message)
+
+            appendItem(sender.email, receiver.email, message.content,
+                messages_list_id, recepientId, message.isUnread, sender.avatar, receiver.avatar, false)
+
+            addClickHandlerMessage(recepientId, GetRecepientEmail(user, message))
+        })
+    }
+
+    function RemoveItem(sender, receiver, message) {
+        let element_id = "#" + sender.id + "add_message"
+        console.log(element_id)
+        $(element_id).remove(element_id)
     }
 
     function GetRecepientId(user, message_obj) {
@@ -95,6 +114,13 @@
             })
             .fail(err => console.log(err))
     }
+
+    notification_connection.on("OnMessageAdded", res => {
+        var res_obj = JSON.parse(res)
+        console.log(res_obj.sender, res_obj.receiver, res_obj.message)
+        UpdateItem(res_obj.sender, res_obj.receiver, res_obj.message)
+        //RemoveItem(res_obj.sender, res_obj.receiver, res_obj.message)
+    })
 
     GetLastMessagesHistory()
     showLoader()

@@ -25,20 +25,34 @@ namespace Promises.Concrete
         public override void Subscribe(IMessagesRepository messagesRepository)
         {
             messagesRepository.OnHaveUnread += OnHaveUnread;
-            messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead; 
+            messagesRepository.OnMessageHistoryRead += OnMessageHistoryRead;
+            messagesRepository.OnMessageAdded += OnMessageAdded;
         }
 
         public override void Unsubscribe(IMessagesRepository messagesRepository)
         {
             messagesRepository.OnHaveUnread -= OnHaveUnread;
             messagesRepository.OnMessageHistoryRead -= OnMessageHistoryRead;
+            messagesRepository.OnMessageAdded -= OnMessageAdded; 
+        }
+        
+        public async void OnMessageAdded(Message mes)
+        {
+            var receiverConId = await GetConId(mes.ReceiverId);
+            
+            await NotifyOne(hub => hub.OnMessageAdded(mes), receiverConId);
+        }
+
+        private async Task<string> GetConId(string id)
+        {
+            var onlineUsers = await _userTracker.UsersOnline();
+            return onlineUsers.FirstOrDefault(u => u.Owner.Id == id)?.ConnectionId;
         }
 
         public async void OnMessageHistoryRead(string personOneId, string personTwoId)
         {
-            var onlineUsers = await _userTracker.UsersOnline();
-            var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
-            var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
+            var personOneConId = await GetConId(personOneId);
+            var personTwoConId = await GetConId(personTwoId);
 
             if (personOneConId != null)
                 await NotifyOne(hub => hub.OnMessageHistoryRead(), personOneConId);
