@@ -8,6 +8,6 @@ namespace Promises.Models.CabinetViewModels
         public IEnumerable<User> Friends { get; set; }
 
         [Required]
-        public IEnumerable<User> Users { get; set; } 
+        public IEnumerable<User> Others { get; set; } 
     }
 }

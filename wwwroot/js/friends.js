@@ -1,190 +1,193 @@
 ﻿(function () {
     console.log("______________friends.js______________")
 
-    let find_input_id = '#_find_input'
-    let other_users_list_id = '#_other_users_list'
-    let friends_list_id = '#_friends_list'
-    let method_FindByEmail = '/FindByEmail/'
-    let method_AddFriend = '/AddFriend/'
-    let method_RemoveFriend = '/RemoveFriend/'
-    let method_PrivateChat = '/PrivateChat/'
-    let controller = '/Cabinet'
-    let friends_loader_id = "#_friends_loader_id"
-    let others_loader_id = "#_others_loader_id"
+    const FIND_INPUT_ID = '#_find_input'
+    const OTHERS_LIST_ID = '#_other_users_list'
+    const FRIENDS_LIST_ID = '#_friends_list'
 
-    function GetImage(byteArray) {
-        return "data:image/png;base64," + byteArray
+    let METHOD_FIND_BY_EMAIL = '/FindByEmail/'
+    let METHOD_ADD_FRIEND = '/AddFriend/'
+    let METHOD_REMOVE_FRIEND = '/RemoveFriend/'
+    let CONTROLLER_NAME_CABINET = '/Cabinet'
+    let FRIENDS_LOADER_ID = "#_friends_loader_id"
+    let OTHERS_LOADER_ID = "#_others_loader_id"
+
+    function ShowLoaders() {
+        Loader(OTHERS_LOADER_ID).Show()
+        Loader(FRIENDS_LOADER_ID).Show()
     }
 
-    function MakeFind(friends_list, others_list) {
-        let friends_copy = [...friends_list]
-        let others_copy = [...others_list]
-        return function (findString, filtered) {
+    function HideLoaders() {
+        Loader(OTHERS_LOADER_ID).Hide()
+        Loader(FRIENDS_LOADER_ID).Hide()
+    }
+
+    function Loader(loader_id) {
+        return (loader_id => {
+            const LOADER_STYLE = "loader"
+            const LOADER_ID = loader_id
+
+            return {
+                Show: () => {
+                    if (!$(LOADER_ID).hasClass(LOADER_STYLE)) {
+                        $(LOADER_ID).addClass(LOADER_STYLE)
+                    }
+                },
+                Hide: () => {
+                    if ($(LOADER_ID).hasClass(LOADER_STYLE)) {
+                        $(LOADER_ID).removeClass(LOADER_STYLE)
+                    }
+                }
+            }
+        })(loader_id)
+    }
+
+    function UserListManager(list_id) {
+        return (list_id => {
+
+            let LIST_ID = list_id
+            const ITEM_PREFIX = 'IT'
+            const ICON_FRIEND_PREFIX = 'IF'
+            const ICON_PREFIX_ENVELOPE = 'IE'
+            const LED_PREFIX = 'L'
+            const STYLE_ICON_MINUS = "glyphicon glyphicon-minus"
+            const STYLE_ICON_PLUS = "glyphicon glyphicon-plus"
+            const STYLE_ICON_ENVELOPE =  "glyphicon glyphicon-envelope"
+
+            function AddFriend(param) {
+                $.get(CONTROLLER_NAME_CABINET + METHOD_ADD_FRIEND + param,
+                    () => {
+                        ClearLists()
+                        ShowLoaders()
+                        FindUsers($(FIND_INPUT_ID).val())
+                    })
+                    .fail(err => console.log(err))
+            }
+
+            function RemoveFriend(param) {
+                $.get(CONTROLLER_NAME_CABINET + METHOD_REMOVE_FRIEND + param,
+                    () => {
+                        ClearLists()
+                        ShowLoaders()
+                        FindUsers($(FIND_INPUT_ID).val())
+                    })
+                    .fail(err => console.log(err))
+            }
+
+            function AddFriendHandler(user, isFriend) {
+                $(UserListManager(LIST_ID).GetIconFriendId(user))
+                    .click(() => isFriend ? RemoveFriend(user.id) : AddFriend(user.id))
+            }
+
+            function HaveChatWithUser(userId, userEmail) {
+                window.location.href = _RAZOR_URL_CABINET_PRIVATE_CHAT
+                    .replace('__id__', userId).replace('__email__', userEmail);
+            }
+
+            function AddChatHandler(user) {
+                $(UserListManager(LIST_ID).GetIconEnvelopeId(user))
+                    .click(() => HaveChatWithUser(user.id, user.email))
+            }
             
+            //it's unique'
+            function GetId(user) {
+                return user.id.toString()
+            }
+
+            function AddItem(user, isFriend) {
+                let icon = isFriend ? STYLE_ICON_MINUS : STYLE_ICON_PLUS
+                let id = GetId(user)
+                let element = `
+                       <a class="list-group-item clearfix">`
+                    + user.email +
+                    `<span class="pull-left">
+                                <img src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", user.id) +
+                    `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
+                            </span>
+                            <span class="pull-right">
+                                <span id="` + ICON_PREFIX_ENVELOPE + id + `" class="btn btn-xs btn-default">
+                                    <span class="` + STYLE_ICON_ENVELOPE + `" aria-hidden="true"></span>
+                                </span>
+                                <span id="` + ICON_FRIEND_PREFIX + id + `" class="btn btn-xs btn-default">
+                                    <span class="` + icon + `" aria-hidden="true"></span>
+                                </span>
+                                <div id="` + LED_PREFIX + id +
+                                `" class="` + (user.isOnline ? "led-online" : "led-offline") + `"></div>       
+                            </span>
+                        </a>
+                    `
+
+                $(LIST_ID).append(element)
+                AddFriendHandler(user, isFriend)
+                AddChatHandler(user)
+            }
+            
+            return {
+                GetIconFriendId: user => '#' + ICON_FRIEND_PREFIX + GetId(user)
+                ,
+
+                GetLedId: user => '#' + LED_PREFIX + GetId(user)
+                ,
+
+                GetIconEnvelopeId: user => '#' + ICON_PREFIX_ENVELOPE + GetId(user)
+                ,
+
+                GetItemId: user => '#' + ITEM_PREFIX + GetId(user)
+                ,
+                
+                Clear: () => $(LIST_ID).empty()
+                ,
+
+                FillList: (list, areFriends) => {
+                    UserListManager(LIST_ID).Clear()
+                    list.forEach(u => AddItem(u, areFriends))
+                }
+            }
+        })(list_id)
+        
+    }
+
+    function ConstructFindFunction(friends, others) {
+        let friends_copy = [...friends]
+        let others_copy = [...others]
+        return (findString, filtered) => {
             filtered.friends = friends_copy.filter(v => v.email.startsWith(findString))
             filtered.others = others_copy.filter(v => v.email.startsWith(findString))
-
         }
     }
 
-    function clearLists() {
-        $(other_users_list_id).empty()
-        $(friends_list_id).empty()
-    }
-
-    function showLoader() {
-        clearLists()
-
-        if (!$(friends_loader_id).hasClass("loader")) {
-            $(friends_loader_id).addClass("loader")
-        }
-
-        if (!$(others_loader_id).hasClass("loader")) {
-            $(others_loader_id).addClass("loader")
-        }
-    }
-
-    function hideLoader() {
-        clearLists()
-
-        if ($(friends_loader_id).hasClass("loader")) {
-            $(friends_loader_id).removeClass("loader")
-        }
-
-        if ($(others_loader_id).hasClass("loader")) {
-            $(others_loader_id).removeClass("loader")
-        }
+    function ClearLists() {
+        UserListManager(OTHERS_LIST_ID).Clear()
+        UserListManager(FRIENDS_LIST_ID).Clear()
     }
     
-    function appendItem(email, id, list_id, icon, isOnline, avatarByteArray) {
-        console.log("HEREHEREHEREHEREHEREHEREHEREHEREHERE")
-        $(list_id).append(`
-           <a href="#" class="list-group-item clearfix">`
-            + email +           
-                `<span class="pull-left">
-                    <img src="` + GetImage(avatarByteArray) +`" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
-                </span>
-                <span class="pull-right">
-                    <span id="` + id + `add_message" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-                    </span>
-                    <span id="` + id + `" class="btn btn-xs btn-default">
-                        <span class="` +  icon + `" aria-hidden="true"></span>
-                    </span>
-                    <div class="` + (isOnline ? "led-online" : "led-offline") + `"></div>       
-                </span>
-            </a>
-        `)
-    }
-
-    function addClickHandlerAdd(id) {
-        let buttonId = "#" + id
-        $(buttonId).click(function () {
-            AddFriend(id)
-        })
-    }
-
-    function moveToPrivateChat(id, email) {
-        window.location.href = _RAZOR_URL_CABINET_PRIVATE_CHAT.replace('__id__', id).replace('__email__', email);
-    }
-
-    function addClickHandlerMessage(id, email) {
-        console.log(id + "  "  + email)
-        let buttonId = "#" + id + "add_message"
-        $(buttonId).click(function () {
-            console.log("clicked")
-            moveToPrivateChat(id, email)
-        })
-    }
-
-    function addClickHandlerRemove(id) {
-        let buttonId = "#" + id
-        $(buttonId).click(function () {
-            RemoveFriend(id)
-        })
-    }
-
-    function AddFriend(param) {
-        $.get(controller + method_AddFriend + param,
-            function () {
-                console.log("Friend has been added")
-                showLoader()
-                //can be optimisized
-                OnUsersReceived($(find_input_id).val())
-            })
-            .fail(function (err) { console.log(err) })
-    }
-
-    function RemoveFriend(param) {
-        $.get(controller + method_RemoveFriend + param,
-            function () {
-                console.log("Friend has been removed")
-                //can be optimisized
-                showLoader()
-                OnUsersReceived($(find_input_id).val())
-            })
-            .fail(function (err) { console.log(err) })
-    }
-
-    function ShowLists(otherUsers, friends) {
-
-        let minus_icon = "glyphicon glyphicon-minus"
-        let plus_icon = "glyphicon glyphicon-plus"
-        clearLists()
-
-        otherUsers.forEach(
-            v => {
-                //create button
-                appendItem(v.email, v.id, other_users_list_id, plus_icon, v.isOnline, v.avatar);
-                //add listener to it
-                //append is synchrounious so it's legal
-                addClickHandlerAdd(v.id)
-                addClickHandlerMessage(v.id, v.email)
-            }
-        )
-
-        friends.forEach(
-            v => {
-                appendItem(v.email, v.id, friends_list_id, minus_icon, v.isOnline, v.avatar)
-                addClickHandlerRemove(v.id)
-                addClickHandlerMessage(v.id, v.email)
-            }
-        )
-    }
-
-    function OnUsersReceived(param) {
-        
-        $.get(controller + method_FindByEmail + param,
-            function (res) {
-                //console.log(res)
-                console.log("____________________")
-                console.log(res)
-                console.log("____________________")
-
-                let Find = MakeFind(res.friends, res.users)
-                hideLoader()
+    function FindUsers(param) {
+        $.get(CONTROLLER_NAME_CABINET + METHOD_FIND_BY_EMAIL + param,
+            model => {
+                let Find = ConstructFindFunction(model.friends, model.others)
+                HideLoaders()
                 
-                $(find_input_id).on('input', function () {
-                    //console.log($(find_input_id).val())
-
+                $(FIND_INPUT_ID).on('input', function () {
+                    
                     let filtered = {}
                     
-                    Find($(find_input_id).val(), filtered)
+                    Find($(FIND_INPUT_ID).val(), filtered)
 
-                    let otherUsers = filtered.others
+                    let others = filtered.others
                     let friends = filtered.friends
 
-                    ShowLists(otherUsers, friends)
-                    /*console.log($(find_input_id).val())*/
+                    UserListManager(OTHERS_LIST_ID).FillList(others, false)
+                    UserListManager(FRIENDS_LIST_ID).FillList(friends, true)
                 })
-
-                ShowLists(res.users, res.friends)
+                
+                UserListManager(OTHERS_LIST_ID).FillList(model.others, false)
+                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, true)
             })
-            .fail(function (err) { console.log(err) })
+            .fail(err => console.log(err))
     }
-    
-    showLoader()
+
+    ShowLoaders()
     //requests for all records in database
-    OnUsersReceived("")
+    FindUsers("")
 
 })()

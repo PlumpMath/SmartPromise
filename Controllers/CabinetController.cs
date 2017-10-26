@@ -182,7 +182,7 @@ namespace Promises.Controllers
                     _friendsRepository.AreFriends(u.Id, userId) && u.Id != userId &&
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id, Avatar = u.Avatar })
+                .Select(u => new User { Email = u.Email, Id = u.Id })
                 .ToList();
 
             friends.ForEach(async u => u.IsOnline = await IsOnline(u.Id));
@@ -193,7 +193,7 @@ namespace Promises.Controllers
                     !_friendsRepository.AreFriends(u.Id, userId) && u.Id != userId &&
                     (email == default(string) || u.Email.StartsWith(email))
                 )
-                .Select(u => new User { Email = u.Email, Id = u.Id, Avatar = u.Avatar })
+                .Select(u => new User { Email = u.Email, Id = u.Id })
                 .ToList();
 
             foundOtherUsers.ForEach(async u => u.IsOnline = await IsOnline(u.Id));
@@ -207,7 +207,7 @@ namespace Promises.Controllers
             var model = new FriendsModel
             {
                 Friends = friends,
-                Users = foundOtherUsers
+                Others = foundOtherUsers
             };
 
             return new OkObjectResult(model);
