@@ -1,18 +1,23 @@
 ﻿@using Promises.Views.Cabinet
+@model User
 @{
     ViewData["Title"] = "Messages";
     ViewData.AddActivePage(CabinetNavPages.Messages);
 }
 <link rel="stylesheet" type="text/css" href="~/css/loader.css">
+
 <style type="text/css">
     .unread-message {
         background-color: #EBF5FA;
     }
 </style>
+
+
+
 <!--/ It's used to be able to be redirected to another MVC page from javascript-->
 
 <h2>Messages</h2><div id="_messages_loader_id"></div>
 
-<div id="_messages_list" class="list-group"></div>
+<div id="_messages_list" class="list-group container-fluid"></div>
 
 

@@ -128,7 +128,7 @@ namespace Promises.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMyUserInfo()
+        public async Task<IActionResult> GetOwner()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             
