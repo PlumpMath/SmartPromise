@@ -1,9 +1,8 @@
 ﻿(function () {
     console.log("______________privateChat.js______________")
 
-    const OWNER = _RAZOR_PRIVATE_CHAT_VIEW_MODEL.owner
     const FRIEND = _RAZOR_PRIVATE_CHAT_VIEW_MODEL.friend
-    
+
     const CHAT_PANEL_ID = '#_chat_panel_id'
     const SEND_BUTTON_ID = '#_send_message_btn'
     const INPUT_ID = '#_message_input'
@@ -17,7 +16,7 @@
     connection.on('OnMessageHistoryRead', () => MessagesListManager.MarkAllMessagesAsRead())
 
     function OnMessage(msg) {
-        MessagesListManager.AddItem(msg, GetSender(msg))
+        MessagesListManager.AddItem(msg)
     }
 
     function SendMessage() {
@@ -31,7 +30,9 @@
 
     let MessagesListManager = (() => {
         const MESSAGES_LIST_ID = "#_messages_list_id"
-        const UNREAD_MESSAGE_STYLE = "unread-message"
+        const UNREAD_MESSAGE_STYLE = "unread"
+        const INPUT_MESSAGE_STYLE = "message-in pull-left"
+        const OUTPUT_MESSAGE_STYLE = "message-out pull-right"
 
         function AddBase64Prefix(byteArray, contentType) {
             return "data:" + contentType + ";base64," + byteArray
@@ -42,37 +43,27 @@
         function ParseDate(date) {
             return date.substring(0, date.indexOf('.')).replace('T', ' ')
         }
+
+        function IsInput(msg) {
+            return msg.senderId != FRIEND.id
+        }
         
         return {
             AddItem: (msg, sender) => {
                 let mes_style = msg.isUnread ? UNREAD_MESSAGE_STYLE : ""
+                let sender_style = IsInput(msg) ? INPUT_MESSAGE_STYLE : OUTPUT_MESSAGE_STYLE
                 let element = `
-                    <li class="right clearfix ` + mes_style + `">
-                        <span class="chat-img pull-right">
-                            <img src="` + AddBase64Prefix(sender.avatar, sender.avatarContentType) + 
-                            `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
-                        </span>
-                        <div class="chat-body clearfix">
-                            <div class="header">
-                                <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>` +
-                                    ParseDate(msg.userDateLocal.toString()) + `</small>
-                                <strong class="pull-right primary-font">` + msg.senderEmail + `</strong>
-                            </div>
-                            <p>` + msg.content +
-                                `</p>
+                    <div class="row ` + mes_style +`">
+                        <div class="message ` + sender_style + `">
+                            ` + msg.content +`
                         </div>
-                    </li>`
+                    </div>
+                `
                 $(MESSAGES_LIST_ID).append(element)
             },
 
             MarkAllMessagesAsRead: () => {
-                $(MESSAGES_LIST_ID).each(function () {
-                    $(this).find('li').each(function () {
-                        if ($(this).hasClass(UNREAD_MESSAGE_STYLE)) {
-                            $(this).removeClass(UNREAD_MESSAGE_STYLE)
-                        }
-                    })
-                })
+                $(CHAT_PANEL_ID).find('.' + UNREAD_MESSAGE_STYLE).removeClass(UNREAD_MESSAGE_STYLE)
             },
 
             ScrollToBottom: () => {
@@ -82,10 +73,6 @@
         }
     })()
 
-    function GetSender(msg) {
-        return msg.senderId == FRIEND.id ? FRIEND : OWNER 
-    }
-    
     function OnConnected(msg) {
         console.log(msg)
     }
@@ -100,7 +87,7 @@
     
     function OnGetHistory(history) {
         let msgArr = JSON.parse(history)
-        msgArr.forEach(m => MessagesListManager.AddItem(m, GetSender(m)))
+        msgArr.forEach(m => MessagesListManager.AddItem(m))
         MessagesListManager.ScrollToBottom()
     }
     

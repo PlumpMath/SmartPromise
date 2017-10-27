@@ -64,20 +64,11 @@ namespace Promises.Controllers
             var owner = await _userManager.GetUserAsync(HttpContext.User);
             var friend = _userManager.Users.FirstOrDefault(u => u.Id == friendId);
             var ownerId = owner.Id;
-            var ownerEmail = await _userManager.GetEmailAsync(owner);
 
-            var isOwnerOnline = await IsOnline(ownerId);
             var isUserOnline = await IsOnline(friendId);
 
             var model = new PrivateChatViewModel
             {
-                Owner = new User {
-                    Id = ownerId,
-                    Email = ownerEmail,
-                    IsOnline = isOwnerOnline,
-                    Avatar = owner.Avatar,
-                    AvatarContentType = owner.AvatarContentType
-                },
                 Friend = new User {
                     Id = friendId,
                     Email = friendEmail,

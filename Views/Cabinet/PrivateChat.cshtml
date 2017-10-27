@@ -5,8 +5,6 @@
     ViewData.AddActivePage(CabinetNavPages.PrivateChat);
 }
 
-<h4>PrivateChat with @Model.Friend.Email</h4>
-
 <!--/ Now we are able to read model from JavaSctipr -->
 <script type="text/javascript">
     let _RAZOR_PRIVATE_CHAT_VIEW_MODEL = @Html.Raw(Json.Serialize(Model))
@@ -16,33 +14,33 @@
 <link rel="stylesheet" type="text/css" href="~/css/chat.css">
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12 col-xs-12 col-lg-12">
-            <div class="panel panel-primary" >
-                <div class="panel-heading" id="accordion">
-                    <span class="glyphicon glyphicon-comment"></span> Chat
-                    <div class="btn-group pull-right">
-                        
-                    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading text-center">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="icon"><span class="glyphicon glyphicon-chevron-left"></span></div>
                 </div>
-                <div class="panel-collapse" id="collapseOne">
-                    <div class="panel-body" id="_chat_panel_id">
-                        <ul id="_messages_list_id" class="chat"></ul>
-                    </div>
-                    <div class="panel-footer">
-                        <div class="input-group">
-                            <input id="_message_input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-                            <span class="input-group-btn">
-                                <button class="btn btn-warning btn-sm" id="_send_message_btn">
-                                    Send
-                                </button>
-                            </span>
-                        </div>
-                    </div>
+                <div class="col-md-offset-3 col-md-2">
+                    <div id="contact"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+                    @Model.Friend.Email
                 </div>
+            </div>
+        </div>
+        <div class="panel-body" id="_chat_panel_id">
+            <div class="date" id="_current_date_id">
+                <span class="bold">Today</span> 11:54
+            </div>
+            <div id="_messages_list_id">
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="input-group">
+                <input id="_message_input" type="text" class="form-control" placeholder="Message">
+                <span class="input-group-btn">
+                    <button id="_send_message_btn" class="btn btn-default" type="button">
+                    <span class="glyphicon glyphicon-send"></span></button>
+                </span>
             </div>
         </div>
     </div>
 </div>
-
-
