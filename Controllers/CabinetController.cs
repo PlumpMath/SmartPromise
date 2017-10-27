@@ -78,13 +78,8 @@ namespace Promises.Controllers
                 },
             };
             
-            var lastMessage = _messagesRepository.FindLastMessage(friendId, ownerId);
-
-            if (lastMessage != null && lastMessage.IsUnread == true && lastMessage.SenderId != ownerId)
-            {
-                _messagesRepository.MarkHistoryAsRead(friendId, ownerId);
-            }
-
+            _messagesRepository.MarkHistoryAsRead(ownerId, friendId);
+            
             return View(model);
         }
 

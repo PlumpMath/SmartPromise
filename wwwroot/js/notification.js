@@ -13,24 +13,23 @@
         $(GINGLE_ID).attr("data-count", new_amount)
     }
     
-    /*
+    
     function UpdateNavigator(new_amount) {
         let text = "Messages " + "(" + new_amount + ")"
+        $(MESSAGES_NAV_ID).html(text)
         console.log(text)
-        $(unread_messages_count).text(text)   
-    }*/
+    }
 
     _RAZOR_NOTIFICATION_CONNECTION.on("OnNewUnreadMessage", user => {
-        console.log(JSON.parse(user))
         ++unread_messages_count
         UpdateGingle(unread_messages_count.toString())
-        //UpdateNavigator(unread_messages_count.toString())
+        UpdateNavigator(unread_messages_count.toString())
     })
 
     _RAZOR_NOTIFICATION_CONNECTION.on("OnMessageHistoryRead", () => {
         unread_messages_count = 0
         UpdateGingle(unread_messages_count.toString())
-        //UpdateNavigator(unread_messages_count.toString())
+        UpdateNavigator(unread_messages_count.toString())
     })
     
 

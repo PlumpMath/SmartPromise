@@ -48,16 +48,13 @@ namespace Promises.Concrete
             await Notify(hub => hub.Send(message), excepts);
         }
 
-        public async void OnMessageHistoryRead(string personOneId, string personTwoId)
+        public async void OnMessageHistoryRead(string friendId)
         {
             var onlineUsers = await _userTracker.UsersOnline();
-            var personOneConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personOneId)?.ConnectionId;
-            var personTwoConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == personTwoId)?.ConnectionId;
-
-            if (personOneConId != null)
-                await NotifyOne(hub => hub.OnMessageHistoryRead(), personOneConId);
-            if (personTwoConId != null)
-                await NotifyOne(hub => hub.OnMessageHistoryRead(), personTwoConId);
+            var friendConId = onlineUsers.FirstOrDefault(u => u.Owner.Id == friendId)?.ConnectionId;
+            
+            if (friendConId != null)
+                await NotifyOne(hub => hub.OnMessageHistoryRead(), friendConId);
         }
     }
 }

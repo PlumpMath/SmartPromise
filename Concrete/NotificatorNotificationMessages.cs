@@ -49,15 +49,12 @@ namespace Promises.Concrete
             return onlineUsers.FirstOrDefault(u => u.Owner.Id == id)?.ConnectionId;
         }
 
-        public async void OnMessageHistoryRead(string personOneId, string personTwoId)
+        public async void OnMessageHistoryRead(string friendId)
         {
-            var personOneConId = await GetConId(personOneId);
-            var personTwoConId = await GetConId(personTwoId);
-
-            if (personOneConId != null)
-                await NotifyOne(hub => hub.OnMessageHistoryRead(), personOneConId);
-            if (personTwoConId != null)
-                await NotifyOne(hub => hub.OnMessageHistoryRead(), personTwoConId);
+            var friendConId = await GetConId(friendId);
+            
+            if (friendConId != null)
+                await NotifyOne(hub => hub.OnMessageHistoryRead(), friendConId);
         }
 
         public async void OnHaveUnread(User receiver, User sender)

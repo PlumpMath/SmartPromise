@@ -12,7 +12,7 @@ namespace Promises.Concrete
     public class EFMessagesRepository : IMessagesRepository, IDisposable
     {
         public event Action<Message> OnMessageAdded;
-        public event Action<string, string> OnMessageHistoryRead;
+        public event Action<string> OnMessageHistoryRead;
         public event Action<User, User> OnHaveUnread;
 
         private readonly INotificator<Chat, IMessagesRepository> _notificatorChat;
@@ -115,18 +115,23 @@ namespace Promises.Concrete
                 (m.SenderId == userTwoId && m.ReceiverId == userOneId)).Take(GetAmount(amount));
         }
 
-        public void MarkHistoryAsRead(string personOneId, string personTwoId)
+        public void MarkHistoryAsRead(string ownerId, string friendId)
         {
-            GetMessageHistory(personOneId, personTwoId).ToList().ForEach(m => {
+            var messageHistory = GetMessageHistory(ownerId, friendId);
+
+            //check if there are unread messages
+            if (messageHistory.FirstOrDefault(u => u.IsUnread == true) == null)
+                return;
+
+            GetMessageHistory(ownerId, friendId).ToList().ForEach(m => {
                 m.IsUnread = false;
                 _applicationContext.Attach(m);
                 _applicationContext.Entry(m).Property(u => u.IsUnread).IsModified = true;
             });
 
             _applicationContext.SaveChanges();
-            //_notificationManager.OnMessageHistoryRead();
-            //OnMessageHistoryRead()
-            OnMessageHistoryRead?.Invoke(personOneId, personTwoId);
+
+            OnMessageHistoryRead?.Invoke(friendId);
         }
 
         public void Dispose()
