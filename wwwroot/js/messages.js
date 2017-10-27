@@ -138,7 +138,7 @@
 
 
     $.get(CONTROLLER_NAME_CABINET + METHOD_GET_MY_USER_INFO, res => main(res))
-        .fail(err => reject(err))
+        .fail(err => console.log(err))
 })()
 
 

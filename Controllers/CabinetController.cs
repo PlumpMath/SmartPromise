@@ -51,6 +51,13 @@ namespace Promises.Controllers
         }
 
         [HttpGet]
+        public async Task<int> GetUnreadAmount()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return _messagesRepository.GetUnreadAmount(user.Id);
+        }
+
+        [HttpGet]
         public async Task<FileStreamResult> GetAvatarImage()
         {
             var user = await _userManager.GetUserAsync(User);

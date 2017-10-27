@@ -115,6 +115,11 @@ namespace Promises.Concrete
                 (m.SenderId == userTwoId && m.ReceiverId == userOneId)).Take(GetAmount(amount));
         }
 
+        public int GetUnreadAmount(string userId)
+        {
+            return Messages.Where(u => u.ReceiverId == userId && u.IsUnread == true).Count();
+        }
+
         public void MarkHistoryAsRead(string ownerId, string friendId)
         {
             var messageHistory = GetMessageHistory(ownerId, friendId);

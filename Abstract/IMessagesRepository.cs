@@ -21,5 +21,6 @@ namespace Promises.Abstract
         IEnumerable<Message> GetLastMessagesHistory(string userId);
         IEnumerable<Message> GetMessageHistory(string personOneId, string personTwoId, MESSAGES_AMOUNT amount);
         void MarkHistoryAsRead(string ownerId, string friendId);
+        int GetUnreadAmount(string userId);
     }
 }

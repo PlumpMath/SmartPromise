@@ -18,7 +18,13 @@
     @{
         //Global var notification
     }
+
+    
     <script type="text/javascript">
+
+        //TODO rewrite
+        $.get('@Url.Action("GetUnreadAmount", "Cabinet")', v => $("#_messages_nav_id").html("Messages " + (v == 0 ? "" : "(" + v + ")")))
+
         let _RAZOR_URL_CABINET_PRIVATE_CHAT = '@Url.Action("PrivateChat", "Cabinet", new { friendId = "__id__", friendEmail = "__email__" })'
         let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatar", "Cabinet", new { userId = "__id__"})'
 
