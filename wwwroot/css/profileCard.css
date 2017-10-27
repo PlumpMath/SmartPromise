@@ -1,0 +1,26 @@
+﻿
+.led-offline {
+    padding-top: 3%;
+    padding-right: 3%;
+    margin-right: 4%;
+    background-color: #940;
+    border-radius: 50%;
+}
+
+.led-online {
+    padding-top: 3%;
+    padding-right: 3%;
+    margin-right: 4%;
+    background-color: #690;
+    border-radius: 50%;
+}
+
+.friend-element {
+    min-height: 100px;
+}
+
+.top-right-corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

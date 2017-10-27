@@ -52,7 +52,12 @@
             const LED_PREFIX = 'L'
             const STYLE_ICON_MINUS = "glyphicon glyphicon-minus"
             const STYLE_ICON_PLUS = "glyphicon glyphicon-plus"
-            const STYLE_ICON_ENVELOPE =  "glyphicon glyphicon-envelope"
+            const STYLE_ICON_ENVELOPE = "glyphicon glyphicon-envelope"
+            const STYLE_ICON_ONLINE = "led-online"
+            const STYLE_ICON_OFFLINE = "led-offline"
+            const REMOVE_FRIEND_OPTION = "Remove friend"
+            const ADD_FRIEND_OPTION = "Add friend"
+
 
             function AddFriend(param) {
                 $.get(CONTROLLER_NAME_CABINET + METHOD_ADD_FRIEND + param,
@@ -95,26 +100,38 @@
             }
 
             function AddItem(user, isFriend) {
-                let icon = isFriend ? STYLE_ICON_MINUS : STYLE_ICON_PLUS
+                let friend_option = isFriend ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
+                let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
                 let element = `
-                       <a class="list-group-item clearfix">`
-                    + user.email +
-                    `<span class="pull-left">
-                                <img src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", user.id) +
-                    `" alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>
-                            </span>
-                            <span class="pull-right">
-                                <span id="` + ICON_PREFIX_ENVELOPE + id + `" class="btn btn-xs btn-default">
-                                    <span class="` + STYLE_ICON_ENVELOPE + `" aria-hidden="true"></span>
-                                </span>
-                                <span id="` + ICON_FRIEND_PREFIX + id + `" class="btn btn-xs btn-default">
-                                    <span class="` + icon + `" aria-hidden="true"></span>
-                                </span>
-                                <div id="` + LED_PREFIX + id +
-                                `" class="` + (user.isOnline ? "led-online" : "led-offline") + `"></div>       
-                            </span>
-                        </a>
+                    <div class="col-12">
+                        <div class="well well-sm">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-4">
+                                    <img width="100" height="100" alt="" src="` +
+                                        _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", user.id) +
+                                    `" class="img-rounded img-responsive" />
+                                </div>
+                    
+                                <div class="col-sm-6 col-md-8 friend-element">
+                                    <div id="` + LED_PREFIX + id + `" class="top-right-corner ` + style_presense +`"></div>
+                                    <h4>` + user.email + `</h4>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary">Action</button>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span><span class="sr-only">Social</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a id="` + ICON_PREFIX_ENVELOPE + id + `">Message</a></li>
+                                            <li><a id="` + ICON_FRIEND_PREFIX + id + `" >` + friend_option + `</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#">Profile</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     `
 
                 $(LIST_ID).append(element)
