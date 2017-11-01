@@ -62,10 +62,10 @@
         })(loader_id)
     }
 
-    function UserListManager(list_id) {
-        return (list_id => {
-
-            let LIST_ID = list_id
+    function UserListManager(list_id, type) {
+        return ((list_id, type) => {
+            const LIST_ID = list_id
+            const ITEM_TYPE = type
             const ITEM_PREFIX = 'IT'
             const ICON_FRIEND_PREFIX = 'IF'
             const ICON_PREFIX_ENVELOPE = 'IE'
@@ -99,9 +99,9 @@
                     .fail(err => console.log(err))
             }
 
-            function AddFriendHandler(user, type) {
-                $(UserListManager(LIST_ID).GetIconFriendId(user))
-                    .click(() => (type === TYPE.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
+            function AddFriendHandler(user) {
+                $(UserListManager(LIST_ID, ITEM_TYPE).GetIconFriendId(user))
+                    .click(() => (ITEM_TYPE === TYPE.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
             }
 
             function HaveChatWithUser(userId, userEmail) {
@@ -110,7 +110,7 @@
             }
 
             function AddChatHandler(user) {
-                $(UserListManager(LIST_ID).GetIconEnvelopeId(user))
+                $(UserListManager(LIST_ID, ITEM_TYPE).GetIconEnvelopeId(user))
                     .click(() => HaveChatWithUser(user.id, user.email))
             }
             
@@ -119,8 +119,9 @@
                 return user.id.toString()
             }
 
-            function AddItem(user, type) {
-                let friend_option = (type === TYPE.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
+            function AddItem(user) {
+                //console.log(ITEM_TYPE)
+                let friend_option = (ITEM_TYPE === TYPE.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
                 let element = `
@@ -155,7 +156,7 @@
                     `
 
                 $(LIST_ID).append(element)
-                AddFriendHandler(user, type)
+                AddFriendHandler(user)
                 AddChatHandler(user)
             }
             
@@ -175,12 +176,12 @@
                 Clear: () => $(LIST_ID).empty()
                 ,
 
-                FillList: (list, type) => {
-                    UserListManager(LIST_ID).Clear()
-                    list.forEach(u => AddItem(u, type))
+                FillList: list => {
+                    UserListManager(LIST_ID, ITEM_TYPE).Clear()
+                    list.forEach(u => AddItem(u))
                 }
             }
-        })(list_id)
+        })(list_id, type)
         
     }
 
@@ -197,8 +198,8 @@
     }
 
     function ClearLists() {
-        UserListManager(OTHERS_LIST_ID).Clear()
-        UserListManager(FRIENDS_LIST_ID).Clear()
+        UserListManager(OTHERS_LIST_ID, TYPE.OTHER).Clear()
+        UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).Clear()
     }
     
     function FindUsers(param) {
@@ -217,12 +218,12 @@
                     let friends = filtered.friends
                     let pending = filtered.pending
 
-                    UserListManager(OTHERS_LIST_ID).FillList(others, TYPE.OTHER)
-                    UserListManager(FRIENDS_LIST_ID).FillList(friends, TYPE.FRIEND)
+                    UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
+                    UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
                 })
                 
-                UserListManager(OTHERS_LIST_ID).FillList(model.others, TYPE.OTHER)
-                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, TYPE.FRIEND)
+                UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
+                UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
             })
             .fail(err => console.log(err))
     }
