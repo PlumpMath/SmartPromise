@@ -8,12 +8,13 @@ namespace Promises.Abstract
 {
     public interface IFriendsRepository
     {
-        event Action<User> OnFriendshipAccepted;
-        event Action<User> OnFriendshipRejected;
-        event Action<User> OnFriendshipRequested;
+        //the first one is to be notified the second one who's the initiator
+        event Action<User, User> OnFriendshipAccepted;
+        event Action<User, User> OnFriendshipRejected;
+        event Action<User, User> OnFriendshipRequested;
         
         IEnumerable<string> GetFriends(string UserId);
-        void AddFriend(string UserId, string UserFriendId);
+        IEnumerable<string> GetPendingFriends(string UserId);
         void RemoveFriend(string UserId, string UserFriendId);
         bool AreFriends(string UserId, string UserFriendId);
         bool ArePendingFriends(string UserId, string UserFriendId);

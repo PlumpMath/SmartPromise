@@ -51,8 +51,8 @@ namespace Promises.Controllers
             //other users except his friends
             var foundOtherUsers = _userManager.Users
                 .Where(u =>
-                    !_friendsRepository.AreFriends(u.Id, userId) && u.Id != userId &&
-                    (email == default(string) || u.Email.StartsWith(email))
+                    !_friendsRepository.AreFriends(u.Id, userId) && !_friendsRepository.ArePendingFriends(u.Id, userId) 
+                    && u.Id != userId && (email == default(string) || u.Email.StartsWith(email))
                 )
                 .Select(u => new User { Email = u.Email, Id = u.Id })
                 .ToList();
@@ -92,7 +92,7 @@ namespace Promises.Controllers
                 return NotFound();
 
             var userId = _userManager.GetUserId(HttpContext.User);
-            _friendsRepository.AddFriend(userId, friendUserId);
+            _friendsRepository.RequestFriendship(userId, friendUserId);
             return Ok();
         }
 
@@ -106,31 +106,7 @@ namespace Promises.Controllers
             _friendsRepository.AcceptFriendship(userId, friendUserId);
             return Ok();
         }
-
-        ////////////////////////////////////////
-        [HttpGet("{FriendUserId}")]
-        public IActionResult RemoveFriend(string FriendUserId)
-        {
-            if (!IsThereUser(FriendUserId))
-                return NotFound();
-
-            var userId = _userManager.GetUserId(HttpContext.User);
-            _friendsRepository.RemoveFriend(userId, FriendUserId);
-            return Ok();
-        }
-
-        [HttpGet("{friendUserId}")]
-        public IActionResult AddFriend(string friendUserId)
-        {
-            if (!IsThereUser(friendUserId))
-                return NotFound();
-
-            var userId = _userManager.GetUserId(HttpContext.User);
-            _friendsRepository.AddFriend(userId, friendUserId);
-            return Ok();
-        }
-        ////////////////////////////////////////
-
+        
         [HttpGet("{friendUserId}")]
         public IActionResult RejectFriendship(string friendUserId)
         {
@@ -140,6 +116,14 @@ namespace Promises.Controllers
             var userId = _userManager.GetUserId(HttpContext.User);
             _friendsRepository.RejectFriendship(userId, friendUserId);
             return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetPendingFriends()
+        {
+            var userId = _userManager.GetUserId(HttpContext.User);
+            var result = _friendsRepository.GetPendingFriends(userId);
+            return new OkObjectResult(result);
         }
 
         private bool IsThereUser(string id)

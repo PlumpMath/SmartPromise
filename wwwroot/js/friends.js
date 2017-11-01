@@ -2,15 +2,16 @@
     console.log("______________friends.js______________")
 
     const TYPE = {
-        FRIEND: "F",
-        PENDING: "P",
-        OTHER: "O"
+        FRIEND: 0,
+        PENDING: 1,
+        OTHER: 2
     }
     
     const FIND_INPUT_ID = '#_find_input'
     
     const OTHERS_LIST_ID = '#_other_users_list'
     const FRIENDS_LIST_ID = '#_friends_list'
+    const PENDING_LIST_ID = '#_pending_users_list'
     
     const LOADER_ID = "#_loader_id"
 
@@ -18,9 +19,9 @@
     const OTHERS_LABEL_ID = '#_others_label_id'
     const PENDING_LABEL_ID = '#_pending_label_id'
 
+    const METHOD_REQUEST_FRIENDSHIP = '/RequestFriendship/'
+    const METHOD_REJECT_FRIENDSHIP = '/RejectFriendship/'
     const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
-    const METHOD_ADD_FRIEND = '/AddFriend/'
-    const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
     const CONTROLLER_NAME = '/api/Friends'
 
     const TITLE_FRIENDS = "Friends"
@@ -81,10 +82,11 @@
             const REMOVE_FRIEND_OPTION = "Remove friend"
             const ADD_FRIEND_OPTION = "Add friend"
             const REQUEST_FRIEND_OPTION = "Request friend"
+            const NO_OPTION = ""
 
 
-            function AddFriend(param) {
-                $.get(CONTROLLER_NAME + METHOD_ADD_FRIEND + param,
+            function RequestFriendship(param) {
+                $.get(CONTROLLER_NAME + METHOD_REQUEST_FRIENDSHIP + param,
                     () => {
                         ClearLists()
                         StartLoading()
@@ -93,8 +95,8 @@
                     .fail(err => console.log(err))
             }
 
-            function RemoveFriend(param) {
-                $.get(CONTROLLER_NAME + METHOD_REMOVE_FRIEND + param,
+            function RejectFriendship(param) {
+                $.get(CONTROLLER_NAME + METHOD_REJECT_FRIENDSHIP + param,
                     () => {
                         ClearLists()
                         StartLoading()
@@ -105,7 +107,19 @@
 
             function AddFriendHandler(user) {
                 $(UserListManager(LIST_ID, ITEM_TYPE).GetUserActionId(user))
-                    .click(() => (ITEM_TYPE === TYPE.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
+                    .click(() => {
+                        switch (ITEM_TYPE) {
+                            case TYPE.FRIEND:
+                                RejectFriendship(user.id)
+                                break
+                            case TYPE.OTHER:
+                                RequestFriendship(user.id)
+                                break
+                            case TYPE.PENDING:
+                                //do nothing
+                                break
+                        }
+                    })
             }
 
             function HaveChatWithUser(userId, userEmail) {
@@ -123,9 +137,19 @@
                 return user.id.toString()
             }
 
+            function GetActionOption() {
+                switch (ITEM_TYPE) {
+                    case TYPE.FRIEND:
+                        return REMOVE_FRIEND_OPTION
+                    case TYPE.OTHER:
+                        return ADD_FRIEND_OPTION
+                    case TYPE.PENDING:
+                    default:                       
+                        return NO_OPTION
+                }
+            }
+
             function AddItem(user) {
-                //console.log(ITEM_TYPE)
-                let friend_option = (ITEM_TYPE === TYPE.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
                 let element = `
@@ -148,7 +172,7 @@
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a id="` + MESSAGE_PREFIX + id + `">Message</a></li>
-                                            <li><a id="` + USER_ACTION_PREFIX + id + `" >` + friend_option + `</a></li>
+                                            <li><a id="` + USER_ACTION_PREFIX + id + `" >` + GetActionOption() + `</a></li>
                                             <li class="divider"></li>
                                             <li><a href="#">Profile</a></li>
                                         </ul>
@@ -204,6 +228,7 @@
     function ClearLists() {
         UserListManager(OTHERS_LIST_ID, TYPE.OTHER).Clear()
         UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).Clear()
+        UserListManager(PENDING_LIST_ID, TYPE.PENDING).Clear()
     }
     
     function FindUsers(param) {
@@ -224,10 +249,12 @@
 
                     UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
                     UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
+                    UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(pending)
                 })
                 
                 UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
                 UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
+                UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(model.pending)
             })
             .fail(err => console.log(err))
     }

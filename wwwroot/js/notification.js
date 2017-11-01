@@ -7,12 +7,23 @@
     const MESSAGES_NAV_ID = "#_messages_nav_id"
     const GINGLE_ID = "#_gingle_id"
 
+    const CONTROLLER_NAME = '/api/Friends/'
+    const METHOD_GET_PENDING_FRIENDS = 'GetPendingFriends/'
+
     let unread_messages_count = 0
     
     function UpdateGingle(new_amount) {
         $(GINGLE_ID).attr("data-count", new_amount)
     }
-    
+
+
+    function GetPendingFriends() {
+        $.get(CONTROLLER_NAME + METHOD_GET_PENDING_FRIENDS, res => {
+            console.log(res)
+        })
+    }
+
+    GetPendingFriends()
     
     function UpdateNavigator(new_amount) {
         let text = "Messages " + "(" + new_amount + ")"

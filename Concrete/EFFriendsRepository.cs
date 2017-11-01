@@ -12,9 +12,10 @@ namespace Promises.Concrete
     {
         private readonly ApplicationDbContext _applicationContext;
 
-        public event Action<User> OnFriendshipAccepted;
-        public event Action<User> OnFriendshipRejected;
-        public event Action<User> OnFriendshipRequested;
+        //the first one is to be notified the second one who's the initiator
+        public event Action<User, User> OnFriendshipAccepted;
+        public event Action<User, User> OnFriendshipRejected;
+        public event Action<User, User> OnFriendshipRequested;
 
         private IEnumerable<Friend> Friends
         {
@@ -35,28 +36,11 @@ namespace Promises.Concrete
             _applicationContext = applicationContext;
         }
 
-        public void AddFriend(string UserId, string UserFriendId)
-        {
-            var res = Find(UserId, UserFriendId);
-            if (res == null)
-            {
-                _applicationContext.Friends.Add(new Friend
-                {
-                    UserId = UserId,
-                    FriendId = UserFriendId,
-                    Status = FriendStatus.ACCEPTED
-                });
-                _applicationContext.SaveChanges();
-            }
-            else return;
-
-            //TODO : USE TRIGGER INSTEAD OF THIS
-            AddFriend(UserFriendId, UserId);
-        }
-
         public IEnumerable<string> GetFriends(string UserId)
         {
-            return Friends.Where(u => u.FriendId == UserId).Select(u => u.UserId);
+            return Friends
+                .Where(u => u.FriendId == UserId && u.Status == FriendStatus.ACCEPTED)
+                .Select(u => u.UserId);
         }
 
         public void RemoveFriend(string UserId, string UserFriendId)
@@ -84,33 +68,36 @@ namespace Promises.Concrete
 
         public bool ArePendingFriends(string UserId, string UserFriendId)
         {
-
             var one = Find(UserId, UserFriendId);
             var two = Find(UserFriendId, UserId);
-            return (null != one && one.Status == FriendStatus.WAITING) && 
+            return (null != one && one.Status == FriendStatus.WAITING) ||
                 (null != two && two.Status == FriendStatus.WAITING);
         }
 
         public void AcceptFriendship(string UserId, string UserFriendId)
         {
-            var one = Find(UserId, UserFriendId);
-            var two = Find(UserFriendId, UserId);
+            //var one = Find(UserId, UserFriendId);
+            var one = Find(UserFriendId, UserId);
 
             one.Status = FriendStatus.ACCEPTED;
-            two.Status = FriendStatus.ACCEPTED;
-
+            
             _applicationContext.Attach(one);
             _applicationContext.Entry(one).Property(u => u.Status).IsModified = true;
-            _applicationContext.Attach(two);
-            _applicationContext.Entry(two).Property(u => u.Status).IsModified = true;
 
+            _applicationContext.Friends.Add(new Friend
+            {
+                UserId = UserId,
+                FriendId = UserFriendId,
+                Status = FriendStatus.ACCEPTED
+            });
+
+            OnFriendshipAccepted?.Invoke(new User { Id = UserFriendId }, new User { Id = UserId });
             _applicationContext.SaveChanges();
-
         }
 
         public void RejectFriendship(string UserId, string UserFriendId)
         {
-            var res = Find(UserId, UserFriendId);
+            var res = Find(UserFriendId, UserId);
 
             if (res != null)
             {
@@ -119,10 +106,11 @@ namespace Promises.Concrete
             }
             else return;
 
-            //TODO : USE TRIGGER INSTEAD OF THIS
-            RemoveFriend(UserFriendId, UserId);
+            OnFriendshipRejected?.Invoke(new User { Id = UserFriendId }, new User { Id = UserId });
         }
 
+
+        //UserId waiting for UserFriendId to accept a request
         public void RequestFriendship(string UserId, string UserFriendId)
         {
             var res = Find(UserId, UserFriendId);
@@ -137,9 +125,15 @@ namespace Promises.Concrete
                 _applicationContext.SaveChanges();
             }
             else return;
+            
+            OnFriendshipRequested?.Invoke(new User { Id = UserFriendId }, new User { Id = UserId });
+        }
 
-            //TODO : USE TRIGGER INSTEAD OF THIS
-            RequestFriendship(UserFriendId, UserId);
+        public IEnumerable<string> GetPendingFriends(string UserId)
+        {
+            return Friends
+                .Where(u => u.FriendId == UserId && u.Status == FriendStatus.WAITING)
+                .Select(u => u.UserId);
         }
     }
 }
