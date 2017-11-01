@@ -1,25 +1,45 @@
 ﻿(function () {
     console.log("______________friends.js______________")
 
+    const STATUS = {
+        FRIEND: "F",
+        PENDING: "P",
+        OTHER: "O"
+    }
+    
     const FIND_INPUT_ID = '#_find_input'
+    
     const OTHERS_LIST_ID = '#_other_users_list'
     const FRIENDS_LIST_ID = '#_friends_list'
-    const FRIENDS_LOADER_ID = "#_friends_loader_id"
-    const OTHERS_LOADER_ID = "#_others_loader_id"
     
+    const LOADER_ID = "#_loader_id"
+
+    const FRIENDS_LABEL_ID = '#_friends_label_id'
+    const OTHERS_LABEL_ID = '#_others_label_id'
+    const PENDING_LABEL_ID = '#_pending_label_id'
+
     const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
     const METHOD_ADD_FRIEND = '/AddFriend/'
     const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
     const CONTROLLER_NAME_CABINET = '/Cabinet'
+
+    const TITLE_FRIENDS = "Friends"
+    const TITLE_OTHERS = "Others"
+    const TITLE_Pending = "Pending"
+    const TITLE_CLEAR = ""
     
-    function ShowLoaders() {
-        Loader(OTHERS_LOADER_ID).Show()
-        Loader(FRIENDS_LOADER_ID).Show()
+    function StopLoading() {
+        $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS)
+        $(OTHERS_LABEL_ID).html(TITLE_OTHERS)
+        $(PENDING_LABEL_ID).html(TITLE_Pending)
+        Loader(LOADER_ID).Hide()
     }
 
-    function HideLoaders() {
-        Loader(OTHERS_LOADER_ID).Hide()
-        Loader(FRIENDS_LOADER_ID).Hide()
+    function StartLoading() {
+        $(FRIENDS_LABEL_ID).html(TITLE_CLEAR)
+        $(OTHERS_LABEL_ID).html(TITLE_CLEAR)
+        $(PENDING_LABEL_ID).html(TITLE_CLEAR)
+        Loader(LOADER_ID).Show()
     }
 
     function Loader(loader_id) {
@@ -63,7 +83,7 @@
                 $.get(CONTROLLER_NAME_CABINET + METHOD_ADD_FRIEND + param,
                     () => {
                         ClearLists()
-                        ShowLoaders()
+                        StartLoading()
                         FindUsers($(FIND_INPUT_ID).val())
                     })
                     .fail(err => console.log(err))
@@ -73,15 +93,15 @@
                 $.get(CONTROLLER_NAME_CABINET + METHOD_REMOVE_FRIEND + param,
                     () => {
                         ClearLists()
-                        ShowLoaders()
+                        StartLoading()
                         FindUsers($(FIND_INPUT_ID).val())
                     })
                     .fail(err => console.log(err))
             }
 
-            function AddFriendHandler(user, isFriend) {
+            function AddFriendHandler(user, status) {
                 $(UserListManager(LIST_ID).GetIconFriendId(user))
-                    .click(() => isFriend ? RemoveFriend(user.id) : AddFriend(user.id))
+                    .click(() => (status === STATUS.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
             }
 
             function HaveChatWithUser(userId, userEmail) {
@@ -99,8 +119,8 @@
                 return user.id.toString()
             }
 
-            function AddItem(user, isFriend) {
-                let friend_option = isFriend ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
+            function AddItem(user, status) {
+                let friend_option = (status === STATUS.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
                 let element = `
@@ -135,7 +155,7 @@
                     `
 
                 $(LIST_ID).append(element)
-                AddFriendHandler(user, isFriend)
+                AddFriendHandler(user, status)
                 AddChatHandler(user)
             }
             
@@ -155,21 +175,24 @@
                 Clear: () => $(LIST_ID).empty()
                 ,
 
-                FillList: (list, areFriends) => {
+                FillList: (list, status) => {
                     UserListManager(LIST_ID).Clear()
-                    list.forEach(u => AddItem(u, areFriends))
+                    list.forEach(u => AddItem(u, status))
                 }
             }
         })(list_id)
         
     }
 
-    function ConstructFindFunction(friends, others) {
+    function ConstructFindFunction(friends, others, pending) {
         let friends_copy = [...friends]
         let others_copy = [...others]
+        let pending_copy = [...pending]
+
         return (findString, filtered) => {
             filtered.friends = friends_copy.filter(v => v.email.startsWith(findString))
             filtered.others = others_copy.filter(v => v.email.startsWith(findString))
+            filtered.pending = pending_copy.filter(v => v.email.startsWith(findString))
         }
     }
 
@@ -181,9 +204,9 @@
     function FindUsers(param) {
         $.get(CONTROLLER_NAME_CABINET + METHOD_FIND_BY_EMAIL + param,
             model => {
-                let Find = ConstructFindFunction(model.friends, model.others)
-                HideLoaders()
-                
+                let Find = ConstructFindFunction(model.friends, model.others, model.pending)
+                StopLoading()
+
                 $(FIND_INPUT_ID).on('input', function () {
                     
                     let filtered = {}
@@ -192,18 +215,19 @@
 
                     let others = filtered.others
                     let friends = filtered.friends
+                    let pending = filtered.pending
 
-                    UserListManager(OTHERS_LIST_ID).FillList(others, false)
-                    UserListManager(FRIENDS_LIST_ID).FillList(friends, true)
+                    UserListManager(OTHERS_LIST_ID).FillList(others, STATUS.OTHER)
+                    UserListManager(FRIENDS_LIST_ID).FillList(friends, STATUS.FRIEND)
                 })
                 
-                UserListManager(OTHERS_LIST_ID).FillList(model.others, false)
-                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, true)
+                UserListManager(OTHERS_LIST_ID).FillList(model.others, STATUS.OTHER)
+                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, STATUS.FRIEND)
             })
             .fail(err => console.log(err))
     }
 
-    ShowLoaders()
+    StartLoading()
     //requests for all records in database
     FindUsers("")
 

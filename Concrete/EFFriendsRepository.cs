@@ -12,6 +12,10 @@ namespace Promises.Concrete
     {
         private readonly ApplicationDbContext _applicationContext;
 
+        public event Action<User> OnFriendshipAccepted;
+        public event Action<User> OnFriendshipRejected;
+        public event Action<User> OnFriendshipRequested;
+
         private IEnumerable<Friend> Friends
         {
             get
@@ -72,8 +76,70 @@ namespace Promises.Concrete
 
         public bool AreFriends(string UserId, string UserFriendId)
         {
-            return default(Friend) != Find(UserId, UserFriendId) 
-                && default(Friend) != Find(UserFriendId, UserId);
+            var one = Find(UserId, UserFriendId);
+            var two = Find(UserFriendId, UserId);
+            return (null != one && one.Status == FriendStatus.ACCEPTED) 
+                && (null != two && two.Status == FriendStatus.ACCEPTED);
+        }
+
+        public bool ArePendingFriends(string UserId, string UserFriendId)
+        {
+
+            var one = Find(UserId, UserFriendId);
+            var two = Find(UserFriendId, UserId);
+            return (null != one && one.Status == FriendStatus.WAITING) && 
+                (null != two && two.Status == FriendStatus.WAITING);
+        }
+
+        public void AcceptFriendship(string UserId, string UserFriendId)
+        {
+            var one = Find(UserId, UserFriendId);
+            var two = Find(UserFriendId, UserId);
+
+            one.Status = FriendStatus.ACCEPTED;
+            two.Status = FriendStatus.ACCEPTED;
+
+            _applicationContext.Attach(one);
+            _applicationContext.Entry(one).Property(u => u.Status).IsModified = true;
+            _applicationContext.Attach(two);
+            _applicationContext.Entry(two).Property(u => u.Status).IsModified = true;
+
+            _applicationContext.SaveChanges();
+
+        }
+
+        public void RejectFriendship(string UserId, string UserFriendId)
+        {
+            var res = Find(UserId, UserFriendId);
+
+            if (res != null)
+            {
+                _applicationContext.Friends.Remove(res);
+                _applicationContext.SaveChanges();
+            }
+            else return;
+
+            //TODO : USE TRIGGER INSTEAD OF THIS
+            RemoveFriend(UserFriendId, UserId);
+        }
+
+        public void RequestFriendship(string UserId, string UserFriendId)
+        {
+            var res = Find(UserId, UserFriendId);
+            if (res == null)
+            {
+                _applicationContext.Friends.Add(new Friend
+                {
+                    UserId = UserId,
+                    FriendId = UserFriendId,
+                    Status = FriendStatus.WAITING
+                });
+                _applicationContext.SaveChanges();
+            }
+            else return;
+
+            //TODO : USE TRIGGER INSTEAD OF THIS
+            RequestFriendship(UserFriendId, UserId);
         }
     }
 }

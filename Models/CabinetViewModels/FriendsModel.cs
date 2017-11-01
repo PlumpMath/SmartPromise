@@ -5,9 +5,11 @@ namespace Promises.Models.CabinetViewModels
 {
     public class FriendsModel
     {
-        public IEnumerable<User> Friends { get; set; }
-
         [Required]
-        public IEnumerable<User> Others { get; set; } 
+        public IEnumerable<User> Friends { get; set; }
+        [Required]
+        public IEnumerable<User> Others { get; set; }
+        [Required]
+        public IEnumerable<User> Pending { get; set; }
     }
 }
