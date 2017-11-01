@@ -1,7 +1,7 @@
 ﻿(function () {
     console.log("______________friends.js______________")
 
-    const STATUS = {
+    const TYPE = {
         FRIEND: "F",
         PENDING: "P",
         OTHER: "O"
@@ -21,7 +21,7 @@
     const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
     const METHOD_ADD_FRIEND = '/AddFriend/'
     const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
-    const CONTROLLER_NAME_CABINET = '/Cabinet'
+    const CONTROLLER_NAME = '/api/Friends'
 
     const TITLE_FRIENDS = "Friends"
     const TITLE_OTHERS = "Others"
@@ -80,7 +80,7 @@
 
 
             function AddFriend(param) {
-                $.get(CONTROLLER_NAME_CABINET + METHOD_ADD_FRIEND + param,
+                $.get(CONTROLLER_NAME + METHOD_ADD_FRIEND + param,
                     () => {
                         ClearLists()
                         StartLoading()
@@ -90,7 +90,7 @@
             }
 
             function RemoveFriend(param) {
-                $.get(CONTROLLER_NAME_CABINET + METHOD_REMOVE_FRIEND + param,
+                $.get(CONTROLLER_NAME + METHOD_REMOVE_FRIEND + param,
                     () => {
                         ClearLists()
                         StartLoading()
@@ -99,9 +99,9 @@
                     .fail(err => console.log(err))
             }
 
-            function AddFriendHandler(user, status) {
+            function AddFriendHandler(user, type) {
                 $(UserListManager(LIST_ID).GetIconFriendId(user))
-                    .click(() => (status === STATUS.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
+                    .click(() => (type === TYPE.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
             }
 
             function HaveChatWithUser(userId, userEmail) {
@@ -119,8 +119,8 @@
                 return user.id.toString()
             }
 
-            function AddItem(user, status) {
-                let friend_option = (status === STATUS.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
+            function AddItem(user, type) {
+                let friend_option = (type === TYPE.FRIEND) ? REMOVE_FRIEND_OPTION : ADD_FRIEND_OPTION
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
                 let element = `
@@ -155,7 +155,7 @@
                     `
 
                 $(LIST_ID).append(element)
-                AddFriendHandler(user, status)
+                AddFriendHandler(user, type)
                 AddChatHandler(user)
             }
             
@@ -175,9 +175,9 @@
                 Clear: () => $(LIST_ID).empty()
                 ,
 
-                FillList: (list, status) => {
+                FillList: (list, type) => {
                     UserListManager(LIST_ID).Clear()
-                    list.forEach(u => AddItem(u, status))
+                    list.forEach(u => AddItem(u, type))
                 }
             }
         })(list_id)
@@ -202,7 +202,7 @@
     }
     
     function FindUsers(param) {
-        $.get(CONTROLLER_NAME_CABINET + METHOD_FIND_BY_EMAIL + param,
+        $.get(CONTROLLER_NAME + METHOD_FIND_BY_EMAIL + param,
             model => {
                 let Find = ConstructFindFunction(model.friends, model.others, model.pending)
                 StopLoading()
@@ -217,12 +217,12 @@
                     let friends = filtered.friends
                     let pending = filtered.pending
 
-                    UserListManager(OTHERS_LIST_ID).FillList(others, STATUS.OTHER)
-                    UserListManager(FRIENDS_LIST_ID).FillList(friends, STATUS.FRIEND)
+                    UserListManager(OTHERS_LIST_ID).FillList(others, TYPE.OTHER)
+                    UserListManager(FRIENDS_LIST_ID).FillList(friends, TYPE.FRIEND)
                 })
                 
-                UserListManager(OTHERS_LIST_ID).FillList(model.others, STATUS.OTHER)
-                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, STATUS.FRIEND)
+                UserListManager(OTHERS_LIST_ID).FillList(model.others, TYPE.OTHER)
+                UserListManager(FRIENDS_LIST_ID).FillList(model.friends, TYPE.FRIEND)
             })
             .fail(err => console.log(err))
     }
