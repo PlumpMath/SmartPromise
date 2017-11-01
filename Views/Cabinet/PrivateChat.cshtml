@@ -13,6 +13,10 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/privateChat.css">
 
+@{ 
+    var contactStyle = Model.Friend.IsOnline ? "contact-online" : "contact-offline";
+}
+
 <div class="container-fluid">
     <div class="panel panel-default">
         <div class="panel-heading text-center">
@@ -21,7 +25,10 @@
                     <div class="icon"><span class="glyphicon glyphicon-chevron-left"></span></div>
                 </div>
                 <div class="col-md-offset-3 col-md-2">
-                    <div id="contact"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+                    <div id=@contactStyle>
+                        <img src="@Url.Action("GetAvatar", "Cabinet", new { userId = @Model.Friend.Id})" 
+                            height="33" width="33" class="img-circle" alt="Avatar" />
+                    </div>
                     @Model.Friend.Email
                 </div>
             </div>
