@@ -66,17 +66,21 @@
         return ((list_id, type) => {
             const LIST_ID = list_id
             const ITEM_TYPE = type
-            const ITEM_PREFIX = 'IT'
-            const ICON_FRIEND_PREFIX = 'IF'
-            const ICON_PREFIX_ENVELOPE = 'IE'
-            const LED_PREFIX = 'L'
+            const ITEM_PREFIX = 'IP'
+            const USER_ACTION_PREFIX = 'UAP'
+            const MESSAGE_PREFIX = 'MP'
+            const ONLINE_INDICATOR_PREFIX = 'OIP'
+
             const STYLE_ICON_MINUS = "glyphicon glyphicon-minus"
             const STYLE_ICON_PLUS = "glyphicon glyphicon-plus"
             const STYLE_ICON_ENVELOPE = "glyphicon glyphicon-envelope"
+
             const STYLE_ICON_ONLINE = "led-online"
             const STYLE_ICON_OFFLINE = "led-offline"
+
             const REMOVE_FRIEND_OPTION = "Remove friend"
             const ADD_FRIEND_OPTION = "Add friend"
+            const REQUEST_FRIEND_OPTION = "Request friend"
 
 
             function AddFriend(param) {
@@ -100,7 +104,7 @@
             }
 
             function AddFriendHandler(user) {
-                $(UserListManager(LIST_ID, ITEM_TYPE).GetIconFriendId(user))
+                $(UserListManager(LIST_ID, ITEM_TYPE).GetUserActionId(user))
                     .click(() => (ITEM_TYPE === TYPE.FRIEND) ? RemoveFriend(user.id) : AddFriend(user.id))
             }
 
@@ -110,7 +114,7 @@
             }
 
             function AddChatHandler(user) {
-                $(UserListManager(LIST_ID, ITEM_TYPE).GetIconEnvelopeId(user))
+                $(UserListManager(LIST_ID, ITEM_TYPE).GetMessageButtonId(user))
                     .click(() => HaveChatWithUser(user.id, user.email))
             }
             
@@ -135,7 +139,7 @@
                                 </div>
                     
                                 <div class="col-sm-6 col-md-8 friend-element">
-                                    <div id="` + LED_PREFIX + id + `" class="top-right-corner ` + style_presense +`"></div>
+                                    <div id="` + ONLINE_INDICATOR_PREFIX + id + `" class="top-right-corner ` + style_presense +`"></div>
                                     <h4>` + user.email + `</h4>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-primary">Action</button>
@@ -143,8 +147,8 @@
                                             <span class="caret"></span><span class="sr-only">Social</span>
                                         </button>
                                         <ul class="dropdown-menu" role="menu">
-                                            <li><a id="` + ICON_PREFIX_ENVELOPE + id + `">Message</a></li>
-                                            <li><a id="` + ICON_FRIEND_PREFIX + id + `" >` + friend_option + `</a></li>
+                                            <li><a id="` + MESSAGE_PREFIX + id + `">Message</a></li>
+                                            <li><a id="` + USER_ACTION_PREFIX + id + `" >` + friend_option + `</a></li>
                                             <li class="divider"></li>
                                             <li><a href="#">Profile</a></li>
                                         </ul>
@@ -161,13 +165,13 @@
             }
             
             return {
-                GetIconFriendId: user => '#' + ICON_FRIEND_PREFIX + GetId(user)
+                GetUserActionId: user => '#' + USER_ACTION_PREFIX + GetId(user)
                 ,
 
-                GetLedId: user => '#' + LED_PREFIX + GetId(user)
+                GetOnlineIndicatorPrefix: user => '#' + ONLINE_INDICATOR_PREFIX + GetId(user)
                 ,
 
-                GetIconEnvelopeId: user => '#' + ICON_PREFIX_ENVELOPE + GetId(user)
+                GetMessageButtonId: user => '#' + MESSAGE_PREFIX + GetId(user)
                 ,
 
                 GetItemId: user => '#' + ITEM_PREFIX + GetId(user)
