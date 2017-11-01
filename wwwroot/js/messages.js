@@ -1,6 +1,6 @@
 ﻿(function () {
     console.log("______________messages.js______________")
-    const CONTROLLER_NAME_CABINET = '/Cabinet'
+    const CONTROLLER_NAME = '/api/Messages'
     const METHOD_GET_MY_USER_INFO = '/GetOwner/'
     const METHOD_GET_LAST_MESSAGES = '/GetLastMessagesHistory/'
 
@@ -120,7 +120,7 @@
         })()
 
         function GetLastMessagesHistory() {
-            $.get(CONTROLLER_NAME_CABINET + METHOD_GET_LAST_MESSAGES,
+            $.get(CONTROLLER_NAME + METHOD_GET_LAST_MESSAGES,
                 res => {
                     Loader.Hide()
                     res.forEach(m => MessagesListManager.AddItem(m))
@@ -137,7 +137,7 @@
     }
 
 
-    $.get(CONTROLLER_NAME_CABINET + METHOD_GET_MY_USER_INFO, res => main(res))
+    $.get(CONTROLLER_NAME + METHOD_GET_MY_USER_INFO, res => main(res))
         .fail(err => console.log(err))
 })()
 

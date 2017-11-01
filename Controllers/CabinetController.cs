@@ -128,19 +128,7 @@ namespace Promises.Controllers
         {
             return View();
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetOwner()
-        {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            
-            return new OkObjectResult(new User
-            {
-                Email = user.Email,
-                Id = user.Id                
-            });
-        }
-
+        
         [HttpGet("{userId}")]
         public FileStreamResult GetAvatar(string userId)
         {
@@ -149,56 +137,12 @@ namespace Promises.Controllers
             return new FileStreamResult(stream, user.AvatarContentType);
         }
         
-        [HttpGet]
-        public IActionResult GetLastMessagesHistory()
-        {
-            var userId = _userManager.GetUserId(HttpContext.User);
-            var history = _messagesRepository.GetLastMessagesHistory(userId)
-                .OrderByDescending(m => m.ServerDateUtc);
-            
-            return new OkObjectResult(history);
-        }
-
         private async Task<bool> IsOnline(string userId)
         {
             var onlineUsers = await _userTracker.UsersOnline();
             return onlineUsers.FirstOrDefault(u => u.Owner.Id == userId) != null;
         }
         
-        [HttpGet]
-        public IActionResult GetLastMessageInHistory(string personId)
-        {
-            var userId = _userManager.GetUserId(HttpContext.User);
-            var message = _messagesRepository.FindLastMessage(userId, personId);
-
-            return new OkObjectResult(message);
-        }
-
-        [HttpGet]
-        public IActionResult GetMessageHistory(string personId)
-        {
-            var userId = _userManager.GetUserId(HttpContext.User);
-            var history = _messagesRepository.GetMessageHistory(userId, personId, MESSAGES_AMOUNT.ALL);
-
-            return new OkObjectResult(history);
-        }
-        
-        private bool IsThereUser(string id)
-        {
-            return default(ApplicationUser) != _userManager.Users.FirstOrDefault(u => u.Id == id);
-        }
-
-        [HttpGet("{FriendUserId}")]
-        public IActionResult RemoveFriend(string FriendUserId)
-        {
-            if (!IsThereUser(FriendUserId))
-                return NotFound();
-
-            var userId = _userManager.GetUserId(HttpContext.User);
-            _friendsRepository.RemoveFriend(userId, FriendUserId);
-            return Ok();
-        }
-
         public async Task<IActionResult> ManagePromises()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
