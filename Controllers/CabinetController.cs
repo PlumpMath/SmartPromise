@@ -26,16 +26,12 @@ namespace Promises.Controllers
             
         public CabinetController(
           UserManager<ApplicationUser> userManager,
-          SignInManager<ApplicationUser> signInManager,
           IPromiseRepository promiseRepository,
-          IFriendsRepository friendsRepository,
           IMessagesRepository messagesRepository,
           IUserTracker<Notification> userTracker)
         {
             _promiseRepository = promiseRepository;
             _userManager = userManager;
-            _signInManager = signInManager;
-            _friendsRepository = friendsRepository;
             _messagesRepository = messagesRepository;
             _userTracker = userTracker;
         }
@@ -123,11 +119,7 @@ namespace Promises.Controllers
         {
             return View();
         }
-
-        public IActionResult GlobalChat()
-        {
-            return View();
-        }
+        
         
         [HttpGet("{userId}")]
         public FileStreamResult GetAvatar(string userId)
