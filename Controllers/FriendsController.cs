@@ -119,10 +119,18 @@ namespace Promises.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPendingFriends()
+        public async Task<IActionResult> GetPendingFriends()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
-            var result = _friendsRepository.GetPendingFriends(userId);
+            var ids = _friendsRepository.GetPendingFriends(userId).ToList();
+
+            IList<User> result = new List <User>{ };
+
+            foreach (var id in  ids)
+            {
+                var email = (await _userManager.FindByIdAsync(id)).Email;
+                result.Add(new Models.User { Id = id, Email = email });
+            }
             return new OkObjectResult(result);
         }
 
