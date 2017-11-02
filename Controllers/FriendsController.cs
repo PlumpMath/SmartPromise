@@ -106,7 +106,18 @@ namespace Promises.Controllers
             _friendsRepository.AcceptFriendship(userId, friendUserId);
             return Ok();
         }
-        
+
+        [HttpGet("{friendUserId}")]
+        public IActionResult RemoveFriend(string friendUserId)
+        {
+            if (!IsThereUser(friendUserId))
+                return NotFound();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            _friendsRepository.RemoveFriend(userId, friendUserId);
+            return Ok();
+        }
+
         [HttpGet("{friendUserId}")]
         public IActionResult RejectFriendship(string friendUserId)
         {

@@ -20,7 +20,7 @@
     const PENDING_LABEL_ID = '#_pending_label_id'
 
     const METHOD_REQUEST_FRIENDSHIP = '/RequestFriendship/'
-    const METHOD_REJECT_FRIENDSHIP = '/RejectFriendship/'
+    const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
     const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
     const CONTROLLER_NAME = '/api/Friends'
 
@@ -96,7 +96,7 @@
             }
 
             function RejectFriendship(param) {
-                $.get(CONTROLLER_NAME + METHOD_REJECT_FRIENDSHIP + param,
+                $.get(CONTROLLER_NAME + METHOD_REMOVE_FRIEND + param,
                     () => {
                         ClearLists()
                         StartLoading()
