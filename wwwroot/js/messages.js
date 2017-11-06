@@ -85,7 +85,8 @@
                     let element = `
                     <a id="` + ITEM_PREFIX + id + `" class="media message list-group-item clearfix ">
                         <span class="pull-left">
-                            <img id="` + ITEM_PREFIX + id + `" src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", GetFriendId(mes)) +
+                            <img id="` + ITEM_PREFIX + id + `" src="` +
+                                HELPERS.GetAvatarImageUrl(70, 70, 100, GetFriendId(mes)) +
                         `" id="` + IMAGE_PREFIX_RECEIVER + id + `" 
                                 alt="User Avatar" class="img-responsive img-rounded" width="70" height="70"/>                        
                         </span>

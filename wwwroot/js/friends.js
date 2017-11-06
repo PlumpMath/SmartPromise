@@ -158,7 +158,7 @@
                             <div class="row">
                                 <div class="col-sm-6 col-md-4">
                                     <img width="100" height="100" alt="" src="` +
-                                        _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", user.id) +
+                                        HELPERS.GetAvatarImageUrl(100, 100, 100, user.id) +
                                     `" class="img-rounded img-responsive" />
                                 </div>
                     

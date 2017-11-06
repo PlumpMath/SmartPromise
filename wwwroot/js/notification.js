@@ -1,6 +1,6 @@
 ﻿
 (function () {
-
+    
     console.log("______________notification.js______________")
     
     const ADD_NOTIFICATION_BUTTON_ID = "#_add_notification_button"
@@ -87,7 +87,7 @@
                             <div class="media">
                                 <div class="media-left">
                                     <div class="media-object">
-                                        <img src="` + _RAZOR_URL_CABINET_GET_AVATAR.replace("__id__", user.id) +
+                                        <img src="` + HELPERS.GetAvatarImageUrl(50, 50, 70, user.id) +
                                             `" height="50" width="50" class="img-circle" alt="Name">
                                     </div>
                                 </div>

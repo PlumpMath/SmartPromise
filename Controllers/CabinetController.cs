@@ -57,31 +57,14 @@ namespace Promises.Controllers
             return _messagesRepository.GetUnreadAmount(user.Id);
         }
 
-        public static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
-            }
-        }
-
         [HttpGet("{width}x{height}/{quality?}/{userId?}")]
-        public async Task<FileStreamResult> GetAvatarImageResized(int width, int height, 
+        public async Task<FileStreamResult> GetAvatarImage(int width, int height, 
             int quality = MAX_IMAGE_QUALITY, string userId = OWNER_DEFAULT)
         {
-            ApplicationUser user = null;
             Stream output = new MemoryStream();
-
-            if (userId != null)
-                user = await Owner();
-            else
-                user = await _userManager.GetUserAsync(User);
+            
+            var user = (userId == OWNER_DEFAULT) ? 
+                await Owner() : _userManager.Users.FirstOrDefault(u => u.Id == userId);
             
             using (var original = SKBitmap.Decode(user.Avatar))
             {
@@ -99,14 +82,6 @@ namespace Promises.Controllers
                     }
                 }
             }
-        }
-
-        [HttpGet]
-        public async Task<FileStreamResult> GetAvatarImage()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            Stream stream = new MemoryStream(user.Avatar);
-            return new FileStreamResult(stream, user.AvatarContentType);
         }
 
         [HttpGet("{friendId}/{friendEmail}")]
@@ -166,15 +141,6 @@ namespace Promises.Controllers
         public IActionResult CreatePromise()
         {
             return View();
-        }
-        
-        
-        [HttpGet("{userId}")]
-        public FileStreamResult GetAvatar(string userId)
-        {
-            var user = _userManager.Users.FirstOrDefault(u => u.Id == userId);
-            Stream stream = new MemoryStream(user.Avatar);
-            return new FileStreamResult(stream, user.AvatarContentType);
         }
         
         private async Task<bool> IsOnline(string userId)
