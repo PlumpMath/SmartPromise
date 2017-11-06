@@ -159,7 +159,7 @@
                                 <div class="col-sm-6 col-md-4">
                                     <img width="100" height="100" alt="" src="` +
                                         HELPERS.GetAvatarImageUrl(100, 100, 100, user.id) +
-                                    `" class="img-rounded img-responsive" />
+                                    `" class="img-circle img-responsive" />
                                 </div>
                     
                                 <div class="col-sm-6 col-md-8 friend-element">

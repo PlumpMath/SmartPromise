@@ -87,7 +87,7 @@
                             <div class="media">
                                 <div class="media-left">
                                     <div class="media-object">
-                                        <img src="` + HELPERS.GetAvatarImageUrl(50, 50, 70, user.id) +
+                                        <img src="` + HELPERS.GetAvatarImageUrl(50, 50, 100, user.id) +
                                             `" height="50" width="50" class="img-circle" alt="Name">
                                     </div>
                                 </div>

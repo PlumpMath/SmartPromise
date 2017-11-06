@@ -88,7 +88,7 @@
                             <img id="` + ITEM_PREFIX + id + `" src="` +
                                 HELPERS.GetAvatarImageUrl(70, 70, 100, GetFriendId(mes)) +
                         `" id="` + IMAGE_PREFIX_RECEIVER + id + `" 
-                                alt="User Avatar" class="img-responsive img-rounded" width="70" height="70"/>                        
+                                alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>                        
                         </span>
                         <div>
                             <small class="pull-right time">` + ParseDate(mes.userDateLocal) + `</small>
