@@ -10,6 +10,7 @@ using Promises.Abstract;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using Promises.Hubs;
+using SkiaSharp;
 
 namespace Promises.Controllers
 {
@@ -17,13 +18,16 @@ namespace Promises.Controllers
     [Route("[controller]/[action]")]
     public class CabinetController : Controller
     {
+        private const int MIN_IMAGE_QUALITY = 0;
+        private const int MAX_IMAGE_QUALITY = 100;
+        private const string OWNER_DEFAULT = null;
+
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IPromiseRepository _promiseRepository;
-        private readonly IFriendsRepository _friendsRepository;
         private readonly IMessagesRepository _messagesRepository;
         private readonly IUserTracker<Notification> _userTracker;
-            
+        private async Task<ApplicationUser> Owner() => await _userManager.GetUserAsync(User);
+
         public CabinetController(
           UserManager<ApplicationUser> userManager,
           IPromiseRepository promiseRepository,
@@ -49,8 +53,52 @@ namespace Promises.Controllers
         [HttpGet]
         public async Task<int> GetUnreadAmount()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await Owner();
             return _messagesRepository.GetUnreadAmount(user.Id);
+        }
+
+        public static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
+        }
+
+        [HttpGet("{width}x{height}/{quality?}/{userId?}")]
+        public async Task<FileStreamResult> GetAvatarImageResized(int width, int height, 
+            int quality = MAX_IMAGE_QUALITY, string userId = OWNER_DEFAULT)
+        {
+            ApplicationUser user = null;
+            Stream output = new MemoryStream();
+
+            if (userId != null)
+                user = await Owner();
+            else
+                user = await _userManager.GetUserAsync(User);
+            
+            using (var original = SKBitmap.Decode(user.Avatar))
+            {
+                using (var resized = original.Resize(new SKImageInfo(width, height), 
+                    SKBitmapResizeMethod.Lanczos3))
+                {
+                    if (resized == null)
+                        return null;
+
+                    using (var image = SKImage.FromBitmap(resized))
+                    {
+                        image.Encode(SKEncodedImageFormat.Jpeg, quality).SaveTo(output);
+                        output.Seek(0, SeekOrigin.Begin);
+                        return new FileStreamResult(output, user.AvatarContentType);
+                    }
+                }
+            }
         }
 
         [HttpGet]
@@ -64,7 +112,7 @@ namespace Promises.Controllers
         [HttpGet("{friendId}/{friendEmail}")]
         public async Task<IActionResult> PrivateChat(string friendId, string friendEmail)
         {
-            var owner = await _userManager.GetUserAsync(HttpContext.User);
+            var owner = await Owner();
             var friend = _userManager.Users.FirstOrDefault(u => u.Id == friendId);
             var ownerId = owner.Id;
 
@@ -99,7 +147,7 @@ namespace Promises.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var user = await _userManager.GetUserAsync(HttpContext.User);
+                    var user = await Owner();
                     var userId = user.Id;
                     _promiseRepository.Add(new Promise { Content = promise.Content, UserId = userId });
                     return RedirectToAction(nameof(Index));
@@ -137,7 +185,7 @@ namespace Promises.Controllers
         
         public async Task<IActionResult> ManagePromises()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await Owner();
             var userId = user.Id;
             var promises = _promiseRepository.Promises.Where(p => p.UserId == userId);
             
