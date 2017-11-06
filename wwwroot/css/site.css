@@ -3,6 +3,17 @@
     padding-bottom: 20px;
 }
 
+.bg {
+    /* The image used */
+    background-image: url();
+    /* Full height */
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
