@@ -1,21 +1,15 @@
-﻿body {
-    background-color: #ffffff;
-    text-align: center;
-    color: #FFF;
-    padding-top: 20%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+﻿
 
 .shadowed {
     box-shadow: 3px 3px 200px black;
     background-color: #ffffff;
 }
 
-* {
+.typewrite {
     color: #2e2c2C;
     text-decoration: none;
+    text-align: center;
+    align-content: center;
 }
 
 .typewrite > .wrap {
