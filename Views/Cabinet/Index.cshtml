@@ -44,7 +44,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="_create_promise_button" type="button" class="btn btn-primary">Submit</button>
+                <button id="_create_promise_button" type="button" data-dismiss="modal" class="btn btn-primary">Submit</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -59,9 +59,9 @@
                 <h1 class="display-3">Hello, world!</h1>
             </div>
             <hr />
-            <div class="rating-block">
+            <div class="promise-stats-block">
                 <h4>Completed promises rating</h4>
-                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                <h2 class="bold padding-bottom-7" id="_completed_rating_id">0 <small>/ 5</small></h2>
                 <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
                     <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                 </button>

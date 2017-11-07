@@ -1,7 +1,7 @@
 ﻿body {
-    background-color: #A2BAE7;
+    background-color: #ffffff;
     text-align: center;
-    color: #2e2c2c;
+    color: #FFF;
     padding-top: 20%;
     background-position: center;
     background-repeat: no-repeat;
@@ -10,11 +10,11 @@
 
 .shadowed {
     box-shadow: 3px 3px 200px black;
-    background-color: #F8F2D8;
+    background-color: #ffffff;
 }
 
 * {
-    color: #2e2c2c;
+    color: #2e2c2C;
     text-decoration: none;
 }
 

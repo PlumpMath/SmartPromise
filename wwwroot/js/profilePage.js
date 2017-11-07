@@ -5,10 +5,9 @@
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
     
-
     var PromisesListManager = (function () {
         const PROMISES_LIST_ID = "#_promises_id"
-        
+        const COMPLETED_RATING_ID = "#_completed_rating_id"
         let promises = 0
         let promises_completed = 0
 
@@ -31,27 +30,41 @@
             return res
         }
 
+        function UpdateStatistics() {
+            let rate = completed === 0? 0 : promises / completed
+            $(COMPLETED_RATING_ID).html(rate)
+        }
+
         return {
             AddItem: promise => {
                 let element = `
-                        <div class="review-block">
+                        <div class="promise-block">
                             <div class="row">
                             <!--
                             <div class="col-sm-3">
                                 <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                                <div class="review-block-name"><a href="#">nktailor</a></div>
-                                <div class="review-block-date">January 29, 2016<br />1 day ago</div>
+                                <div class="promise-block-name"><a href="#">nktailor</a></div>
+                                <div class="promise-block-date">January 29, 2016<br />1 day ago</div>
                             </div>
                             -->
-                            <div class="col-sm-12">
-                                <div class="review-block-rate">` + GetComplicityBlock(promise.complicity) + ` </div>
-                                <div class="review-block-title">` + promise.title + `</div>
-                                <div class="review-block-description">` + promise.content +`</div>
+                            <div class="col-sm-9">
+                                <div class="promise-block-rate">` + GetComplicityBlock(promise.complicity) + ` </div>
+                                <div class="promise-block-title">` + promise.title + `</div>
+                                <div class="promise-block-description">` + promise.content +`</div>                                
+                            </div>
+                            <div class="col-sm-3">
+                                <span class="pull-right">
+                                    <button type="button" class="btn btn-success">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </div>`
 
                 $(PROMISES_LIST_ID).append(element)
+                ++promises
+                UpdateStatistics()
             }
         }
     })()

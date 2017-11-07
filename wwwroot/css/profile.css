@@ -4,7 +4,7 @@
     color: #FFF;
 }
 
-.rating-block {
+.promise-stats-block {
     background-color: #FAFAFA;
     border: 1px solid #EFEFEF;
     padding: 15px 15px 20px 15px;
@@ -19,7 +19,8 @@
     padding-bottom: 7px;
 }
 
-.review-block {
+.promise-block {
+    min-height: 100px;
     background-color: #FAFAFA;
     border: 1px solid #EFEFEF;
     padding: 15px;
@@ -27,26 +28,30 @@
     margin-bottom: 15px;
 }
 
-.review-block-name {
+.promise-block-name {
     font-size: 12px;
     margin: 10px 0;
 }
 
-.review-block-date {
+.promise-block-date {
     font-size: 12px;
 }
 
-.review-block-rate {
+.promise-block-rate {
     font-size: 13px;
     margin-bottom: 15px;
 }
 
-.review-block-title {
+.promise-block-title {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 10px;
 }
 
-.review-block-description {
+.promise-block-completed {
+    background-color: #7fc168;
+}
+
+.promise-block-description {
     font-size: 13px;
 }
