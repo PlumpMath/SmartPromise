@@ -1,5 +1,6 @@
-﻿console.log("______________helpers.js______________")
+﻿
 var HELPERS = (function () {
+    console.log("______________helpers.js______________")
     return {
         GetAvatarImageUrl: (width, height, quality, userId) =>
             _RAZOR_URL_CABINET_GET_AVATAR

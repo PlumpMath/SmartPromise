@@ -1,4 +1,4 @@
-﻿(function () {
+﻿var Friends = function () {
     console.log("______________friends.js______________")
 
     const TYPE = {
@@ -263,4 +263,4 @@
     //requests for all records in database
     FindUsers("")
 
-})()
+}

@@ -55,7 +55,7 @@
 .message {
     font-size: 1.2em;
     width: auto;
-    max-width: 300px;
+    min-width: 300px;
     border-radius: 15px;
     padding: 10px;
     margin-bottom: 10px;

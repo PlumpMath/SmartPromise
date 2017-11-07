@@ -1,5 +1,5 @@
 ﻿
-(function () {
+var Notification = function () {
     
     console.log("______________notification.js______________")
     
@@ -143,4 +143,4 @@
         unread_messages_count = 0
         UpdateNavigator(unread_messages_count.toString())
     })
-})()
+}

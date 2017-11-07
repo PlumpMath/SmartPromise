@@ -37,8 +37,9 @@
         let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
         _RAZOR_NOTIFICATION_CONNECTION.start()
     </script>
-    <script type="text/javascript" src="~/js/helpers.js"></script>
-    <script type="text/javascript" src="~/js/notification.js"></script>
+    <script type="text/javascript">
+        Notification()
+    </script>
 
     
     @if (ViewData["ActivePage"] != null)
@@ -46,16 +47,24 @@
         switch (ViewData["ActivePage"].ToString())
         {
             case @CabinetNavPages.Friends:
-                <script type="text/javascript" src="~/js/friends.js"></script>
+                <script type="text/javascript">
+                    Friends()
+                </script>
                 break;
             case @CabinetNavPages.PrivateChat:
-                <script type="text/javascript" src="~/js/chat.js"></script>
+                <script type="text/javascript">
+                    Chat()
+                </script>
                 break;
             case @CabinetNavPages.Messages:
-                <script type="text/javascript" src="~/js/messages.js"></script>
+                <script type="text/javascript">
+                    Messages()
+                </script>
                 break;
-            case CabinetNavPages.Index: 
-                <script type="text/javascript" src="~/js/profilePage.js"></script>
+            case CabinetNavPages.Index:
+                <script type="text/javascript">
+                    ProfilePage()
+                </script>
                 break;
         }
     }

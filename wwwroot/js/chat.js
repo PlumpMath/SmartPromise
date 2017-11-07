@@ -1,4 +1,4 @@
-﻿(function () {
+﻿var Chat = function () {
     console.log("______________privateChat.js______________")
 
     const FRIEND = _RAZOR_PRIVATE_CHAT_VIEW_MODEL.friend
@@ -111,4 +111,4 @@
             })
         })
     ).catch(err => console.log(err))
-})()
+}
