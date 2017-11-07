@@ -292,6 +292,7 @@ wwwroot/lib/*
 !wwwroot/lib/signalr-client
 wwwroot/css/out/*
 wwwroot/js/out/*
+Node/out/*
 
 migrations
 #*.db

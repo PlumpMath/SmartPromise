@@ -1,4 +1,4 @@
-﻿/// <binding BeforeBuild='build' Clean='clean' />
+﻿/// <binding BeforeBuild='minify, build' Clean='clean' />
 var gulp = require('gulp'),
     jsminify = require("gulp-minify")
     cssmin = require('gulp-clean-css')
@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     concatCss = require('gulp-concat-css')
     gulpSequence = require('gulp-sequence')
     clean = require('gulp-clean')
+    babel = require('gulp-babel');
 
 gulp.task("min:js", function () {
     return gulp.src(["./wwwroot/js/*.js", "!" + "./wwwroot/js/*.min.js"], { base: "." })
@@ -39,4 +40,16 @@ gulp.task('clean', function () {
         .pipe(clean());
 });
 
-gulp.task('build', ['min:css', 'min:js'])
+gulp.task('minify', ['min:css', 'min:js'])
+
+gulp.task('build', () =>
+    gulp.src('./Node/blockchain.js')
+        .pipe(babel({
+            presets: ["es2015"]
+        }))
+        .pipe(rename(function (opt) {
+            opt.basename = "bundle"
+            return opt
+        }))
+        .pipe(gulp.dest('./Node/out'))
+);

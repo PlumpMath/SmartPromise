@@ -7,6 +7,7 @@ using Promises.Extensions;
 
 namespace Promises.Controllers
 {
+    
     [AllowAnonymous]
     public class HomeController : Controller
     {
@@ -43,7 +44,7 @@ namespace Promises.Controllers
 
             return View();
         }
-
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

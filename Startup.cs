@@ -37,7 +37,9 @@ namespace Promises
             services.AddTransient<IPromiseRepository, EFPromiseRepository>();
             services.AddTransient<IFriendsRepository, EFFriendsRepository>();
             services.AddTransient<IMessagesRepository, EFMessagesRepository>();
-            
+            services.AddTransient<IBlockchain, NeoBlockchain>();
+
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserIdentityDbContext>()
                 .AddDefaultTokenProviders();
@@ -51,14 +53,14 @@ namespace Promises
             services.AddSingleton(typeof(INotificator<Chat, IMessagesRepository>), typeof(NotificatorChatMessages));
             services.AddSingleton(typeof(INotificator<Notification, IMessagesRepository>), typeof(NotificatorNotificationMessages));
             services.AddSingleton(typeof(IUserTracker<>), typeof(InMemoryUserTracker<>));
-
+            
             var physicalProvider = HostingEnvironment.ContentRootFileProvider;
             services.AddSingleton<IFileProvider>(physicalProvider);
             //services.AddScoped<Chat>(p => new Chat(p.GetRequiredService<InMemoryUserTracker<Chat>>()));
 
             services.AddSignalR();
-
             services.AddMvc();
+            services.AddNodeServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

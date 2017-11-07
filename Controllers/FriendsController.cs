@@ -10,6 +10,7 @@ using Promises.Abstract;
 using Promises.Models.CabinetViewModels;
 using Promises.Hubs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.NodeServices;
 
 namespace Promises.Controllers
 {
