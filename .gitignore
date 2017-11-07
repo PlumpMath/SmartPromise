@@ -290,6 +290,8 @@ __pycache__/
 #Custome ignores
 wwwroot/lib/*
 !wwwroot/lib/signalr-client
+wwwroot/css/out/*
+wwwroot/js/out/*
 
 migrations
 #*.db
