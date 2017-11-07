@@ -36,7 +36,7 @@ gulp.task("min:bundlecss", function () {
 gulp.task('min:css', gulpSequence('concat:css', 'min:bundlecss'))
 
 gulp.task('clean', function () {
-    return gulp.src(['./wwwroot/css/out', "./wwwroot/js/out"], { read: false })
+    return gulp.src(['./wwwroot/css/out', "./wwwroot/js/out", "./Node/out/bundle.js"], { read: false })
         .pipe(clean());
 });
 
