@@ -4,6 +4,32 @@
     ViewData.AddActivePage(CabinetNavPages.Index);
 }
 
+<div class="modal fade" id="_complete_promise" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Complete promise</h4>
+            </div>
+            <div class="container-fluid">
+                <form>
+                    <div class="form-group">
+                        <label>Proof</label>
+                        <input class="form-control" id="_promise_proof" placeholder="Enter a proof">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="_complete_promise_btn" type="button" data-dismiss="modal" class="btn btn-primary">Complete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <div class="modal fade" id="_fill_promise_modal" role="dialog">
     <div class="modal-dialog">
 
@@ -17,11 +43,11 @@
                 <form>
                     <div class="form-group">
                         <label>Title</label>
-                        <input class="form-control" id="_promise_title" aria-describedby="emailHelp" placeholder="Enter a title of the promise">
+                        <input class="form-control" id="_promise_title" placeholder="Enter a title of the promise">
                     </div>
                     <div class="form-group">
                         <label>Content</label>
-                        <input class="form-control" id="_promise_content" aria-describedby="emailHelp" placeholder="What do you promise to do">
+                        <input class="form-control" id="_promise_content" placeholder="What do you promise to do">
                     </div>
                     <div class="form-group">
                         <label>Complicity</label>
@@ -42,7 +68,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="_create_promise_button" type="button" data-dismiss="modal" class="btn btn-primary">Submit</button>
+                <button id="_create_promise_button" type="button" class="btn btn-primary">Submit</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
