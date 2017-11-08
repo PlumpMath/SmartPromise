@@ -128,7 +128,7 @@ var Notification = function () {
     GetPendingFriends()
     
     function UpdateNavigator(new_amount) {
-        let text = "Messages " + "(" + new_amount + ")"
+        let text = (new_amount == 0)? "Messages" : ("Messages " + "(" + new_amount + ")")
         $(MESSAGES_NAV_ID).html(text)
         console.log(text)
     }

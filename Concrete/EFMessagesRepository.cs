@@ -125,7 +125,7 @@ namespace Promises.Concrete
             var messageHistory = GetMessageHistory(ownerId, friendId);
 
             //check if there are unread messages
-            if (messageHistory.FirstOrDefault(u => u.IsUnread == true) == null)
+            if (messageHistory.FirstOrDefault(u => u.SenderId == friendId && u.IsUnread == true) == null)
                 return;
 
             GetMessageHistory(ownerId, friendId).ToList().ForEach(m => {
