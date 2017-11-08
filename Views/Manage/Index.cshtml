@@ -7,12 +7,12 @@
 <h4>@ViewData["Title"]</h4>
 @Html.Partial("_StatusMessage", Model.StatusMessage)
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <form method="post" enctype="multipart/form-data" asp-controller="Manage"  asp-action="Index">
 
             <div class="form-group">
                 <label asp-for="Avatar"></label>
-                <img src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 300, quality = 100})" 
+                <img style="padding-bottom:10px;" src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 300, quality = 100})" 
                     class="img-responsive img-rounded" alt="Avatar" />
                 <input asp-for="Avatar" multiple/>
             </div>

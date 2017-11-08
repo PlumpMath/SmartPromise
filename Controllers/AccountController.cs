@@ -13,6 +13,7 @@ using Promises.Services;
 using Promises.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Promises.Abstract;
 
 namespace Promises.Controllers
 {
@@ -29,19 +30,22 @@ namespace Promises.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly IBlockchain _blockchain;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger,
-            IFileProvider fileProvider)
+            IFileProvider fileProvider,
+            IBlockchain blockchain)
         {
             _fileProvider = fileProvider;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _blockchain = blockchain;
         }
 
         [TempData]
@@ -228,8 +232,14 @@ namespace Promises.Controllers
             if (ModelState.IsValid)
             {
                 var promise = new Promise { Content = "Want to be break free!" };
-                
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                var account = await _blockchain.GenerateAccount();
+                var user = new ApplicationUser {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Wif =  account.wif,
+                    Address = account.address
+                };
 
                 IFileInfo fileInfo = _fileProvider.GetFileInfo(DEFAULT_AVATAR_IMAGE);
                 

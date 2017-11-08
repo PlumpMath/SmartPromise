@@ -58,9 +58,10 @@ module.exports = {
     ,
 
     GenerateAccount: (callback) => {
-        let newPrivateKey = generatePrivateKey();
-        let newWif = getWIFFromPrivateKey(newPrivateKey);
-        callback(null, getAccountFromWIFKey(newWif))
+        let newPrivateKey = generatePrivateKey()
+        let newWif = getWIFFromPrivateKey(newPrivateKey)
+        let account = getAccountFromWIFKey(newWif)
+        callback(null, { address: account.address, privateKey: account.privateKey, wif: newWif })
     }
     ,
 

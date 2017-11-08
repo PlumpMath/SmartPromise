@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Promises.Models
 {
+    //TODO restructure entire database
     public class User
     {
         [Required]

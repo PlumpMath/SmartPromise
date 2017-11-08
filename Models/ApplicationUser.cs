@@ -13,5 +13,7 @@ namespace Promises.Models
         //todo Make UserAvatarObject instead of this
         public byte[] Avatar { get; set; }
         public string AvatarContentType { get; set; }
+        public string Wif { get; set; }
+        public string Address { get; set; }
     }
 }

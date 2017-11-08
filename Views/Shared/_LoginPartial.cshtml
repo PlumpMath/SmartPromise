@@ -3,17 +3,37 @@
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IBlockchain BlockChain
 
 @if (SignInManager.IsSignedIn(User))
 {
+    var user = await UserManager.GetUserAsync(User);
+    var balances = await BlockChain.GetBalance(NETWORK_TYPE.TESTNET, user.Address);
+    
+    
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-            </li>
+                <button type="button" class="btn btn-link navbar-btn navbar-link"> NEO : @balances.NEO </button>
             <li>
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>
+            <li>
+                <button type="button" class="btn btn-link navbar-btn navbar-link"> GAS : @balances.GAS </button>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    Menu
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Profile</a></li>
+                    <li><a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Settings</a></li>
+                    <li><a data-toggle="modal" data-target="#_payment_details">Payment details</a></li>
+                    <li class="divider"></li>
+                    <li><button style="background-color:#ffffff; color:#808080" type="submit" class="btn btn-block">Log out</button></li>
+                </ul>
             </li>
+            
+            
             <li class="dropdown dropdown-notifications">
                 <a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
                     <span id="_gingle_id" data-count="0" class="glyphicon glyphicon-bell notification-icon"></span>
@@ -27,15 +47,15 @@
                         </div>-->
                         <h3 id="_noti_label_id" class="dropdown-toolbar-title">Notifications (0)</h3>
                     </div><!-- /dropdown-toolbar -->
-                    
+
 
                     <ul id="_notifications_list" class="dropdown-menu notifications"></ul>
 
-                <!--
-                    <div class="dropdown-footer text-center">
-                        <a href="#">View All</a>
+                    <!--
+                        <div class="dropdown-footer text-center">
+                            <a href="#">View All</a>
 
-                    </div> /dropdown-footer -->
+                        </div> /dropdown-footer -->
 
                 </div><!-- /dropdown-container -->
             </li><!-- /dropdown -->

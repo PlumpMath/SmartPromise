@@ -8,9 +8,7 @@ namespace Promises.Models
     public class Account
     {
         public string privateKey { get; set; }
-        public string publicKeyEncoded { get; set; }
-        public string publicKeyHash { get; set; }
-        public string programHash { get; set; }
         public string address { get; set; }
+        public string wif { get; set; }
     }
 }
