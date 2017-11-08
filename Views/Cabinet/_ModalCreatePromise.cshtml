@@ -1,0 +1,45 @@
+﻿<div class="modal fade" id="_fill_promise_modal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Creating promise</h4>
+            </div>
+            <div class="container-fluid">
+                <form>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input class="form-control" id="_promise_title" placeholder="Enter a title of the promise">
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <input class="form-control" id="_promise_content" placeholder="What do you promise to do">
+                    </div>
+                    <div class="form-group">
+                        <label>Complicity</label>
+                        <p />
+                        <div id="_complicity_control_id">
+                            @{
+                                for (int i = 1; i <= 5; ++i)
+                                {
+                                    var id = "_complicity_" + i.ToString() + "_id";
+                                    <button id="@id" type="button"
+                                            class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="_create_promise_button" type="button" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

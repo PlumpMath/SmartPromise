@@ -40,9 +40,17 @@ namespace Promises.Controllers
             _userTracker = userTracker;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Profile(string userId = OWNER_DEFAULT)
         {
-            return View();
+            var user = (userId == OWNER_DEFAULT) ?
+                await Owner() : _userManager.Users.FirstOrDefault(u => u.Id == userId);
+
+            var model = new ProfileViewModel
+            {
+                Email = user.Email,
+                Address = user.Address
+            };
+            return View(model);
         }
 
         public IActionResult Messages()
@@ -125,7 +133,7 @@ namespace Promises.Controllers
                     var user = await Owner();
                     var userId = user.Id;
                     _promiseRepository.Add(new Promise { Content = promise.Content, UserId = userId });
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Profile));
                 }
             }
             catch (DbUpdateException /* ex */)

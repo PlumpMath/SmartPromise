@@ -10,11 +10,13 @@
     }
 </style>
 
-
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-left">
         <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">
+            @await Html.PartialAsync("_YourProfile")
+            <hr />
             @await Html.PartialAsync("_CabinetNav")
+            <hr />
         </div>
         <div class="col-12 col-md-9">
             @RenderBody()
@@ -29,14 +31,13 @@
     <script type="text/javascript">
         //TODO rewrite
         $.get('@Url.Action("GetUnreadAmount", "Cabinet")', v => $("#_messages_nav_id").html("Messages " + (v == 0 ? "" : "(" + v + ")")))
-
         let _RAZOR_URL_CABINET_PRIVATE_CHAT = '@Url.Action("PrivateChat", "Cabinet", new { friendId = "__id__", friendEmail = "__email__" })'
-        let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatarImage", "Cabinet", new {
-                                            width ="__width__", height="__height__", quality="__quality__", userId = "__id__" })'
-
+        let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatarImage", "Cabinet", new { width ="__width__", height="__height__", quality="__quality__", userId = "__id__" })'
+        let _RAZOR_PROFILE_LINK = '@Url.Action("Profile", "Cabinet", new { userId = "__id__"})'
         let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
         _RAZOR_NOTIFICATION_CONNECTION.start()
     </script>
+
     <script type="text/javascript">
         Notification()
     </script>
@@ -61,7 +62,7 @@
                     Messages()
                 </script>
                 break;
-            case CabinetNavPages.Index:
+            case CabinetNavPages.Profile:
                 <script type="text/javascript">
                     ProfilePage()
                 </script>

@@ -1,0 +1,52 @@
+﻿@using Promises.Views.Cabinet
+@model ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+    ViewData.AddActivePage(CabinetNavPages.Profile);
+}
+
+@Html.Partial("_ModalCompletePromise")
+@Html.Partial("_ModalCreatePromise")
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+
+            <div class="jumbotron">
+                <h1 class="display-3">@Model.Email</h1>
+            </div>
+            
+            <hr />
+            <div class="promise-stats-block">
+                <h4>Completed promises rating</h4>
+                <h2 class="bold padding-bottom-7" id="_completed_rating_id">0 <small>/ 5</small></h2>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                </button>
+                <span class="pull-right">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#_fill_promise_modal">Post promise</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-7">
+            <hr/>
+            <div id="_promises_id"></div>
+        </div>
+    </div>
+
+</div>

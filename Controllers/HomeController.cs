@@ -23,7 +23,7 @@ namespace Promises.Controllers
         {
             if (_signInManager.IsSignedIn(this.User))
             {
-                return RedirectToAction(nameof(CabinetController.Index), typeof(CabinetController).UrlName());
+                return RedirectToAction(nameof(CabinetController.Profile), typeof(CabinetController).UrlName());
             }
             else
             {

@@ -152,14 +152,17 @@
             function AddItem(user) {
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
+                console.log(HELPERS.GetUserProfileHref(user.id))
                 let element = `
                     <div class="col-12">
                         <div class="well well-sm">
                             <div class="row">
                                 <div class="col-sm-6 col-md-4">
-                                    <img width="100" height="100" alt="" src="` +
+                                    <a href="` + HELPERS.GetUserProfileHref(user.id) + `">
+                                        <img width="100" height="100" alt="" src="` +
                                         HELPERS.GetAvatarImageUrl(100, 100, 100, user.id) +
                                     `" class="img-circle img-responsive" />
+                                    </a>
                                 </div>
                     
                                 <div class="col-sm-6 col-md-8 friend-element">

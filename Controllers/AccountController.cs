@@ -492,7 +492,7 @@ namespace Promises.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(CabinetController.Index), typeof(CabinetController).UrlName());
+                return RedirectToAction(nameof(CabinetController.Profile), typeof(CabinetController).UrlName());
             }
         }
 

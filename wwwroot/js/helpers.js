@@ -8,6 +8,10 @@ var HELPERS = (function () {
                 .replace("__height__", height.toString())
                 .replace("__quality__", quality.toString())
                 .replace("__id__", userId.toString())
+        ,
+
+        GetUserProfileHref: userId =>
+            _RAZOR_PROFILE_LINK.replace("__id__", userId)
     }
-}
-)()
+    
+})()
