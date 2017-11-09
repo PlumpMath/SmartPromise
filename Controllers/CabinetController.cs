@@ -48,7 +48,9 @@ namespace Promises.Controllers
             var model = new ProfileViewModel
             {
                 Email = user.Email,
-                Address = user.Address
+                Address = user.Address,
+                IsYourProfile = userId == OWNER_DEFAULT,
+                Id = user.Id
             };
             return View(model);
         }

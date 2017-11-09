@@ -9,5 +9,7 @@ namespace Promises.Models.CabinetViewModels
     {
         public string Address { get; set; }
         public string Email { get; set; } 
+        public bool IsYourProfile { get; set; }
+        public string Id { get; set; }
     }
 }

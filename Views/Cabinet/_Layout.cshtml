@@ -1,6 +1,7 @@
 ﻿@using Promises.Views.Cabinet
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
+    ProfileViewModel profileViewModel = ViewData.GetProfileViewModel();
 }
 
 
@@ -13,7 +14,13 @@
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-left">
         <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">
-            @await Html.PartialAsync("_YourProfile")
+            
+            @{
+                var view = (profileViewModel == null || profileViewModel.IsYourProfile)? 
+                    "_YourProfile" : "_OtherUserProfile";
+            }
+
+            @await Html.PartialAsync(@view)
             <hr />
             @await Html.PartialAsync("_CabinetNav")
             <hr />

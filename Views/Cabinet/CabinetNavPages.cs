@@ -33,6 +33,9 @@ namespace Promises.Views.Cabinet
         public static string GlobalChatClass(ViewContext viewContext) => PageNavClass(viewContext, GlobalChat);
         public static string FriendsClass(ViewContext viewContext) => PageNavClass(viewContext, Friends);
 
+        public static bool IsActivePage(ViewDataDictionary viewData, string page) =>
+            viewData["ActivePage"] as string == page;
+        
         public static string PageNavClass(ViewContext viewContext, string page)
         {
             var activePage = viewContext.ViewData["ActivePage"] as string;
