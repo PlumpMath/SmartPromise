@@ -25,12 +25,14 @@ namespace Promises.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPromiseRepository _promiseRepository;
         private readonly IMessagesRepository _messagesRepository;
+        private readonly IFriendsRepository _friendsRepository;
         private readonly IUserTracker<Notification> _userTracker;
         private async Task<ApplicationUser> Owner() => await _userManager.GetUserAsync(User);
 
         public CabinetController(
           UserManager<ApplicationUser> userManager,
           IPromiseRepository promiseRepository,
+          IFriendsRepository friendsRepository,
           IMessagesRepository messagesRepository,
           IUserTracker<Notification> userTracker)
         {
@@ -38,6 +40,7 @@ namespace Promises.Controllers
             _userManager = userManager;
             _messagesRepository = messagesRepository;
             _userTracker = userTracker;
+            _friendsRepository = friendsRepository;
         }
 
         public async Task<IActionResult> Profile(string userId = OWNER_DEFAULT)
@@ -45,12 +48,17 @@ namespace Promises.Controllers
             var user = (userId == OWNER_DEFAULT) ?
                 await Owner() : _userManager.Users.FirstOrDefault(u => u.Id == userId);
 
+            var ownerId = (await Owner()).Id;
+            var isFriend = (ownerId == userId) ? false : _friendsRepository.AreFriends(userId, ownerId);
             var model = new ProfileViewModel
             {
                 Email = user.Email,
                 Address = user.Address,
                 IsYourProfile = userId == OWNER_DEFAULT,
-                Id = user.Id
+                Id = user.Id,
+                IsFriend = isFriend,
+                IsOnline = await IsOnline(userId)
+
             };
             return View(model);
         }

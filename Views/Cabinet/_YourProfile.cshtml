@@ -1,4 +1,17 @@
-﻿
-<img style="display:block; margin:auto; width:100%" 
-     src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 250 })"
-     class="img-responsive img-thumbnail main-avatar" alt="Avatar" />
+﻿@inject UserManager<ApplicationUser> userManager
+
+@{
+    var owner = await userManager.GetUserAsync(User);
+}
+
+<div class="thumbnail">
+    <img style="display:block; margin:auto; width:100%"
+         src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 250 })"
+         class="img-responsive img-thumbnail main-avatar" alt="Avatar" />
+
+    <div class="caption">
+        <h3>@owner.Email</h3>
+        <a href="#" class="btn btn-link" role="button">Info</a>
+        <a href="#" class="btn btn-link" role="button">Transactions</a>
+    </div>
+</div>

@@ -33,6 +33,12 @@ namespace Promises.Controllers
             _userTracker = userTracker;
         }
 
+        [HttpGet("{firstId}/{secondId}")]
+        public IActionResult AreFriends(string firstId, string secondId)
+        {
+            return new OkObjectResult(_friendsRepository.AreFriends(firstId, secondId));
+        }
+
         [HttpGet("{email?}")]
         public IActionResult FindByEmail(string email = default(string))
         {

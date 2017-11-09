@@ -1,5 +1,27 @@
 ﻿@model ProfileViewModel
 
-<img style="display:block; margin:auto; width:100%"
-     src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 250, quality=100, userId = @Model.Id })"
-     class="img-responsive img-thumbnail main-avatar" alt="Avatar" />
+
+<div class="thumbnail">
+    <img style="display:block; margin:auto; width:100%"
+         src="@Url.Action("GetAvatarImage", "Cabinet", new { width = 300, height = 250, quality = 100, userId = @Model.Id })"
+         class="img-responsive img-thumbnail main-avatar" alt="Avatar" />
+
+    <div class="caption">
+        <h3>@Model.Email</h3>
+        @{
+            var status = @Model.IsOnline ? "online" : "offline";
+        }
+        <small class="bold text-muted">@status</small>
+        @if (Model.IsFriend)
+        {
+            <small class="bold text-muted">&nbsp;&nbsp;&nbsp;friend</small>
+        }
+        <a href="#" class="btn btn-link" role="button">Info</a>
+        <a href="#" class="btnbtn-link" role="button">Pay</a> 
+        <a href="#" class="btn btn-link" role="button">Chat</a>
+        @if (!Model.IsFriend)
+        {
+            <a href="#" class="btn btn-link" role="button">Add</a>
+        }
+    </div>
+</div>
