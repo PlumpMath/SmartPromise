@@ -1,9 +1,11 @@
 ﻿@using Promises.Views.Cabinet
 
 
-<ul class="nav nav-pills nav-stacked">
-    <li class="@CabinetNavPages.IndexNavClass(ViewContext)"><a asp-action="Profile">Profile</a></li>
+<div class="list-group">
+    <a class="list-group-item list-group-item-action + @CabinetNavPages.IndexNavClass(ViewContext)" asp-action="Profile">Profile</a>
     <!--<li class="@CabinetNavPages.ManagePromisesNavClass(ViewContext)"><a asp-action="ManagePromises">Promises</a></li>-->
-    <li class="@CabinetNavPages.FriendsClass(ViewContext)"><a asp-action="Friends">Friends</a></li>
-    <li class="@CabinetNavPages.MessagesClass(ViewContext)"><a id="_messages_nav_id" asp-action="Messages">Messages</a></li>
-</ul>
+    <a class="list-group-item list-group-item-action + @CabinetNavPages.FriendsClass(ViewContext)" asp-action="Friends">Friends</a>
+    <a class="list-group-item list-group-item-action + @CabinetNavPages.MessagesClass(ViewContext)" asp-action="Messages">Messages
+        <span id="_messages_nav_id" class="badge badge-default badge-pill"></span>
+    </a>
+</div>

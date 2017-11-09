@@ -93,9 +93,9 @@
                         <div>
                             <small class="pull-right time">` + ParseDate(mes.userDateLocal) + `</small>
 
-                            <h5 class="media-heading">` + GetFriendEmail(mes) + `</h5>
+                            <h4 class="mb-1">` + GetFriendEmail(mes) + `</h4>
                             <small class="col-lg-10 ` + (mes.isUnread ? "unread-message" : "") + `">` +
-                        mes.senderEmail + ": " + mes.content + `"</small>
+                        mes.senderEmail + ": " + mes.content + `</small>
                         </div>
                     </a>
                 `
