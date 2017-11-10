@@ -22,13 +22,13 @@ let ModalPay = function () {
     const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
 
-    let asset = $(ASSET_ID).val().toLowerCase()
-    let net = $(NET_ID).val().toLowerCase()
+    let asset = $(ASSET_ID).val()
+    let net = $(NET_ID).val()
 
     let funds = {}
 
-    function IsAmount(value) {
-        return !(parseInt(value) <= 0 || parseInt(value) > parseInt(funds[net][asset]))
+    function IsAmountCorrect(value, fund) {
+        return !(parseInt(value) <= 0 || parseInt(value) > parseInt(fund))
     }
 
     function Init() {
@@ -38,15 +38,15 @@ let ModalPay = function () {
         $(AMOUNT_ID).val(EMPTY)
     }
 
-    function FillBalance(addr) {
+    function GetBalance(addr, net, asset) {
         return new Promise((resolve, reject) => {
-            $.get(HELPERS.GetBlockchainBalanceUrl(TESTNET, addr),
-                res => {
+            $.get(HELPERS.GetBlockchainBalanceUrl(net, addr))
+                .success(res => {
                     console.log(res)
-                    funds[TESTNET] = res
-                    $.get(HELPERS.GetBlockchainBalanceUrl(MAINNET, addr),
-                        res => { console.log(res); funds[MAINNET] = res; resolve() })
+                    resolve(res[asset])
                 })
+                .error(err => reject(err))  
+                
         })
     }
 
@@ -69,10 +69,12 @@ let ModalPay = function () {
     }
 
     function StartProcessing() {
+        $(SEND_ID).prop('disabled', true)
         HELPERS.Loader(LOADER_ID).Show()
     }
 
     function EndProcessing() {
+        $(SEND_ID).prop('disabled', false)
         HELPERS.Loader(LOADER_ID).Hide()
     }
 
@@ -80,16 +82,18 @@ let ModalPay = function () {
         () => {
             $(MODAL_ID).on('shown.bs.modal', () => Init())
             $.get(_RAZOR_GET_MY_ADDRESS, addr => {
-
+                console.log(addr)
                 $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
                 $(NET_ID).change(() => net = $(NET_ID).val())
                 $(SEND_ID).click(() => {
+                    ClearMessage()
                     StartProcessing()
-                    FillBalance(addr).then(() => {
-
-                        console.log(funds)
+                    GetBalance(addr, net, asset).then(fund => {
+                        console.log(asset)
+                        console.log(net)
+                        console.log(fund)
                         let amount = $(AMOUNT_ID).val()
-                        let isCorrect = IsAmount(amount)
+                        let isCorrect = IsAmountCorrect(amount, fund)
 
                         if (isCorrect == true) {
                             $.get(HELPERS.GetSendAssetUrl(net, ADDR_TO_PAY, asset, amount))
@@ -105,7 +109,11 @@ let ModalPay = function () {
                             OnError(INSUFFICIENT_FUNDS)
                             EndProcessing()
                         }
+                    }).catch(err => {
+                        OnError(err)
+                        EndProcessing()
                     })
+
                 })
             })
         }
