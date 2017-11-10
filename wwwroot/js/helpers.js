@@ -1,21 +1,13 @@
 ﻿
 var HELPERS = (function () {
-    function GetNet(net) {
-        let lower = net.toString().toLowerCase()
-        if (lower == "mainnet")
-            return 1
-        if (lower == "testnet")
-            return 0
-        return 0
+    const NET = {
+        "testnet": 0,
+        "mainnet": 1
     }
 
-    function GetAssetName(assetName) {
-        let lower = assetName.toString().toLowerCase()
-        if (lower == "neo")
-            return 0
-        if (lower == "gas")
-            return 1
-        return 0
+    const ASSETS = {
+        "neo": 0,
+        "gas": 1
     }
 
     function Loader(loader_id) {
@@ -53,20 +45,24 @@ var HELPERS = (function () {
         ,
         GetBlockchainBalanceUrl: (net, addr) =>
             _RAZOR_BLOCKCHAIN_GET_BALANCE
-                .replace("__network__", GetNet(net))
+                .replace("__network__", NET[net])
                 .replace("__addr__", addr)
 
         ,
-        GetSendAssetUrl: (assetName, addr, net, amount) => 
+        GetSendAssetUrl: (asset, addr, net, amount) => 
             _RAZOR_SEND_ASSET
-                .replace("__assetName__", GetAssetName(assetName))
-                .replace("__network__", GetNet(net))
+                .replace("__assetName__", ASSETS[asset])
+                .replace("__network__", NET[net])
                 .replace("__addr__", addr)
                 .replace("__amount__", amount)
         ,
 
         Loader
-       
+        ,
+        NET
+        ,
+        ASSETS
+    
     }
     
 })()
