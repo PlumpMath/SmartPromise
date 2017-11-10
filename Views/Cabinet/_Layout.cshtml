@@ -36,6 +36,7 @@
 }
 
 @await Html.PartialAsync("_ModalPaymentsDetails", profileViewModel)
+@await Html.PartialAsync("_ModalTransactionHistory", profileViewModel)
 
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-left">
@@ -67,16 +68,19 @@
         let _RAZOR_URL_CABINET_PRIVATE_CHAT = '@Url.Action("PrivateChat", "Cabinet", new { friendId = "__id__", friendEmail = "__email__" })'
         let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatarImage", "Cabinet", new { width ="__width__", height="__height__", quality="__quality__", userId = "__id__" })'
         let _RAZOR_PROFILE_LINK = '@Url.Action("Profile", "Cabinet", new { userId = "__id__"})'
-        let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
+        let _RAZOR_GET_TRANSACTION_HISTORY = '@Url.Action("GetTransactionHistory", "Blockchain", new { network = "__network__", addr = "__addr__"})'
         let _RAZOR_BLOCKCHAIN_GET_BALANCE = '@Url.Action("GetBalance", "Blockchain", new { network = "__network__", addr = "__addr__" })'
         let _RAZOR_GET_MY_ADDRESS = '@Url.Action("GetMyAddress", "Friends")'
         let _RAZOR_SEND_ASSET = '@Url.Action("SendAsset", "Blockchain", new { type = "__network__", assetName = "__assetName__", addr = "__addr__", amount = "__amount__" })'
+
+        let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
         _RAZOR_NOTIFICATION_CONNECTION.start()
     </script>
 
     <script type="text/javascript">
         Notification()
         GenerateQrAddressCode()
+        ModalTransactionHistory()
     </script>
 
 

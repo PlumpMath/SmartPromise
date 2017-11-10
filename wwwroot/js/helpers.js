@@ -56,7 +56,11 @@ var HELPERS = (function () {
                 .replace("__addr__", addr)
                 .replace("__amount__", amount)
         ,
-
+        GetTransactionHistoryUrl: (net, addr) =>
+            _RAZOR_GET_TRANSACTION_HISTORY
+                .replace("__network__", NET[net])
+                .replace("__addr__", addr)
+        ,
         Loader
         ,
         NET
