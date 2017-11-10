@@ -70,7 +70,7 @@
         let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
         let _RAZOR_BLOCKCHAIN_GET_BALANCE = '@Url.Action("GetBalance", "Blockchain", new { network = "__network__", addr = "__addr__" })'
         let _RAZOR_GET_MY_ADDRESS = '@Url.Action("GetMyAddress", "Friends")'
-        let _RAZOR_SEND_ASSET = "/api/Blockchain/SendAsset/__network__/__assetName__/__addr__/__amount__"
+        let _RAZOR_SEND_ASSET = '@Url.Action("SendAsset", "Blockchain", new { type = "__network__", assetName = "__assetName__", addr = "__addr__", amount = "__amount__" })'
         _RAZOR_NOTIFICATION_CONNECTION.start()
     </script>
 
