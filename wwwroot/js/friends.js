@@ -8,7 +8,7 @@
     }
     
     const FIND_INPUT_ID = '#_find_input'
-    
+    const FIND_ID = '#_friend_find_input'
     const OTHERS_LIST_ID = '#_other_users_list'
     const FRIENDS_LIST_ID = '#_friends_list'
     const PENDING_LIST_ID = '#_pending_users_list'
@@ -38,11 +38,12 @@
     }
 
     function HideFindInput() {
-        $(FIND_INPUT_ID).hide()
+        console.log(FIND_ID)
+        $(FIND_ID).hide()
     }
 
     function ShowFindInpit() {
-        $(FIND_INPUT_ID).show()
+        $(FIND_ID).show()
     }
 
     function StartLoading() {
@@ -168,7 +169,7 @@
                         <div class="well well-sm">
                             <div class="row">
                                 <div class="col-sm-6 col-md-4">
-                                    <a href="` + HELPERS.GetUserProfileHref(user.id) + `">
+                                    <a href="` +  HELPERS.GetUserProfileHref(user.id) + `">
                                         <img width="100" height="100" alt="" src="` +
                                         HELPERS.GetAvatarImageUrl(100, 100, 100, user.id) +
                                     `" class="img-circle img-responsive" />
