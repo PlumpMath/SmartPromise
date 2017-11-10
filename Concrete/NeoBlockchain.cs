@@ -51,10 +51,11 @@ namespace Promises.Concrete
                 IEnumerable<TransactionHistoryItem>>(GetScriptLocation(), "GetTransactionHistory", GetNetwork(type), addr);
         }
 
-        public async Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr)
+        public async Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr, int amount)
         {
             var asset = (assetName == ASSET_NAME.NEO) ? "NEO" : "GAS";
-            return await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), "SendAsset", GetNetwork(type), wif, asset, addr);
+            var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), "SendAsset", GetNetwork(type), wif, asset, addr, amount);
+            return res;
         }
 
         public async Task<bool> VerifyAddress(string addr)

@@ -92,6 +92,13 @@ namespace Promises.Controllers
             return new OkObjectResult(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetMyAddress()
+        {
+            var res = await _userManager.GetUserAsync(User);
+            return new OkObjectResult(res.Address);
+        }
+
         [HttpGet("{friendUserId}")]
         public IActionResult RequestFriendship(string friendUserId)
         {

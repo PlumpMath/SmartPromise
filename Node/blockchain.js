@@ -44,7 +44,7 @@ module.exports = {
         getTransactionHistory(net, addr).then(history => callback(null, history))
     ,
     
-    SendAsset: (callback, net, wif, assetName, addr) => {
+    SendAsset: (callback, net, wif, assetName, addr, amount) => {
         let sendAsset = {}
         sendAsset[assetName] = amount
 

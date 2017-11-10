@@ -1,5 +1,9 @@
 ﻿@model ProfileViewModel
 
+@{
+    var status = @Model.IsOnline ? "online" : "offline";
+}
+
 
 <div class="thumbnail">
     <img style="display:block; margin:auto; width:100%"
@@ -8,20 +12,17 @@
 
     <div class="caption">
         <h3>@Model.Email</h3>
-        @{
-            var status = @Model.IsOnline ? "online" : "offline";
-        }
+        
         <small class="bold text-muted">@status</small>
-        @if (Model.IsFriend)
+        <small id="_friend_status" class="bold text-muted">&nbsp;&nbsp;&nbsp;&nbsp;@Model.FriendStatus</small>
+        <hr />
+        <a role="button" class="btn btn-link" data-toggle="modal" data-target="#_payment_details">Info</a>
+        <a href="@Url.Action("PrivateChat", "Cabinet", new { friendId = Model.Id, friendEmail = Model.Email })" class="btnbtn-link" role="button">Chat</a> 
+        <a role="button" class="btn btn-link" data-toggle="modal" data-target="#_modal_pay">Pay</a>
+        @if (Model.FriendStatus == "")
         {
-            <small class="bold text-muted">&nbsp;&nbsp;&nbsp;friend</small>
-        }
-        <a href="#" class="btn btn-link" role="button">Info</a>
-        <a href="#" class="btnbtn-link" role="button">Pay</a> 
-        <a href="#" class="btn btn-link" role="button">Chat</a>
-        @if (!Model.IsFriend)
-        {
-            <a href="#" class="btn btn-link" role="button">Add</a>
+            <a id="_add_friend" onClick="$.get('@Url.Action("RequestFriendship", "Friends", new { friendUserId = Model.Id })', () => OtherUserProfile.handleAddFriend())" 
+               class="btn btn-link" role="button">Add</a>
         }
     </div>
 </div>

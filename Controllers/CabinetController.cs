@@ -49,14 +49,23 @@ namespace Promises.Controllers
                 await Owner() : _userManager.Users.FirstOrDefault(u => u.Id == userId);
 
             var ownerId = (await Owner()).Id;
-            var isFriend = (ownerId == userId) ? false : _friendsRepository.AreFriends(userId, ownerId);
+
+            var friendStatus = "";
+            
+            if (_friendsRepository.AreFriends(userId, ownerId))
+                friendStatus = "friend";
+            else if (_friendsRepository.ArePendingFriends(userId, ownerId))
+                friendStatus = "subscribed";
+            else
+                friendStatus = "";
+
             var model = new ProfileViewModel
             {
                 Email = user.Email,
                 Address = user.Address,
                 IsYourProfile = userId == OWNER_DEFAULT,
                 Id = user.Id,
-                IsFriend = isFriend,
+                FriendStatus = friendStatus,
                 IsOnline = await IsOnline(userId)
 
             };

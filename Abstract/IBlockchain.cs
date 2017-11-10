@@ -14,7 +14,7 @@ namespace Promises.Abstract
         Task<Balance> GetBalance(NETWORK_TYPE type, string addr);
         Task<IEnumerable<TransactionHistoryItem>> GetTransactionHistory(
             NETWORK_TYPE type, string addr);
-        Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr);
+        Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr, int amount);
         Task<Account> GenerateAccount();
         Task<string> GetStorage(NETWORK_TYPE type, string scriptHash, string key);
         Task<bool> VerifyAddress(string addr);

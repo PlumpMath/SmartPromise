@@ -1,7 +1,22 @@
 ﻿@using Promises.Views.Cabinet
+@inject UserManager<ApplicationUser> userManager
+
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
     ProfileViewModel profileViewModel = ViewData.GetProfileViewModel();
+    if (profileViewModel == null)
+    {
+
+        var owner = await userManager.GetUserAsync(User);
+        profileViewModel = new ProfileViewModel
+        {
+            Email = owner.Email,
+            Id = owner.Id,
+            Address = owner.Address,
+            IsYourProfile = true,
+            IsOnline = true
+        };
+    }
 }
 
 
@@ -11,18 +26,29 @@
     }
 </style>
 
+
+
+@{
+    if (!profileViewModel.IsYourProfile)
+    {
+        @await Html.PartialAsync("_ModalPay", profileViewModel);
+    }
+}
+
+@await Html.PartialAsync("_ModalPaymentsDetails", profileViewModel)
+
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-left">
         <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">
             
             @{
-                var view = (profileViewModel == null || profileViewModel.IsYourProfile)? 
+                var view = profileViewModel.IsYourProfile? 
                     "_YourProfile" : "_OtherUserProfile";
             }
 
-            @await Html.PartialAsync(@view)
+            @await Html.PartialAsync(@view, profileViewModel)
             <hr />
-            @await Html.PartialAsync("_CabinetNav")
+            @await Html.PartialAsync("_CabinetNav", profileViewModel)
             <hr />
         </div>
         <div class="col-12 col-md-9">
@@ -42,6 +68,9 @@
         let _RAZOR_URL_CABINET_GET_AVATAR = '@Url.Action("GetAvatarImage", "Cabinet", new { width ="__width__", height="__height__", quality="__quality__", userId = "__id__" })'
         let _RAZOR_PROFILE_LINK = '@Url.Action("Profile", "Cabinet", new { userId = "__id__"})'
         let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
+        let _RAZOR_BLOCKCHAIN_GET_BALANCE = '@Url.Action("GetBalance", "Blockchain", new { network = "__network__", addr = "__addr__" })'
+        let _RAZOR_GET_MY_ADDRESS = '@Url.Action("GetMyAddress", "Friends")'
+        let _RAZOR_SEND_ASSET = "/api/Blockchain/SendAsset/__network__/__assetName__/__addr__/__amount__"
         _RAZOR_NOTIFICATION_CONNECTION.start()
     </script>
 
@@ -49,7 +78,13 @@
         Notification()
     </script>
 
-    
+    @if (!profileViewModel.IsYourProfile)
+    {
+        <script type="text/javascript">
+            ModalPay()
+        </script>
+    }
+
     @if (ViewData["ActivePage"] != null)
     {
         switch (ViewData["ActivePage"].ToString())

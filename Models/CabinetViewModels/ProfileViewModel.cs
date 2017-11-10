@@ -11,7 +11,7 @@ namespace Promises.Models.CabinetViewModels
         public string Email { get; set; } 
         public bool IsYourProfile { get; set; }
         public string Id { get; set; }
-        public bool IsFriend { get; set; }
+        public string FriendStatus { get; set; }
         public bool IsOnline { get; set; }
     }
 }

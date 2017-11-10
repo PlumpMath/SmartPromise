@@ -6,6 +6,7 @@ using Promises.Abstract;
 using Promises.Models;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Promises.Controllers
 {
@@ -15,10 +16,14 @@ namespace Promises.Controllers
     public class BlockchainController : Controller
     {
         private readonly IBlockchain _blockchain;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BlockchainController(IBlockchain blockchain)
+        public BlockchainController(
+            IBlockchain blockchain,
+            UserManager<ApplicationUser> userManager)
         {
             _blockchain = blockchain;
+            _userManager = userManager;
         }
 
         [HttpGet("{network}/{addr}")]
@@ -32,13 +37,7 @@ namespace Promises.Controllers
         {
             return await _blockchain.GetTransactionHistory(network, addr);
         }
-
-        [HttpGet("{network}/{wif}/{assetName}/{addr}")]
-        public async Task<bool> GetTransactionHistory(
-            NETWORK_TYPE network, string wif, ASSET_NAME assetName, string addr)
-        {
-            return await _blockchain.SendAsset(network, wif, assetName, addr);
-        }
+        
 
         [HttpGet()]
         public async Task<Account> GenerateAccount()
@@ -46,6 +45,13 @@ namespace Promises.Controllers
             return await _blockchain.GenerateAccount();
         }
 
+        [HttpGet("{type}/{assetName}/{addr}/{amount}")]
+        public async Task<bool> SendAsset(NETWORK_TYPE type, ASSET_NAME assetName, string addr, int amount)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return await _blockchain.SendAsset(type, user.Wif, assetName, addr, amount);
+        }
+        
         [HttpGet("{network}/{scriptHash}/{key}")]
         public async Task<string> GetStorage(NETWORK_TYPE network, string scriptHash, string key)
         {
