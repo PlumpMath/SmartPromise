@@ -2,15 +2,13 @@
 @model PrivateChatViewModel
 @{
     ViewData["Title"] = "PrivateChat";
-    ViewData.AddActivePage(CabinetNavPages.Messages);
+    ViewData.AddActivePage(CabinetNavPages.PrivateChat);
 }
 
 <!--/ Now we are able to read model from JavaSctipr -->
 <script type="text/javascript">
     let _RAZOR_PRIVATE_CHAT_VIEW_MODEL = @Html.Raw(Json.Serialize(Model))
 </script>
-
-
 
 @{ 
     var contactStyle = Model.Friend.IsOnline ? "contact-online" : "contact-offline";
@@ -21,7 +19,7 @@
         <div class="panel-heading text-center">
             <div class="row">
                 <div class="col-md-2">
-                    <div class="icon"><span class="glyphicon glyphicon-chevron-left"></span></div>
+                    <div class="icon"><a href="@Url.Action("Messages", "Cabinet")"><span role="button" class="glyphicon glyphicon-chevron-left"></span></a></div>
                 </div>
                 <div class="col-md-offset-3 col-md-2">
                     <div id=@contactStyle>
@@ -34,7 +32,7 @@
         </div>
         <div class="panel-body" id="_chat_panel_id">
             <div class="date" id="_current_date_id">
-                <span class="bold">Today</span> 11:54
+                <!--<span class="bold">Today</span> 11:54-->
             </div>
             <div id="_messages_list_id">
             </div>

@@ -17,6 +17,8 @@
 
     function OnMessage(msg) {
         MessagesListManager.AddItem(msg)
+        console.log("Scrolling")
+        MessagesListManager.ScrollToBottom()
     }
 
     function SendMessage() {
@@ -90,10 +92,14 @@
         msgArr.forEach(m => MessagesListManager.AddItem(m))
         MessagesListManager.ScrollToBottom()
     }
+
+    function SetMessageNavBarActive() {
+        $('#_cabinet_nav_messages').addClass("active")
+    }
     
-    connection.start().then(() =>
+    connection.start().then(() =>    
         $(document).ready(() => {
-            
+            SetMessageNavBarActive()
             $(INPUT_ID).keyup(event => {
                 if (event.keyCode === ENTER_BUTTON_KEY) {
                     $(SEND_BUTTON_ID).click()
@@ -105,10 +111,12 @@
             GetHistory(FRIEND.id)
 
             $(SEND_BUTTON_ID).click(() => {
-                MessagesListManager.ScrollToBottom()
                 SendMessage()
                 ClearInput()
             })
         })
-    ).catch(err => console.log(err))
+    ).catch(err => {
+        $(document).ready(() => SetMessageNavBarActive())
+        console.log(err)
+    })
 }

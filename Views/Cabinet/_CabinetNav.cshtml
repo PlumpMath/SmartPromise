@@ -5,7 +5,7 @@
     <a class="list-group-item list-group-item-action + @CabinetNavPages.IndexNavClass(ViewContext)" asp-action="Profile">Profile</a>
     <!--<li class="@CabinetNavPages.ManagePromisesNavClass(ViewContext)"><a asp-action="ManagePromises">Promises</a></li>-->
     <a class="list-group-item list-group-item-action + @CabinetNavPages.FriendsClass(ViewContext)" asp-action="Friends">Friends</a>
-    <a class="list-group-item list-group-item-action + @CabinetNavPages.MessagesClass(ViewContext)" asp-action="Messages">Messages
+    <a id="_cabinet_nav_messages" class="list-group-item list-group-item-action + @CabinetNavPages.MessagesClass(ViewContext)" asp-action="Messages">Messages
         <span id="_messages_nav_id" class="badge badge-default badge-pill"></span>
     </a>
 </div>

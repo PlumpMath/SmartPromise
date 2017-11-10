@@ -1,5 +1,6 @@
 ﻿var ProfilePage = function () {
     console.log("______________profilePage.js______________")
+    
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
     const TITLE_ID = "#_promise_title"
@@ -151,12 +152,12 @@
         }
     }
 
-    window.onload = () => {
+    $(document).ready( () => {
         ComplicityManager.AddHandlers()
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
             PromisesListManager.AddItem(promise)
             $(MODAL_PROMISE_ID).modal("toggle")
         })
-    }
+    })
 }

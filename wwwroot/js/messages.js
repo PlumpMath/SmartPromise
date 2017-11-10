@@ -137,7 +137,6 @@
         GetLastMessagesHistory()
     }
 
-
     $.get(CONTROLLER_NAME + METHOD_GET_MY_USER_INFO, res => main(res))
         .fail(err => console.log(err))
 }

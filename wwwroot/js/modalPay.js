@@ -76,36 +76,41 @@ let ModalPay = function () {
         HELPERS.Loader(LOADER_ID).Hide()
     }
 
-    $(MODAL_ID).on('shown.bs.modal', () => Init())
-    $.get(_RAZOR_GET_MY_ADDRESS, addr => {
-        
-        $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
-        $(NET_ID).change(() => net = $(NET_ID).val())
-        $(SEND_ID).click(() => {
-            StartProcessing()
-            FillBalance(addr).then(() => {
+    $(document).ready(
+        () => {
+            $(MODAL_ID).on('shown.bs.modal', () => Init())
+            $.get(_RAZOR_GET_MY_ADDRESS, addr => {
 
-                console.log(funds)
-                let amount = $(AMOUNT_ID).val()
-                let isCorrect = IsAmount(amount)
+                $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
+                $(NET_ID).change(() => net = $(NET_ID).val())
+                $(SEND_ID).click(() => {
+                    StartProcessing()
+                    FillBalance(addr).then(() => {
 
-                if (isCorrect == true) {
-                    $.get(HELPERS.GetSendAssetUrl(net, ADDR_TO_PAY, asset, amount))
-                        .success(res => {
-                            (res == true) ? OnSuccess() : OnError()
+                        console.log(funds)
+                        let amount = $(AMOUNT_ID).val()
+                        let isCorrect = IsAmount(amount)
+
+                        if (isCorrect == true) {
+                            $.get(HELPERS.GetSendAssetUrl(net, ADDR_TO_PAY, asset, amount))
+                                .success(res => {
+                                    (res == true) ? OnSuccess() : OnError()
+                                    EndProcessing()
+                                })
+                                .error(err => {
+                                    OnError(err)
+                                    EndProcessing()
+                                })
+                        } else {
+                            OnError(INSUFFICIENT_FUNDS)
                             EndProcessing()
-                        })
-                        .error(err => {
-                            OnError(err)
-                            EndProcessing()
-                        })
-                } else {
-                    OnError(INSUFFICIENT_FUNDS)
-                    EndProcessing()
-                }
+                        }
+                    })
+                })
             })
-        })
-    })
+        }
+    )
+    
 
 }
 

@@ -30,13 +30,23 @@
     const TITLE_CLEAR = ""
     
     function StopLoading() {
+        ShowFindInpit()
         $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS)
         $(OTHERS_LABEL_ID).html(TITLE_OTHERS)
         $(PENDING_LABEL_ID).html(TITLE_Pending)
         Loader(LOADER_ID).Hide()
     }
 
+    function HideFindInput() {
+        $(FIND_INPUT_ID).hide()
+    }
+
+    function ShowFindInpit() {
+        $(FIND_INPUT_ID).show()
+    }
+
     function StartLoading() {
+        HideFindInput()
         $(FRIENDS_LABEL_ID).html(TITLE_CLEAR)
         $(OTHERS_LABEL_ID).html(TITLE_CLEAR)
         $(PENDING_LABEL_ID).html(TITLE_CLEAR)
@@ -262,7 +272,10 @@
             .fail(err => console.log(err))
     }
 
-    StartLoading()
+    $(document).ready(() => {
+        StartLoading()
+    })
+    
     //requests for all records in database
     FindUsers("")
 
