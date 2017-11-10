@@ -25,8 +25,7 @@ namespace Promises.Concrete
             _hostingEnvironment = hoistingEnviroment;
         }
 
-        private string GetScriptLocation() => _hostingEnvironment.IsProduction() ? 
-            "./wwwroot/Node/out/bundle.js" : "./Node/out/bundle.js";
+        private string GetScriptLocation() => "./Node/out/bundle.js"; 
         
         public async Task<Account> GenerateAccount()
         {

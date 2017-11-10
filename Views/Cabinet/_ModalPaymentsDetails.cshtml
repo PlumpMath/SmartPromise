@@ -1,4 +1,11 @@
-﻿<div class="modal fade" id="_payment_details" role="dialog">
+﻿@model ProfileViewModel
+
+@{
+    var label = Model.IsYourProfile ?
+        "This is your address. You can freely publish it to other users." :
+        "This is user's address, you can send him coins by directly sending them on this address";
+}
+<div class="modal fade" id="_payment_details" role="dialog">
     <div class="modal-dialog">
 
         <div class="modal-content">
@@ -6,8 +13,14 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Payment details</h4>
             </div>
-            <div class="container-fluid">
+            <div align="center" class="container-fluid">
+                <br/>
+                <h5 class="bold" id="_modal_payments_address">@label</h5>
+                <div id="_payment_qrCode"></div>
+                <br/>
+                <small>@Model.Address</small>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
