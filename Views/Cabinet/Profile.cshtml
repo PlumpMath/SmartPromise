@@ -1,4 +1,5 @@
 ﻿@using Promises.Views.Cabinet
+@inject IPromiseRepository promiseRepository
 @model ProfileViewModel
 
 @{
@@ -45,7 +46,9 @@
     <div class="row">
         <div class="col-sm-7">
             <hr/>
+            <div class="loader" id="_promises_loader">
             <div id="_promises_id"></div>
+           
         </div>
     </div>
 

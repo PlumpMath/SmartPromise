@@ -11,6 +11,6 @@ namespace Promises.Abstract
         IEnumerable<Promise> Promises { get; }
         Promise Get(Guid id);
         void Add(Promise promise);
-        Promise Remove(Guid id);
+        void Complete(Guid id);
     }
 }

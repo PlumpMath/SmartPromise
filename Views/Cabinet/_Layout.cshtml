@@ -72,6 +72,9 @@
         let _RAZOR_BLOCKCHAIN_GET_BALANCE = '@Url.Action("GetBalance", "Blockchain", new { network = "__network__", addr = "__addr__" })'
         let _RAZOR_GET_MY_ADDRESS = '@Url.Action("GetMyAddress", "Friends")'
         let _RAZOR_SEND_ASSET = '@Url.Action("SendAsset", "Blockchain", new { type = "__network__", assetName = "__assetName__", addr = "__addr__", amount = "__amount__" })'
+        let _RAZOR_ADD_PROMISE = '@Url.Action("Add", "Promises", new { title = "__title__", content = "__content__", complicity = "__complicity__", date = "__date__" })'
+        let _RAZOR_GET_PROMISES = '@Url.Action("Get", "Promises")'
+        let _RAZOR_COMPLETE_PROMISE = '@Url.Action("Complete", "Promises", new { id = "__id__"})'
 
         let _RAZOR_NOTIFICATION_CONNECTION = new signalR.HubConnection('/notification')
         _RAZOR_NOTIFICATION_CONNECTION.start()

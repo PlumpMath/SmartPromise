@@ -42,20 +42,20 @@ namespace Promises.Concrete
             
         }
 
+        public void Complete(Guid id)
+        {
+            var promise = Promises.FirstOrDefault(p => p.Id == id);
+            promise.IsCompleted = true;
+
+            _applicationContext.Attach(promise);
+            _applicationContext.Entry(promise).Property(u => u.IsCompleted).IsModified = true;
+
+            _applicationContext.SaveChanges();
+        }
+
         public Promise Get(Guid id)
         {
             return Promises.FirstOrDefault(rec => rec.Id == id);
-        }
-
-        public Promise Remove(Guid id)
-        {
-            Promise promise = Get(id);
-            if (promise != null)
-            {
-                _applicationContext.Promises.Remove(promise);
-                _applicationContext.SaveChanges();
-            }
-            return promise;
         }
     }
 }

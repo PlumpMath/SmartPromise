@@ -61,6 +61,17 @@ var HELPERS = (function () {
                 .replace("__network__", NET[net])
                 .replace("__addr__", addr)
         ,
+        GetAddPromiseUrl: (promise) =>
+            _RAZOR_ADD_PROMISE
+                .replace("__title__", promise.title)
+                .replace("__content__", promise.content)
+                .replace("__complicity__", promise.complicity)
+                .replace("__date__", promise.date)
+        ,
+        GetCompletePromiseUrl: (id) => 
+            _RAZOR_COMPLETE_PROMISE
+                .replace("__id__", id)
+        ,
         Loader
         ,
         NET

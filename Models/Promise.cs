@@ -14,5 +14,6 @@ namespace Promises.Models
         public string Content { get; set; }
         public DateTime Date { get; set; }
         public PromiseComplicity Complicity { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

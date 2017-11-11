@@ -5,6 +5,7 @@
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
+    const LOADER_ID = '#_promises_loader'
     
     var PromisesListManager = (function () {
         const PROMISES_LIST_ID = "#_promises_id"
@@ -12,13 +13,12 @@
         const COMPLETE_PROMISE_MODAL_ID = "#_complete_promise"
         const COMPLETE_PROMISE_BTN_ID = '#_complete_promise_btn'
         const BUTTON_PREFIX = "BP"
-        const PROMISE_PREFIX = "PP"
 
         let promises = 0
         let promises_completed = 0
 
         function GetPromiseId(key) {
-            return '#' + PROMISE_PREFIX + GetKey(key)
+            return '#' + GetKey(key)
         }
 
         function GetCompleteButtonId(key) {
@@ -49,7 +49,6 @@
         }
 
         function UpdateStatistics() {
-            console.log(promises_completed + "      " + promises)
             let rate = promises_completed === 0 ? 0 : ((promises_completed / promises) * 5).toFixed(2)
             $(COMPLETED_RATING_ID).html(rate + " <small>/ 5</small>")
         }
@@ -64,16 +63,26 @@
         function AddButtonHandler(key) {
             $(GetCompleteButtonId(key)).click(() => {
                 $(COMPLETE_PROMISE_MODAL_ID).modal("toggle")
-                $(COMPLETE_PROMISE_BTN_ID).unbind('click').click(() => UpdateAsCompleted(key))
+                $(COMPLETE_PROMISE_BTN_ID).unbind('click').click(() => {
+                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() =>  Update() )
+                })
             })
         }
 
         return {
             AddItem: promise => {
-                let promiseKey = PROMISE_PREFIX + GetKey(promises)
-                let buttonKey = BUTTON_PREFIX + GetKey(promises)
+                let promiseKey = GetKey(promise.id)
+                let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
+                let promiseStyle = promise.isCompleted ? "promise-block promise-block-completed" : "promise-block"
+                let completeButton = !promise.isCompleted ? `
+                    <span class="pull-right">
+                        <button id="` + buttonKey + `" type="button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </span>
+                ` : ""
                 let element = `
-                        <div id="` + promiseKey + `"class="promise-block">
+                        <div id="` + promiseKey + `"class="` + promiseStyle + `">
                             <div class="row">
                             <!--
                             <div class="col-sm-3">
@@ -87,23 +96,20 @@
                                 <div class="promise-block-title">` + promise.title + `</div>
                                 <div class="promise-block-description">` + promise.content +`</div>                                
                             </div>
-                            <div class="col-sm-3">
-                                <span class="pull-right">
-                                    <button id="` + buttonKey + `" type="button" class="btn btn-success">
-                                        <span class="glyphicon glyphicon-ok"></span>
-                                    </button>
-                                </span>
-                            </div>
+                            <div class="col-sm-3">` + completeButton + `</div>
                         </div>
                     </div>`
-                
-                var key = GetKey(promises)
-                console.log(key)
-                $(PROMISES_LIST_ID).append(element)
-                AddButtonHandler(key)
+
+                $(PROMISES_LIST_ID).prepend(element)
+                AddButtonHandler(promiseKey)
                 ++promises
                 UpdateStatistics()
             }
+
+            ,
+            Clear: () => 
+                $(PROMISES_LIST_ID + "> div").remove()
+            
         }
     })()
 
@@ -148,15 +154,35 @@
         return {
             title: $(TITLE_ID).val(),
             content: $(CONTENT_ID).val(),
-            complicity: ComplicityManager.GetComplicity()
+            complicity: ComplicityManager.GetComplicity(),
+            date: Date.now()
         }
     }
 
-    $(document).ready( () => {
+    function Update() {
+        PromisesListManager.Clear()
+        HELPERS.Loader(LOADER_ID).Show()
+        $.get(_RAZOR_GET_PROMISES)
+            .success(ps => {
+                HELPERS.Loader(LOADER_ID).Hide()
+                ps.forEach(p => PromisesListManager.AddItem(p))
+            })
+
+    }
+    
+    $(document).ready(() => {
         ComplicityManager.AddHandlers()
+
+        Update()
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
-            PromisesListManager.AddItem(promise)
+
+            $.post(HELPERS.GetAddPromiseUrl(promise)).success(() => Update())
+
+            //PromisesListManager.AddItem(promise)
+            
+
+
             $(MODAL_PROMISE_ID).modal("toggle")
         })
     })
