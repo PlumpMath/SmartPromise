@@ -66,8 +66,9 @@ namespace Promises.Controllers
                 IsYourProfile = userId == OWNER_DEFAULT,
                 Id = user.Id,
                 FriendStatus = friendStatus,
-                IsOnline = await IsOnline(userId)
-
+                IsOnline = await IsOnline(userId),
+                Avatar = user.Avatar,
+                AvatarContentType = user.AvatarContentType
             };
             return View(model);
         }

@@ -13,5 +13,7 @@ namespace Promises.Models.CabinetViewModels
         public string Id { get; set; }
         public string FriendStatus { get; set; }
         public bool IsOnline { get; set; }
+        public byte[] Avatar { get; set; }
+        public string AvatarContentType { get; set; }
     }
 }

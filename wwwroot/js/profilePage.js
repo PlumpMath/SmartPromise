@@ -49,8 +49,8 @@
         }
 
         function UpdateStatistics() {
-            let rate = promises_completed === 0 ? 0 : ((promises_completed / promises) * 5).toFixed(2)
-            $(COMPLETED_RATING_ID).html(rate + " <small>/ 5</small>")
+            //let rate = promises_completed === 0 ? 0 : ((promises_completed / promises) * 5).toFixed(2)
+            $(COMPLETED_RATING_ID).html(promises_completed + " <small>/" + promises + "</small>")
         }
 
         function UpdateAsCompleted(key) {
@@ -64,7 +64,7 @@
             $(GetCompleteButtonId(key)).click(() => {
                 $(COMPLETE_PROMISE_MODAL_ID).modal("toggle")
                 $(COMPLETE_PROMISE_BTN_ID).unbind('click').click(() => {
-                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() =>  Update() )
+                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() => { UpdateAsCompleted(key) } )
                 })
             })
         }
@@ -102,13 +102,18 @@
 
                 $(PROMISES_LIST_ID).prepend(element)
                 AddButtonHandler(promiseKey)
+                if (promise.isCompleted)
+                    ++promises_completed
                 ++promises
                 UpdateStatistics()
             }
 
             ,
-            Clear: () => 
+            Clear: () => {
+                promises_completed = 0
+                promises = 0
                 $(PROMISES_LIST_ID + "> div").remove()
+            }
             
         }
     })()
