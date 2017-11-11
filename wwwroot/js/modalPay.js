@@ -89,20 +89,18 @@ let ModalPay = function () {
                     ClearMessage()
                     StartProcessing()
                     GetBalance(addr, net, asset).then(fund => {
-                        console.log(asset)
-                        console.log(net)
-                        console.log(fund)
                         let amount = $(AMOUNT_ID).val()
                         let isCorrect = IsAmountCorrect(amount, fund)
 
                         if (isCorrect == true) {
-                            $.get(HELPERS.GetSendAssetUrl(net, ADDR_TO_PAY, asset, amount))
+                            $.get(HELPERS.GetSendAssetUrl(asset, ADDR_TO_PAY, net, amount))
                                 .success(res => {
                                     (res == true) ? OnSuccess() : OnError()
                                     EndProcessing()
                                 })
                                 .error(err => {
-                                    OnError(err)
+                                    let mes = (err.statusText !== undefined) ? err.statusText : "internal error"
+                                    OnError(mes)
                                     EndProcessing()
                                 })
                         } else {

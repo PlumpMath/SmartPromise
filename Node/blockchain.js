@@ -53,12 +53,14 @@ module.exports = {
         let sendAsset = {}
         sendAsset[assetName] = amount
 
-        doSendAsset(net, addr, wif, sendAsset).then(response => {
-            let res = (response.result === undefined || response.result === false) ?
-                false : true
+        doSendAsset(net, addr, wif, sendAsset)
+            .then(response => {
+                let res = (response.result === undefined || response.result === false) ?
+                    false : true
 
-            callback(null, res)
-        })
+                callback(null, res)
+            })
+            .catch(err => callback(null, err))
     }
     ,
 
@@ -79,13 +81,13 @@ module.exports = {
     ,
 
     CalculateInvokeGas: (callback, operation, net, key, data, scriptHash) => {
-        callback(2, null)
+        callback(null, 2)
     }
     ,
 
     InvokeContractAdd: (callback, net, wif, key, data, gasCost) => {
         const account = getAccountFromWIFKey(wif)
-
+        
         getBalance(net, account.address)
             .then((balances) => {
                 const intents = [
@@ -96,12 +98,13 @@ module.exports = {
                 const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash: CONTRACT_HASH }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)
+                
                 const hexTx = serializeTransaction(signedTx)
                 queryRPC(net, 'sendrawtransaction', [hexTx])
-                    .then(res => callback(res.result, null))
-                    .catch(err => callback(err, null))
+                    .then(res => callback(null, res.result))
+                    .catch(err => callback(null, err))
             })
-            .catch(err => callback(err, null))
+            .catch(err => callback(null, err))
         
     }
 }    
