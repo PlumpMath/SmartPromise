@@ -8,9 +8,9 @@ namespace Promises.Abstract
 {
     public interface IPromiseRepository
     {
-        IEnumerable<Promise> Promises { get; }
-        Promise Get(Guid id);
-        void Add(Promise promise);
-        void Complete(Guid id);
+        Task<IEnumerable<Promise>> GetPromises(ApplicationUser user);
+        Task<Promise> Get(Guid id);
+        Task<bool> Add(Promise promise, ApplicationUser user);
+        Task<bool> Complete(Guid id);
     }
 }

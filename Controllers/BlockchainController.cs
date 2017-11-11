@@ -56,7 +56,7 @@ namespace Promises.Controllers
         [HttpGet("{network}/{scriptHash}/{key}")]
         public async Task<string> GetStorage(NETWORK_TYPE network, string scriptHash, string key)
         {
-            return await _blockchain.GetStorage(network, scriptHash, key);
+            return await _blockchain.GetStorage(network, key);
         }
         
         [HttpGet("{addr}")]

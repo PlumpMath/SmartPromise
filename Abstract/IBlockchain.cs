@@ -16,7 +16,7 @@ namespace Promises.Abstract
             NETWORK_TYPE type, string addr);
         Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr, int amount);
         Task<Account> GenerateAccount();
-        Task<string> GetStorage(NETWORK_TYPE type, string scriptHash, string key);
+        Task<string> GetStorage(NETWORK_TYPE type, string key);
         Task<bool> VerifyAddress(string addr);
         Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string key, string data, int gasCost);
     }

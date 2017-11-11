@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Promises.Abstract;
 using Promises.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Promises.Controllers
 {
@@ -16,17 +17,21 @@ namespace Promises.Controllers
     public class PromisesController : Controller
     {
         private readonly IPromiseRepository _promiseRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public PromisesController(
-            IPromiseRepository promiseRepository)
+            IPromiseRepository promiseRepository,
+            UserManager<ApplicationUser> userManager)
         {
             _promiseRepository = promiseRepository;
+            _userManager = userManager;
         }
 
         [HttpPost("{title}/{content}/{complicity}/{date?}")]
-        public IActionResult Add(string title, string content, 
+        public async Task<IActionResult> Add(string title, string content, 
             PromiseComplicity complicity, DateTime date)
         {
+            var user = await _userManager.GetUserAsync(User);
             var promise = new Promise
             {
                 Title = title,
@@ -36,14 +41,15 @@ namespace Promises.Controllers
                 IsCompleted = false
             };
 
-            _promiseRepository.Add(promise);
-            return Ok();
+            var res = await _promiseRepository.Add(promise, user);
+            return new OkObjectResult(res);
         }
 
         [HttpGet()]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var res = _promiseRepository.Promises;
+            var user = await _userManager.GetUserAsync(User);
+            var res = await _promiseRepository.GetPromises(user);
             return new OkObjectResult(res);
         }
 

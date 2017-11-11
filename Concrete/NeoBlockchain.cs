@@ -12,8 +12,8 @@ namespace Promises.Concrete
 {
     public class NeoBlockchain : IBlockchain
     {
-        
-        
+
+        private readonly string CONTRACT_HASH = "dd1f90ab7f24f222c3aeb3cda34d273cea9d0959";
         private readonly INodeServices _nodeServices;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -37,10 +37,10 @@ namespace Promises.Concrete
             return await _nodeServices.InvokeExportAsync<Balance>(GetScriptLocation(), "GetBalance", GetNetwork(type), addr);
         }
 
-        public async Task<string> GetStorage(NETWORK_TYPE type, string scriptHash, string key)
+        public async Task<string> GetStorage(NETWORK_TYPE type, string key)
         {
             return await _nodeServices
-                .InvokeExportAsync<string>(GetScriptLocation(), "GetStorage", GetNetwork(type), scriptHash, key);
+                .InvokeExportAsync<string>(GetScriptLocation(), "GetStorage", GetNetwork(type), CONTRACT_HASH, key);
         }
 
         public async Task<IEnumerable<TransactionHistoryItem>> GetTransactionHistory(
@@ -53,7 +53,8 @@ namespace Promises.Concrete
         public async Task<bool> SendAsset(NETWORK_TYPE type, string wif, ASSET_NAME assetName, string addr, int amount)
         {
             var asset = (assetName == ASSET_NAME.NEO) ? "NEO" : "GAS";
-            var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), "SendAsset", GetNetwork(type), wif, asset, addr, amount);
+            var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), 
+                "SendAsset", GetNetwork(type), wif, asset, addr, amount);
             return res;
         }
 
@@ -67,10 +68,11 @@ namespace Promises.Concrete
             return (type == NETWORK_TYPE.MAINNET) ? "MainNet" : "TestNet";
         }
 
-        public async Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string key, string data, int gasCost)
+        public async Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif,
+            string key, string data, int gasCost)
         {
             var res = await _nodeServices.InvokeExportAsync<bool>(
-                GetScriptLocation(), "InvokeContractAdd", GetNetwork(net), wif, key, data, gasCost);
+                GetScriptLocation(), "InvokeContractAdd", GetNetwork(net), wif, key, data, CONTRACT_HASH, gasCost);
             return res;
         }
     }

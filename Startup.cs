@@ -34,7 +34,9 @@ namespace Promises
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ApplicationDatabase")));
 
-            services.AddTransient<IPromiseRepository, EFPromiseRepository>();
+            //services.AddTransient<IPromiseRepository, EFPromiseRepository>();
+            services.AddTransient<IPromiseRepository, BlockchainNeoPromiseRepository>();
+
             services.AddTransient<IFriendsRepository, EFFriendsRepository>();
             services.AddTransient<IMessagesRepository, EFMessagesRepository>();
             services.AddTransient<IBlockchain, NeoBlockchain>();

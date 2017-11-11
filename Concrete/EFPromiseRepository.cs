@@ -18,18 +18,15 @@ namespace Promises.Concrete
             _applicationContext = applicationContext;
         }
 
-        public IEnumerable<Promise> Promises
+        public Task<IEnumerable<Promise>> GetPromises(ApplicationUser user)
         {
-            get
-            {
-                return _applicationContext.Promises;
-            }
+            return Task.Run(() => _applicationContext.Promises.AsEnumerable());
         }
 
-        public void Add(Promise promise)
+        public async Task<bool> Add(Promise promise, ApplicationUser user)
         {
             
-            Promise result = Get(promise.Id);
+            Promise result = await Get(promise.Id);
             if (result != null)
             {
                 promise.Content = promise.Content;
@@ -39,23 +36,26 @@ namespace Promises.Concrete
                 _applicationContext.Promises.Add(promise);
             }
             _applicationContext.SaveChanges();
-            
+            return true;
         }
 
-        public void Complete(Guid id)
+        public async Task<bool> Complete(Guid id)
         {
-            var promise = Promises.FirstOrDefault(p => p.Id == id);
+            var promises = await GetPromises(null);
+            var promise = promises.FirstOrDefault(p => p.Id == id);
             promise.IsCompleted = true;
 
             _applicationContext.Attach(promise);
             _applicationContext.Entry(promise).Property(u => u.IsCompleted).IsModified = true;
 
             _applicationContext.SaveChanges();
+            return true;
         }
 
-        public Promise Get(Guid id)
+        public async Task<Promise> Get(Guid id)
         {
-            return Promises.FirstOrDefault(rec => rec.Id == id);
+            var promises = await GetPromises(null);
+            return promises.FirstOrDefault(rec => rec.Id == id);
         }
     }
 }

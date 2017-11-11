@@ -23,7 +23,7 @@
                 <td>` + tx.txid + `</td>
             </tr>
         `
-        $(TRANSCATIONS_TABLE_ID).prepend(item)
+        $(TRANSCATIONS_TABLE_ID).append(item)
     }
     
     $(document).ready(() => {

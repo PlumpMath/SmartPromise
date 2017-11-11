@@ -5,13 +5,9 @@
     queryRPC, serializeTransaction, create, signTransaction
 } from 'neon-js'
 
-
-const MAIN_ADDRESS = "AXWWMKZaL7BYxSonrdTfAjpY3wnH1F2g4Z"
-const TEST_ADDRESS = "AYRBCHPqusVjP37cU2EUfEUrzW83NFWwqj"
-const CONTRACT_HASH = "dd1f90ab7f24f222c3aeb3cda34d273cea9d0959"
-
 const SC_OPERATIONS = {
-    ADD: "add"
+    ADD: "add",
+    REPLACE: "replace"
 }
 
 const MAIN_NET = "MainNet"
@@ -38,6 +34,10 @@ let Converter = (function () {
         }
     }
 })()
+
+function InvokeContract() {
+
+}
 
 module.exports = {
     GetBalance: (callback, net, addr) =>
@@ -73,8 +73,9 @@ module.exports = {
     ,
 
     GetStorage: (callback, net, scriptHash, keyAscii) =>
-        getStorage(TEST_NET, CONTRACT_HASH, Converter.ascii_to_hex(keyAscii))
+        getStorage(net, scriptHash, Converter.ascii_to_hex(keyAscii))
             .then(res => callback(null, Converter.hex_to_ascii(res.result)))
+            .catch(err => callback(null, err))
     ,
 
     VerifyAddress: (callback, addr) => callback(null, verifyAddress(addr))
@@ -85,7 +86,7 @@ module.exports = {
     }
     ,
 
-    InvokeContractAdd: (callback, net, wif, key, data, gasCost) => {
+    InvokeContractAdd: (callback, net, wif, key, data, scriptHash, gasCost) => {
         const account = getAccountFromWIFKey(wif)
         
         getBalance(net, account.address)
@@ -95,7 +96,7 @@ module.exports = {
                 ]
 
                 const args = [Converter.ascii_to_hex(key), Converter.ascii_to_hex(data)]
-                const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash: CONTRACT_HASH }
+                const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)
                 
@@ -107,4 +108,30 @@ module.exports = {
             .catch(err => callback(null, err))
         
     }
+    ,
+
+    InvokeContractReplace: (callback, net, wif, key, data, gasCost) => {
+        const account = getAccountFromWIFKey(wif)
+
+        getBalance(net, account.address)
+            .then((balances) => {
+                const intents = [
+                    //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
+                ]
+
+                const args = [Converter.ascii_to_hex(key), Converter.ascii_to_hex(data)]
+                const invoke = { operation: SC_OPERATIONS.REPLACE, args, scriptHash: CONTRACT_HASH }
+                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
+                const signedTx = signTransaction(unsignedTx, account.privateKey)
+
+                const hexTx = serializeTransaction(signedTx)
+                queryRPC(net, 'sendrawtransaction', [hexTx])
+                    .then(res => callback(null, res.result))
+                    .catch(err => callback(null, err))
+            })
+            .catch(err => callback(null, err))
+
+    }
+
+
 }    
