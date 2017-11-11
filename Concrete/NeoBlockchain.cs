@@ -66,5 +66,12 @@ namespace Promises.Concrete
         {
             return (type == NETWORK_TYPE.MAINNET) ? "MainNet" : "TestNet";
         }
+
+        public async Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string key, string data, int gasCost)
+        {
+            var res = await _nodeServices.InvokeExportAsync<bool>(
+                GetScriptLocation(), "InvokeContractAdd", GetNetwork(net), wif, key, data, gasCost);
+            return res;
+        }
     }
 }

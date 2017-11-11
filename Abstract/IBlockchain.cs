@@ -18,5 +18,6 @@ namespace Promises.Abstract
         Task<Account> GenerateAccount();
         Task<string> GetStorage(NETWORK_TYPE type, string scriptHash, string key);
         Task<bool> VerifyAddress(string addr);
+        Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string key, string data, int gasCost);
     }
 }

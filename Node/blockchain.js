@@ -1,13 +1,18 @@
 ﻿import {
     getAccountFromWIFKey, generatePrivateKey,
     getStorage, getTransactionHistory, doSendAsset,
-    getWIFFromPrivateKey, getBalance, verifyAddress
+    getWIFFromPrivateKey, getBalance, verifyAddress,
+    queryRPC, serializeTransaction, create, signTransaction
 } from 'neon-js'
 
 
 const MAIN_ADDRESS = "AXWWMKZaL7BYxSonrdTfAjpY3wnH1F2g4Z"
 const TEST_ADDRESS = "AYRBCHPqusVjP37cU2EUfEUrzW83NFWwqj"
-const CONTRACT_HASH = "b0cda325106823831a2a0c04504de833c3862500"
+const CONTRACT_HASH = "dd1f90ab7f24f222c3aeb3cda34d273cea9d0959"
+
+const SC_OPERATIONS = {
+    ADD: "add"
+}
 
 const MAIN_NET = "MainNet"
 const TEST_NET = "TestNet"
@@ -71,4 +76,32 @@ module.exports = {
     ,
 
     VerifyAddress: (callback, addr) => callback(null, verifyAddress(addr))
+    ,
+
+    CalculateInvokeGas: (callback, operation, net, key, data, scriptHash) => {
+        callback(2, null)
+    }
+    ,
+
+    InvokeContractAdd: (callback, net, wif, key, data, gasCost) => {
+        const account = getAccountFromWIFKey(wif)
+
+        getBalance(net, account.address)
+            .then((balances) => {
+                const intents = [
+                    //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
+                ]
+
+                const args = [Converter.ascii_to_hex(key), Converter.ascii_to_hex(data)]
+                const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash: CONTRACT_HASH }
+                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
+                const signedTx = signTransaction(unsignedTx, account.privateKey)
+                const hexTx = serializeTransaction(signedTx)
+                queryRPC(net, 'sendrawtransaction', [hexTx])
+                    .then(res => callback(res.result, null))
+                    .catch(err => callback(err, null))
+            })
+            .catch(err => callback(err, null))
+        
+    }
 }    

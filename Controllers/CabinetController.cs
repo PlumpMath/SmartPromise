@@ -140,50 +140,12 @@ namespace Promises.Controllers
         {
             return View();
         }
-        
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePromise(PromiseCreationModel promise)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var user = await Owner();
-                    var userId = user.Id;
-                    _promiseRepository.Add(new Promise { Content = promise.Content, UserId = userId });
-                    return RedirectToAction(nameof(Profile));
-                }
-            }
-            catch (DbUpdateException /* ex */)
-            {
-                //Log the error (uncomment ex variable name and write a log.
-                ModelState.AddModelError("", "Unable to save changes. " +
-                    "Try again, and if the problem persists " +
-                    "see your system administrator.");
-            }
-            return View(promise);
-        }
 
-        public IActionResult CreatePromise()
-        {
-            return View();
-        }
         
         private async Task<bool> IsOnline(string userId)
         {
             var onlineUsers = await _userTracker.UsersOnline();
             return onlineUsers.FirstOrDefault(u => u.Owner.Id == userId) != null;
-        }
-        
-        public async Task<IActionResult> ManagePromises()
-        {
-            var user = await Owner();
-            var userId = user.Id;
-            var promises = _promiseRepository.Promises.Where(p => p.UserId == userId);
-            
-            var model = new ManagePromisesViewModel{ Promises = promises };
-            return View(model);
         }
     }
 }

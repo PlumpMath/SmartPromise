@@ -7,6 +7,7 @@ using Promises.Models;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace Promises.Controllers
 {
@@ -62,6 +63,15 @@ namespace Promises.Controllers
         public async Task<bool> VerifyAddress(string addr)
         {
             return await _blockchain.VerifyAddress(addr);
+        }
+
+        [HttpGet("{net}/{data}")]
+        public async Task<bool> ContractInvokeAddPromise(NETWORK_TYPE net, Promise data)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            var user = await _userManager.GetUserAsync(User);
+
+            return await _blockchain.InvokeContractAdd(net, user.Wif, user.Email, json, 2);
         }
     }
 }
