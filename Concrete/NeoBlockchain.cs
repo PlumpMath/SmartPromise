@@ -39,8 +39,9 @@ namespace Promises.Concrete
 
         public async Task<string> GetStorage(NETWORK_TYPE type, string key)
         {
-            return await _nodeServices
+            var res = await _nodeServices
                 .InvokeExportAsync<string>(GetScriptLocation(), "GetStorage", GetNetwork(type), CONTRACT_HASH, key);
+            return res;
         }
 
         public async Task<IEnumerable<TransactionHistoryItem>> GetTransactionHistory(

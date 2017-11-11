@@ -72,13 +72,16 @@ module.exports = {
     }
     ,
 
-    GetStorage: (callback, net, scriptHash, keyAscii) =>
-        getStorage(net, scriptHash, Converter.ascii_to_hex(keyAscii))
+    GetStorage: (callback, net, scriptHash, key) => {
+        getStorage(net, scriptHash, Converter.ascii_to_hex(key))
             .then(res => callback(null, Converter.hex_to_ascii(res.result)))
             .catch(err => callback(null, err))
+    }
     ,
 
-    VerifyAddress: (callback, addr) => callback(null, verifyAddress(addr))
+    VerifyAddress: (callback, addr) => {
+        callback(null, verifyAddress(addr))
+    }
     ,
 
     CalculateInvokeGas: (callback, operation, net, key, data, scriptHash) => {

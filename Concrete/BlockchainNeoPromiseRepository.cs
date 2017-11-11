@@ -27,8 +27,9 @@ namespace Promises.Concrete
         public async Task<IEnumerable<Promise>> GetPromises(ApplicationUser user)
         {
             var json = await _blockchain.GetStorage(NETWORK_TYPE.TESTNET, user.Address);
-            var promises = JsonConvert.DeserializeObject<IEnumerable<Promise>>(json);
-            return promises;
+            var promises = JsonConvert.DeserializeObject<Promise>(json);
+            
+            return new List<Promise> { promises };
         }
 
         public async Task<bool> Add(Promise promise, ApplicationUser user)
