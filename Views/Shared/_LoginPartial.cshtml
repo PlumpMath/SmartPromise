@@ -14,10 +14,10 @@
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <span class="navbar-text">NEO : @balances.NEO</span>
+                <button id="_testnet_neo" type="button" class="btn btn-link navbar-btn"> NEO : @balances.NEO </button>
             </li>
             <li>
-                <span class="navbar-text">GAS : @balances.GAS</span>
+                <button id="_testnet_gas" type="button" class="btn btn-link navbar-btn"> GAS : @balances.GAS </button>
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">

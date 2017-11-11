@@ -26,14 +26,11 @@
 
     const TITLE_FRIENDS = "Friends"
     const TITLE_OTHERS = "Others"
-    const TITLE_Pending = "Pending"
+    const TITLE_PENDING = "Pending"
     const TITLE_CLEAR = ""
     
     function StopLoading() {
         ShowFindInpit()
-        $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS)
-        $(OTHERS_LABEL_ID).html(TITLE_OTHERS)
-        $(PENDING_LABEL_ID).html(TITLE_Pending)
         Loader(LOADER_ID).Hide()
     }
 
@@ -48,9 +45,6 @@
 
     function StartLoading() {
         HideFindInput()
-        $(FRIENDS_LABEL_ID).html(TITLE_CLEAR)
-        $(OTHERS_LABEL_ID).html(TITLE_CLEAR)
-        $(PENDING_LABEL_ID).html(TITLE_CLEAR)
         Loader(LOADER_ID).Show()
     }
 
@@ -244,6 +238,12 @@
         UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).Clear()
         UserListManager(PENDING_LIST_ID, TYPE.PENDING).Clear()
     }
+
+    function UpdateLabels(others, friends, pending) {
+        (others && others.length !== 0) ? $(OTHERS_LABEL_ID).html(TITLE_OTHERS + "<br/>") : $(OTHERS_LABEL_ID).html("");
+        (friends && friends.length !== 0) ? $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS + "<br/>") : $(FRIENDS_LABEL_ID).html("");
+        (pending && pending.length !== 0) ? $(PENDING_LABEL_ID).html(TITLE_PENDING + "<br/>") : $(PENDING_LABEL_ID).html("");
+    }
     
     function FindUsers(param) {
         $.get(CONTROLLER_NAME + METHOD_FIND_BY_EMAIL + param,
@@ -260,15 +260,17 @@
                     let others = filtered.others
                     let friends = filtered.friends
                     let pending = filtered.pending
-
+                    
                     UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
                     UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
                     UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(pending)
+                    UpdateLabels(others, friends, pending)
                 })
                 
                 UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
                 UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
                 UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(model.pending)
+                UpdateLabels(model.others, model.friends, model.pending)
             })
             .fail(err => console.log(err))
     }
