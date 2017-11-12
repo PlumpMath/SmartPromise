@@ -10,10 +10,63 @@
     const STATUS_ID = "#_modal_create_promise_result"
     const LOADER_CREATE_PROMISE_ID = "#_modal_create_promise_loader"
 
-    const STATUS_ERROR = "Transaction failed: please, try again later."
-    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it."
+    const STATUS_ERROR = "Transaction failed: please, try again later. "
+    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
+    const BE_AWARE = "Beware! This transaction would cost you 2 gas! "
     const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
+
+    function OnError(err) {
+        $(STATUS_ID).removeClass().addClass("text-danger").html(STATUS_ERROR + err)
+    }
+
+    function OnSuccess() {
+        $(STATUS_ID).removeClass().addClass("text-success").html(STATUS_SUCCESS)
+    }
+
+    function StartProcessing() {
+        ClearStatus()
+        $(SUMBIT_PROMISE_ID).prop('disabled', true)
+        HELPERS.Loader(LOADER_CREATE_PROMISE_ID).Show()
+    }
+
+    function ClearStatus() {
+        $(STATUS_ID).html(EMPTY)
+    }
+
+    function EndProcessing() {
+        $(SUMBIT_PROMISE_ID).prop('disabled', false)
+        HELPERS.Loader(LOADER_CREATE_PROMISE_ID).Hide()
+        $(TITLE_ID).val(EMPTY)
+        $(CONTENT_ID).val(EMPTY)
+        ComplicityManager.Clear()
+    }
+
+    function Init() {
+        $(STATUS_ID).removeClass().addClass("text-warning").html(BE_AWARE)
+        $(TITLE_ID).val(EMPTY)
+        $(CONTENT_ID).val(EMPTY)
+        ComplicityManager.Clear()
+    }
+
+    function Check(fund) {
+        if (fund <= 2) {
+            OnError(INSUFFICIENT_FUNDS)
+            return false
+        }
+
+        if ($(TITLE_ID).val() === "") {
+            OnError("Please, fill the title.")
+            return false
+        }
+
+        if ($(CONTENT_ID).val() === "") {
+            OnError("Please, fill the content.")
+            return false
+        }
+
+        return true
+    }
     
     var PromisesListManager = (function () {
         const PROMISES_LIST_ID = "#_promises_id"
@@ -158,7 +211,10 @@
                             ++complicity
                     })
                 return complicity
-            }
+            },
+            Clear: () =>
+                ChangeComplicity(MIN_COMPLICITY)
+
         }
 
     })()
@@ -186,17 +242,51 @@
     $(document).ready(() => {
         ComplicityManager.AddHandlers()
 
+        $(MODAL_PROMISE_ID).on('shown.bs.modal', () => {
+            Init()
+        })
+
         Update()
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
+            StartProcessing()
 
-            $.post(HELPERS.GetAddPromiseUrl(promise)).success(() => Update())
-
+            $.get(_RAZOR_GET_MY_ADDRESS)
+                .success(addr => {
+                    HELPERS.GetBalance(addr, "TestNet", "gas")
+                        .then(fund => {
+                            console.log(fund)
+                            if (Check(fund) === true) {
+                                $.post(HELPERS.GetAddPromiseUrl(promise))
+                                    .success(res => {
+                                        (res == true) ? OnSuccess() : OnError("Probably you should wait till previous transaction get processed.")
+                                        EndProcessing()
+                                    })
+                                    .error(err => {
+                                        let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
+                                        OnError(mes)
+                                        EndProcessing()
+                                    })
+                            } else {
+                                EndProcessing()
+                            }
+                        })
+                        .catch(err => {
+                            OnError(err)
+                            EndProcessing()
+                        })
+                    })  
+                })
+                .error(err => {
+                    OnError(err)
+                    EndProcessing()
+                })
+            
             //PromisesListManager.AddItem(promise)
             
 
 
-            $(MODAL_PROMISE_ID).modal("toggle")
+            //$(MODAL_PROMISE_ID).modal("toggle")
         })
-    })
+
 }

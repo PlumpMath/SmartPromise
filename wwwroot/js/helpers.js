@@ -72,6 +72,17 @@ var HELPERS = (function () {
             _RAZOR_COMPLETE_PROMISE
                 .replace("__id__", id)
         ,
+        GetBalance: (addr, net, asset) => {
+            return new Promise((resolve, reject) => {
+                $.get(HELPERS.GetBlockchainBalanceUrl(net, addr))
+                    .success(res => {
+                        console.log(res)
+                        resolve(res[asset])
+                    })
+                    .error(err => reject(err))
+
+            })
+        },
         Loader
         ,
         NET

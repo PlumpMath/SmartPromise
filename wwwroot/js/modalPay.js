@@ -17,9 +17,9 @@ let ModalPay = function () {
 
     const ADDR_TO_PAY = $(ADDRESS_TO_PAY_ID).text()
 
-    const STATUS_ERROR = "Transaction failed: please, try again later."
-    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it."
-    const INSUFFICIENT_FUNDS = "Insufficient funds."
+    const STATUS_ERROR = "Transaction failed: please, try again later. "
+    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
+    const INSUFFICIENT_FUNDS = "Insufficient funds. "
     const EMPTY = ""
 
     let asset = ""
@@ -37,18 +37,6 @@ let ModalPay = function () {
         $(AMOUNT_ID).val(EMPTY)
         asset = ASSET_GAS
         net = TESTNET
-    }
-
-    function GetBalance(addr, net, asset) {
-        return new Promise((resolve, reject) => {
-            $.get(HELPERS.GetBlockchainBalanceUrl(net, addr))
-                .success(res => {
-                    console.log(res)
-                    resolve(res[asset])
-                })
-                .error(err => reject(err))  
-                
-        })
     }
 
     function OnSuccess() {
@@ -93,11 +81,11 @@ let ModalPay = function () {
                 $(SEND_ID).click(() => {
                     ClearMessage()
                     StartProcessing()
-                    GetBalance(addr, net, asset).then(fund => {
+                    HELPERS.GetBalance(addr, net, asset).then(fund => {
                         let amount = $(AMOUNT_ID).val()
-                        console.log(asset)
+                        /*console.log(asset)
                         console.log("AMOUNT : " + amount)
-                        console.log("FUND : " + fund)
+                        console.log("FUND : " + fund)*/
                         let isCorrect = IsAmountCorrect(amount, fund)
 
                         if (isCorrect == true) {
@@ -107,11 +95,12 @@ let ModalPay = function () {
                             console.log(amount)*/
                             $.get(HELPERS.GetSendAssetUrl(asset, ADDR_TO_PAY, net, amount))
                                 .success(res => {
-                                    (res == true) ? OnSuccess() : OnError("probably you should wait till previous transaction get processed")
+                                    (res == true) ? OnSuccess() : OnError("Probably you should wait till previous transaction get processed.")
                                     EndProcessing()
                                 })
                                 .error(err => {
-                                    let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "internal error"
+                                    //console.log(err)
+                                    let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
                                     OnError(mes)
                                     EndProcessing()
                                 })
@@ -120,6 +109,7 @@ let ModalPay = function () {
                             EndProcessing()
                         }
                     }).catch(err => {
+                        //console.log(err)
                         OnError(err)
                         EndProcessing()
                     })
