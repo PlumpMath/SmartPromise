@@ -13,7 +13,7 @@ namespace Promises.Concrete
     public class NeoBlockchain : IBlockchain
     {
 
-        private readonly string CONTRACT_HASH = "dd1f90ab7f24f222c3aeb3cda34d273cea9d0959";
+        private readonly string CONTRACT_HASH = "a42abb913fa551de74fd4626ad4a789a2987e52e";
         private readonly INodeServices _nodeServices;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -39,9 +39,16 @@ namespace Promises.Concrete
 
         public async Task<string> GetStorage(NETWORK_TYPE type, string key)
         {
-            var res = await _nodeServices
-                .InvokeExportAsync<string>(GetScriptLocation(), "GetStorage", GetNetwork(type), CONTRACT_HASH, key);
-            return res;
+            try
+            {
+                var res = await _nodeServices
+                    .InvokeExportAsync<string>(GetScriptLocation(), "GetStorage", GetNetwork(type), CONTRACT_HASH, key);
+                return res;
+            }
+            catch (Exception err) {
+                return null;
+            }
+            
         }
 
         public async Task<IEnumerable<TransactionHistoryItem>> GetTransactionHistory(

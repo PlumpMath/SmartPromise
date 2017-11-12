@@ -12,7 +12,7 @@
 
     const STATUS_ERROR = "Transaction failed: please, try again later. "
     const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
-    const BE_AWARE = "Beware! This transaction would cost you 2 gas! "
+    const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
     const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
 
@@ -50,7 +50,8 @@
     }
 
     function Check(fund) {
-        if (fund <= 2) {
+        let GasCost = 1
+        if (fund <= GasCost) {
             OnError(INSUFFICIENT_FUNDS)
             return false
         }

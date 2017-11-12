@@ -73,8 +73,8 @@ module.exports = {
     ,
 
     GetStorage: (callback, net, scriptHash, key) => {
-        getStorage(net, scriptHash, Converter.ascii_to_hex(key))
-            .then(res => callback(null, Converter.hex_to_ascii(res.result)))
+        getStorage(net, scriptHash, key)
+            .then(res => callback(null, res.result))
             .catch(err => callback(null, err))
     }
     ,
@@ -98,7 +98,7 @@ module.exports = {
                     //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
                 ]
 
-                const args = [Converter.ascii_to_hex(key), Converter.ascii_to_hex(data)]
+                const args = [key, data]
                 const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)
@@ -122,7 +122,7 @@ module.exports = {
                     //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
                 ]
 
-                const args = [Converter.ascii_to_hex(key), Converter.ascii_to_hex(data)]
+                const args = [key, data]
                 const invoke = { operation: SC_OPERATIONS.REPLACE, args, scriptHash: CONTRACT_HASH }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)
