@@ -35,9 +35,27 @@ let Converter = (function () {
     }
 })()
 
-function InvokeContract() {
+function InvokeContractFactory(operation) {
+    return function(callback, net, wif, key, data, scriptHash, gasCost) {
+        const account = getAccountFromWIFKey(wif)
 
-}
+        getBalance(net, account.address)
+            .then((balances) => {
+                const intents = []
+
+                const args = [key, data]
+                const invoke = { operation, args, scriptHash }
+                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
+                const signedTx = signTransaction(unsignedTx, account.privateKey)
+
+                const hexTx = serializeTransaction(signedTx)
+                queryRPC(net, 'sendrawtransaction', [hexTx])
+                    .then(res => callback(null, res.result))
+                    .catch(err => callback(null, err))
+            })
+            .catch(err => callback(null, err))
+    }
+} 
 
 module.exports = {
     GetBalance: (callback, net, addr) =>
@@ -89,52 +107,9 @@ module.exports = {
     }
     ,
 
-    InvokeContractAdd: (callback, net, wif, key, data, scriptHash, gasCost) => {
-        const account = getAccountFromWIFKey(wif)
-        
-        getBalance(net, account.address)
-            .then((balances) => {
-                const intents = [
-                    //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
-                ]
-
-                const args = [key, data]
-                const invoke = { operation: SC_OPERATIONS.ADD, args, scriptHash }
-                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
-                const signedTx = signTransaction(unsignedTx, account.privateKey)
-                
-                const hexTx = serializeTransaction(signedTx)
-                queryRPC(net, 'sendrawtransaction', [hexTx])
-                    .then(res => callback(null, res.result))
-                    .catch(err => callback(null, err))
-            })
-            .catch(err => callback(null, err))
-        
-    }
+    InvokeContractAdd: InvokeContractFactory(SC_OPERATIONS.ADD)
     ,
 
-    InvokeContractReplace: (callback, net, wif, key, data, gasCost) => {
-        const account = getAccountFromWIFKey(wif)
-
-        getBalance(net, account.address)
-            .then((balances) => {
-                const intents = [
-                    //{ assetId: ASSETS['NEO'], value: 0, scriptHash: scriptHash }
-                ]
-
-                const args = [key, data]
-                const invoke = { operation: SC_OPERATIONS.REPLACE, args, scriptHash: CONTRACT_HASH }
-                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
-                const signedTx = signTransaction(unsignedTx, account.privateKey)
-
-                const hexTx = serializeTransaction(signedTx)
-                queryRPC(net, 'sendrawtransaction', [hexTx])
-                    .then(res => callback(null, res.result))
-                    .catch(err => callback(null, err))
-            })
-            .catch(err => callback(null, err))
-
-    }
-
-
+    InvokeContractReplace: InvokeContractFactory(SC_OPERATIONS.REPLACE)
+    
 }    

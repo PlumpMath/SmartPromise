@@ -52,6 +52,10 @@
     background-color: #7fc168;
 }
 
+.promise-block-error {
+    background-color:#cc3434
+}
+
 .promise-block-description {
     font-size: 13px;
 }

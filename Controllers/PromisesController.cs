@@ -38,17 +38,17 @@ namespace Promises.Controllers
                 Content = content,
                 Date = date,
                 Complicity = complicity,
-                IsCompleted = false
+                Status = PROMISE_STATUS.NOT_COMPLTED
             };
 
             var res = await _promiseRepository.Add(promise, user);
             return new OkObjectResult(res);
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> Get()
+        [HttpGet("{address}")]
+        public async Task<IActionResult> Get(string address)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = _userManager.Users.FirstOrDefault(u => u.Address == address);
             var res = await _promiseRepository.GetPromises(user);
             return new OkObjectResult(res);
         }

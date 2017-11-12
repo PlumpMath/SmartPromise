@@ -43,10 +43,10 @@ namespace Promises.Concrete
         {
             var promises = await GetPromises(null);
             var promise = promises.FirstOrDefault(p => p.Id == id);
-            promise.IsCompleted = true;
+            promise.Status = PROMISE_STATUS.COMPLETED;
 
             _applicationContext.Attach(promise);
-            _applicationContext.Entry(promise).Property(u => u.IsCompleted).IsModified = true;
+            _applicationContext.Entry(promise).Property(u => u.Status == PROMISE_STATUS.COMPLETED).IsModified = true;
 
             _applicationContext.SaveChanges();
             return true;

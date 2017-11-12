@@ -16,6 +16,11 @@
     const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
 
+    const PROMISE_STATUS = {
+        ERROR: -1,
+        COMPLTED: 1,
+        NOT_COMPLETED: 0
+    }
     function OnError(err) {
         $(STATUS_ID).removeClass().addClass("text-danger").html(STATUS_ERROR + err)
     }
@@ -130,19 +135,36 @@
                 })
             })
         }
+        
+        function GetPromiseStyle(promise) {
+            switch (promise.status) {
+                case PROMISE_STATUS.COMPLTED:
+                    return "promise-block promise-block-completed"
+                case PROMISE_STATUS.ERROR:
+                    return "promise-block promise-block-error"
+                case PROMISE_STATUS.NOT_COMPLETED:
+                default:
+                    return "promise-block"
+            }
+        }
 
         return {
             AddItem: promise => {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
-                let promiseStyle = promise.isCompleted ? "promise-block promise-block-completed" : "promise-block"
-                let completeButton = !promise.isCompleted ? `
+
+                let promiseStyle = GetPromiseStyle(promise)
+                let completeButton = (promise.status === PROMISE_STATUS.COMPLTED || promise.status === PROMISE_STATUS.ERROR) ?
+                    "" : `
                     <span class="pull-right">
                         <button id="` + buttonKey + `" type="button" class="btn btn-success">
                             <span class="glyphicon glyphicon-ok"></span>
                         </button>
                     </span>
-                ` : ""
+                ` 
+
+                let complicityBlock = (promise.status == PROMISE_STATUS.ERROR) ?
+                    "" : `<div class="promise-block-rate">` + GetComplicityBlock(promise.complicity) + ` </div>`
                 let element = `
                         <div id="` + promiseKey + `"class="` + promiseStyle + `">
                             <div class="row">
@@ -153,8 +175,7 @@
                                 <div class="promise-block-date">January 29, 2016<br />1 day ago</div>
                             </div>
                             -->
-                            <div class="col-sm-9">
-                                <div class="promise-block-rate">` + GetComplicityBlock(promise.complicity) + ` </div>
+                            <div class="col-sm-9">` + complicityBlock + `
                                 <div class="promise-block-title">` + promise.title + `</div>
                                 <div class="promise-block-description">` + promise.content +`</div>                                
                             </div>
@@ -232,7 +253,7 @@
     function Update() {
         PromisesListManager.Clear()
         HELPERS.Loader(LOADER_ID).Show()
-        $.get(_RAZOR_GET_PROMISES)
+        $.get(_RAZOR_GET_PROMISES.replace("__address__", _RAZOR_PROFILE_VIEW_USER_ADDRESS))
             .success(ps => {
                 HELPERS.Loader(LOADER_ID).Hide()
                 ps.forEach(p => PromisesListManager.AddItem(p))
