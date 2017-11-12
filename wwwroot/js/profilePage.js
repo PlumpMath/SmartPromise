@@ -52,12 +52,47 @@
 
     })(loader_id, status_id, submit_btn_id, after_processing)
 
+function InvokeContractByUrl(url, ProcessManager) {
+    ProcessManager.StartProcessing()
+
+    $.get(_RAZOR_GET_MY_ADDRESS)
+        .success(addr => {
+            HELPERS.GetBalance(addr, "TestNet", "gas")
+                .then(fund => {
+                    if (Check(fund) === true) {
+                        $.post(url)
+                            .success(res => {
+                                (res == true) ?
+                                    ProcessManager.OnSuccess() :
+                                    ProcessManager.OnError("Probably you should wait till previous transaction get processed.")
+                                ProcessManager.EndProcessing()
+                            })
+                            .error(err => {
+                                let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
+                                ProcessManager.OnError(mes)
+                                ProcessManager.EndProcessing()
+                            })
+                    } else {
+                        ProcessManager.EndProcessing()
+                    }
+                })
+                .catch(err => {
+                    ProcessManager.OnError(err)
+                    ProcessManager.EndProcessing()
+                })
+        })
+        .error(err => {
+            ProcessManager.OnError(err)
+            ProcessManager.EndProcessing()
+        })
+}
 
 var ProfilePage = function () {
     console.log("______________profilePage.js______________")
     
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
+    
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
     const LOADER_ID = '#_promises_loader'
@@ -68,9 +103,10 @@ var ProfilePage = function () {
         COMPLTED: 1,
         NOT_COMPLETED: 0
     }
+
     
     const MODAL_FILL_PROMISE = TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
-        '#_create_promise_button', EmptyFillPromiseForm)
+        SUMBIT_PROMISE_ID, EmptyFillPromiseForm)
     
     function EmptyFillPromiseForm() {
         $(TITLE_ID).val(EMPTY)
@@ -99,15 +135,20 @@ var ProfilePage = function () {
     }
     
     var PromisesListManager = (function () {
+        
+        const COMPLETE_PROMISE_ID = '#_complete_promise_button'
+        const MODAL_COMPLETE_PROMISE_ID = "#_modal_complete_promise"
+        
         const PROMISES_LIST_ID = "#_promises_id"
         const COMPLETED_RATING_ID = "#_completed_rating_id"
-        const COMPLETE_PROMISE_MODAL_ID = "#_complete_promise"
-        const COMPLETE_PROMISE_BTN_ID = '#_complete_promise_btn'
         const BUTTON_PREFIX = "BP"
 
         let promises = 0
         let promises_completed = 0
 
+        const MODAL_COMPLETE_PROMISE = TransactionStatusManager("_modal_complete_promise_loader", "_modal_create_complete_result",
+            COMPLETE_PROMISE_ID, () => $('#_promise_proof').val(EMPTY))
+        
         function GetPromiseId(key) {
             return '#' + GetKey(key)
         }
@@ -153,9 +194,12 @@ var ProfilePage = function () {
 
         function AddButtonHandler(key) {
             $(GetCompleteButtonId(key)).click(() => {
-                $(COMPLETE_PROMISE_MODAL_ID).modal("toggle")
-                $(COMPLETE_PROMISE_BTN_ID).unbind('click').click(() => {
+                $(MODAL_COMPLETE_PROMISE_ID).modal("toggle")
+                $(COMPLETE_PROMISE_ID).unbind('click').click(() => {
                     $.post(HELPERS.GetCompletePromiseUrl(key)).then(() => {
+
+
+
                         let comment = `
                             <div class="promise-block promise-block-comment">
                                 <div class="row">
@@ -235,7 +279,10 @@ var ProfilePage = function () {
                 promises = 0
                 $(PROMISES_LIST_ID + "> div").remove()
             }
-            
+            ,
+            MODAL_COMPLETE_PROMISE_ID
+            ,
+            MODAL_COMPLETE_PROMISE
         }
     })()
 
@@ -299,6 +346,7 @@ var ProfilePage = function () {
 
     }
     
+
     $(document).ready(() => {
         ComplicityManager.AddHandlers()
 
@@ -306,48 +354,16 @@ var ProfilePage = function () {
             MODAL_FILL_PROMISE.Init()
         })
 
-        Update()
-        $(SUMBIT_PROMISE_ID).click(() => {
-            let promise = GetPromise()
-            MODAL_FILL_PROMISE.StartProcessing()
-
-            $.get(_RAZOR_GET_MY_ADDRESS)
-                .success(addr => {
-                    HELPERS.GetBalance(addr, "TestNet", "gas")
-                        .then(fund => {
-                            if (Check(fund) === true) {
-                                $.post(HELPERS.GetAddPromiseUrl(promise))
-                                    .success(res => {
-                                        (res == true) ?
-                                            MODAL_FILL_PROMISE.OnSuccess() :
-                                            MODAL_FILL_PROMISE.OnError("Probably you should wait till previous transaction get processed.")
-                                        MODAL_FILL_PROMISE.EndProcessing()
-                                    })
-                                    .error(err => {
-                                        let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
-                                        MODAL_FILL_PROMISE.OnError(mes)
-                                        MODAL_FILL_PROMISE.EndProcessing()
-                                    })
-                            } else {
-                                MODAL_FILL_PROMISE.EndProcessing()
-                            }
-                        })
-                        .catch(err => {
-                            MODAL_FILL_PROMISE.OnError(err)
-                            MODAL_FILL_PROMISE.EndProcessing()
-                        })
-                    })  
-                })
-                .error(err => {
-                    MODAL_FILL_PROMISE.OnError(err)
-                    MODAL_FILL_PROMISE.EndProcessing()
-                })
-            
-            //PromisesListManager.AddItem(promise)
-            
-
-
-            //$(MODAL_PROMISE_ID).modal("toggle")
+        $(PromisesListManager.MODAL_COMPLETE_PROMISE_ID).on('shown.bs.modal', () => {
+            PromisesListManager.MODAL_COMPLETE_PROMISE.Init()
         })
 
+        
+        Update()
+        
+        $(SUMBIT_PROMISE_ID).click(() => {
+            let promise = GetPromise()
+            InvokeContractByUrl(HELPERS.GetAddPromiseUrl(promise), MODAL_FILL_PROMISE)
+        })
+    })
 }
