@@ -6,6 +6,14 @@
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
     const LOADER_ID = '#_promises_loader'
+
+    const STATUS_ID = "#_modal_create_promise_result"
+    const LOADER_CREATE_PROMISE_ID = "#_modal_create_promise_loader"
+
+    const STATUS_ERROR = "Transaction failed: please, try again later."
+    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it."
+    const INSUFFICIENT_FUNDS = "Insufficient funds."
+    const EMPTY = ""
     
     var PromisesListManager = (function () {
         const PROMISES_LIST_ID = "#_promises_id"

@@ -2,8 +2,8 @@
 let ModalPay = function () {
     const TESTNET = 'testnet'
     const MAINNET = 'mainnet'
-    const ASSET_NEO = 'gas'
-    const ASSET_GAS = 'neo'
+    const ASSET_NEO = 'neo'
+    const ASSET_GAS = 'gas'
 
     const ASSET_ID = "#_asset_type"
     const NET_ID = '#_net_type'
@@ -22,20 +22,21 @@ let ModalPay = function () {
     const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
 
-    let asset = $(ASSET_ID).val()
-    let net = $(NET_ID).val()
+    let asset = ""
+    let net = ""
 
     let funds = {}
 
     function IsAmountCorrect(value, fund) {
         return !(parseInt(value) <= 0 || parseInt(value) > parseInt(fund))
     }
-
+    
     function Init() {
-        ClearMessage()
-        $(ASSET_ID + ' option[value="someValue"]').text(TESTNET)
-        $(NET_ID + ' option[value="someValue"]').text(ASSET_GAS.toUpperCase())
+        $(NET_ID + ' option[value="testnet"]').attr('selected', 'selected')
+        $(ASSET_ID).val("gas")
         $(AMOUNT_ID).val(EMPTY)
+        asset = ASSET_GAS
+        net = TESTNET
     }
 
     function GetBalance(addr, net, asset) {
@@ -76,13 +77,17 @@ let ModalPay = function () {
     function EndProcessing() {
         $(SEND_ID).prop('disabled', false)
         HELPERS.Loader(LOADER_ID).Hide()
+        Init()
     }
 
     $(document).ready(
         () => {
-            $(MODAL_ID).on('shown.bs.modal', () => Init())
+            $(MODAL_ID).on('shown.bs.modal', () => {
+                ClearMessage()
+                Init()
+            })
             $.get(_RAZOR_GET_MY_ADDRESS, addr => {
-                console.log(addr)
+                //console.log(addr)
                 $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
                 $(NET_ID).change(() => net = $(NET_ID).val())
                 $(SEND_ID).click(() => {
@@ -90,16 +95,23 @@ let ModalPay = function () {
                     StartProcessing()
                     GetBalance(addr, net, asset).then(fund => {
                         let amount = $(AMOUNT_ID).val()
+                        console.log(asset)
+                        console.log("AMOUNT : " + amount)
+                        console.log("FUND : " + fund)
                         let isCorrect = IsAmountCorrect(amount, fund)
 
                         if (isCorrect == true) {
+                            /*console.log(asset)
+                            console.log(ADDR_TO_PAY)
+                            console.log(net)
+                            console.log(amount)*/
                             $.get(HELPERS.GetSendAssetUrl(asset, ADDR_TO_PAY, net, amount))
                                 .success(res => {
-                                    (res == true) ? OnSuccess() : OnError()
+                                    (res == true) ? OnSuccess() : OnError("probably you should wait till previous transaction get processed")
                                     EndProcessing()
                                 })
                                 .error(err => {
-                                    let mes = (err.statusText !== undefined) ? err.statusText : "internal error"
+                                    let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "internal error"
                                     OnError(mes)
                                     EndProcessing()
                                 })
