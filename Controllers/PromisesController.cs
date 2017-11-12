@@ -54,7 +54,7 @@ namespace Promises.Controllers
         }
 
         [HttpPost("{id}")]
-        public IActionResult Complete(Guid id)
+        public IActionResult Complete(int id)
         {
             _promiseRepository.Complete(id);
             return Ok();

@@ -5,7 +5,7 @@
 }
 
 .promise-stats-block {
-    background-color: #FAFAFA;
+    background-color: #FAFAFa;
     border: 1px solid #EFEFEF;
     padding: 15px 15px 20px 15px;
     border-radius: 3px;
@@ -58,4 +58,8 @@
 
 .promise-block-description {
     font-size: 13px;
+}
+
+.promise-block-comment {
+    margin-left: 10%;
 }

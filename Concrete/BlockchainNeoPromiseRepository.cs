@@ -96,6 +96,9 @@ namespace Promises.Concrete
 
         public async Task<bool> Add(Promise promise, ApplicationUser user)
         {
+            //it's guaranteed it's unique by contract code
+            promise.Id = await GetPromiseCount(user);
+
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
             var addressHex = SmartPromiseKeyGenerator.Str2Hex(user.Address);
@@ -128,14 +131,14 @@ namespace Promises.Concrete
             return promises;
         }
 
-        public Task<bool> Complete(Guid id)
+        public Task<bool> Complete(int id)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => true);
         }
 
-        public Task<Promise> Get(Guid id)
+        public Task<Promise> Get(int id)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => new Promise { });
         }
     }
 }

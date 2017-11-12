@@ -1,4 +1,59 @@
-﻿var ProfilePage = function () {
+﻿let TransactionStatusManager = (loader_id, status_id, submit_btn_id,
+    after_processing) => ((lid, sid, bid, ap) => {
+
+        const LOADER_ID = lid
+        const STATUS_ID = sid
+        const SUBMIT_ID = bid
+        const FUNC_AFTER = ap
+
+        const STATUS_ERROR = "Transaction failed: please, try again later. "
+        const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
+        const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
+        const INSUFFICIENT_FUNDS = "Insufficient funds."
+        const EMPTY = ""
+
+        function OnError(err) {
+            $(STATUS_ID).removeClass().addClass("text-danger").html(STATUS_ERROR + err)
+        }
+
+        function OnSuccess() {
+            $(STATUS_ID).removeClass().addClass("text-success").html(STATUS_SUCCESS)
+        }
+
+        function StartProcessing() {
+            ClearStatus()
+            $(SUBMIT_ID).prop('disabled', true)
+            console.log(LOADER_ID)
+            HELPERS.Loader(LOADER_ID).Show()
+        }
+
+        function ClearStatus() {
+            $(STATUS_ID).html(EMPTY)
+        }
+
+        function EndProcessing() {
+            $(SUBMIT_ID).prop('disabled', false)
+            HELPERS.Loader(LOADER_ID).Hide()
+            FUNC_AFTER()
+        }
+
+        function Init(ls_id) {
+            $(STATUS_ID).removeClass().addClass("text-warning").html(BE_AWARE)
+            FUNC_AFTER()
+        }
+
+        return {
+            Init,
+            StartProcessing,
+            EndProcessing,
+            OnSuccess,
+            OnError,
+        }
+
+    })(loader_id, status_id, submit_btn_id, after_processing)
+
+
+var ProfilePage = function () {
     console.log("______________profilePage.js______________")
     
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
@@ -6,14 +61,6 @@
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
     const LOADER_ID = '#_promises_loader'
-
-    const STATUS_ID = "#_modal_create_promise_result"
-    const LOADER_CREATE_PROMISE_ID = "#_modal_create_promise_loader"
-
-    const STATUS_ERROR = "Transaction failed: please, try again later. "
-    const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
-    const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
-    const INSUFFICIENT_FUNDS = "Insufficient funds."
     const EMPTY = ""
 
     const PROMISE_STATUS = {
@@ -21,34 +68,11 @@
         COMPLTED: 1,
         NOT_COMPLETED: 0
     }
-    function OnError(err) {
-        $(STATUS_ID).removeClass().addClass("text-danger").html(STATUS_ERROR + err)
-    }
-
-    function OnSuccess() {
-        $(STATUS_ID).removeClass().addClass("text-success").html(STATUS_SUCCESS)
-    }
-
-    function StartProcessing() {
-        ClearStatus()
-        $(SUMBIT_PROMISE_ID).prop('disabled', true)
-        HELPERS.Loader(LOADER_CREATE_PROMISE_ID).Show()
-    }
-
-    function ClearStatus() {
-        $(STATUS_ID).html(EMPTY)
-    }
-
-    function EndProcessing() {
-        $(SUMBIT_PROMISE_ID).prop('disabled', false)
-        HELPERS.Loader(LOADER_CREATE_PROMISE_ID).Hide()
-        $(TITLE_ID).val(EMPTY)
-        $(CONTENT_ID).val(EMPTY)
-        ComplicityManager.Clear()
-    }
-
-    function Init() {
-        $(STATUS_ID).removeClass().addClass("text-warning").html(BE_AWARE)
+    
+    const MODAL_FILL_PROMISE = TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
+        '#_create_promise_button', EmptyFillPromiseForm)
+    
+    function EmptyFillPromiseForm() {
         $(TITLE_ID).val(EMPTY)
         $(CONTENT_ID).val(EMPTY)
         ComplicityManager.Clear()
@@ -57,17 +81,17 @@
     function Check(fund) {
         let GasCost = 1
         if (fund <= GasCost) {
-            OnError(INSUFFICIENT_FUNDS)
+            MODAL_FILL_PROMISE.OnError(INSUFFICIENT_FUNDS)
             return false
         }
 
         if ($(TITLE_ID).val() === "") {
-            OnError("Please, fill the title.")
+            MODAL_FILL_PROMISE.OnError("Please, fill the title.")
             return false
         }
 
         if ($(CONTENT_ID).val() === "") {
-            OnError("Please, fill the content.")
+            MODAL_FILL_PROMISE.OnError("Please, fill the content.")
             return false
         }
 
@@ -131,7 +155,21 @@
             $(GetCompleteButtonId(key)).click(() => {
                 $(COMPLETE_PROMISE_MODAL_ID).modal("toggle")
                 $(COMPLETE_PROMISE_BTN_ID).unbind('click').click(() => {
-                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() => { UpdateAsCompleted(key) } )
+                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() => {
+                        let comment = `
+                            <div class="promise-block promise-block-comment">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <div class="promise-block-title">` + "Promise completed!" + `</div>
+                                        <div class="promise-block-description">` + "Proof : " + "I made this" + `</div>                                
+                                    </div>
+                                    <div class="col-sm-3"></div>
+                                </div>
+                            </div>
+                        `
+                        $(comment).insertAfter(GetPromiseId(key))
+                        UpdateAsCompleted(key)
+                    })
                 })
             })
         }
@@ -152,7 +190,7 @@
             AddItem: promise => {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
-
+                console.log(promise.id)
                 let promiseStyle = GetPromiseStyle(promise)
                 let completeButton = (promise.status === PROMISE_STATUS.COMPLTED || promise.status === PROMISE_STATUS.ERROR) ?
                     "" : `
@@ -162,7 +200,7 @@
                         </button>
                     </span>
                 ` 
-
+                
                 let complicityBlock = (promise.status == PROMISE_STATUS.ERROR) ?
                     "" : `<div class="promise-block-rate">` + GetComplicityBlock(promise.complicity) + ` </div>`
                 let element = `
@@ -265,43 +303,44 @@
         ComplicityManager.AddHandlers()
 
         $(MODAL_PROMISE_ID).on('shown.bs.modal', () => {
-            Init()
+            MODAL_FILL_PROMISE.Init()
         })
 
         Update()
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
-            StartProcessing()
+            MODAL_FILL_PROMISE.StartProcessing()
 
             $.get(_RAZOR_GET_MY_ADDRESS)
                 .success(addr => {
                     HELPERS.GetBalance(addr, "TestNet", "gas")
                         .then(fund => {
-                            console.log(fund)
                             if (Check(fund) === true) {
                                 $.post(HELPERS.GetAddPromiseUrl(promise))
                                     .success(res => {
-                                        (res == true) ? OnSuccess() : OnError("Probably you should wait till previous transaction get processed.")
-                                        EndProcessing()
+                                        (res == true) ?
+                                            MODAL_FILL_PROMISE.OnSuccess() :
+                                            MODAL_FILL_PROMISE.OnError("Probably you should wait till previous transaction get processed.")
+                                        MODAL_FILL_PROMISE.EndProcessing()
                                     })
                                     .error(err => {
                                         let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
-                                        OnError(mes)
-                                        EndProcessing()
+                                        MODAL_FILL_PROMISE.OnError(mes)
+                                        MODAL_FILL_PROMISE.EndProcessing()
                                     })
                             } else {
-                                EndProcessing()
+                                MODAL_FILL_PROMISE.EndProcessing()
                             }
                         })
                         .catch(err => {
-                            OnError(err)
-                            EndProcessing()
+                            MODAL_FILL_PROMISE.OnError(err)
+                            MODAL_FILL_PROMISE.EndProcessing()
                         })
                     })  
                 })
                 .error(err => {
-                    OnError(err)
-                    EndProcessing()
+                    MODAL_FILL_PROMISE.OnError(err)
+                    MODAL_FILL_PROMISE.EndProcessing()
                 })
             
             //PromisesListManager.AddItem(promise)

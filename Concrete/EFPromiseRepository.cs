@@ -39,7 +39,7 @@ namespace Promises.Concrete
             return true;
         }
 
-        public async Task<bool> Complete(Guid id)
+        public async Task<bool> Complete(int id)
         {
             var promises = await GetPromises(null);
             var promise = promises.FirstOrDefault(p => p.Id == id);
@@ -52,7 +52,7 @@ namespace Promises.Concrete
             return true;
         }
 
-        public async Task<Promise> Get(Guid id)
+        public async Task<Promise> Get(int id)
         {
             var promises = await GetPromises(null);
             return promises.FirstOrDefault(rec => rec.Id == id);
