@@ -36,14 +36,13 @@ let Converter = (function () {
 })()
 
 function InvokeContractFactory(operation) {
-    return function(callback, net, wif, key, data, scriptHash, gasCost) {
+    return function (callback, net, wif, scriptHash, gasCost, ...args) {
         const account = getAccountFromWIFKey(wif)
 
         getBalance(net, account.address)
             .then((balances) => {
                 const intents = []
-
-                const args = [key, data]
+                
                 const invoke = { operation, args, scriptHash }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)

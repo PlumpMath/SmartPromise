@@ -26,7 +26,7 @@ namespace Promises.Concrete
         public async Task<bool> Add(Promise promise, ApplicationUser user)
         {
             
-            Promise result = await Get(promise.Id);
+            Promise result = await Get(promise.Id, null);
             if (result != null)
             {
                 promise.Content = promise.Content;
@@ -39,7 +39,7 @@ namespace Promises.Concrete
             return true;
         }
 
-        public async Task<bool> Complete(int id)
+        public async Task<bool> Complete(int id, string proof, ApplicationUser user)
         {
             var promises = await GetPromises(null);
             var promise = promises.FirstOrDefault(p => p.Id == id);
@@ -52,7 +52,7 @@ namespace Promises.Concrete
             return true;
         }
 
-        public async Task<Promise> Get(int id)
+        public async Task<Promise> Get(int id, ApplicationUser user)
         {
             var promises = await GetPromises(null);
             return promises.FirstOrDefault(rec => rec.Id == id);

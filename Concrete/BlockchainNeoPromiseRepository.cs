@@ -131,14 +131,35 @@ namespace Promises.Concrete
             return promises;
         }
 
-        public Task<bool> Complete(int id)
+        public async Task<bool> Complete(int id, string proof, ApplicationUser user)
         {
-            return Task.Run(() => true);
+            var promise = await Get(id, user);
+            if (promise == null)
+                return false;
+
+            promise.Status = PROMISE_STATUS.COMPLETED;
+            promise.Proof = proof;
+            var json = JsonConvert.SerializeObject(promise);
+            var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
+            var addressHex = SmartPromiseKeyGenerator.Str2Hex(user.Address);
+
+            var res = await _blockchain.InvokeContractReplace(NETWORK_TYPE.TESTNET, user.Wif, addressHex, jsonHex, id, 1);
+            return res;
         }
 
-        public Task<Promise> Get(int id)
+        public async Task<Promise> Get(int id, ApplicationUser user)
         {
-            return Task.Run(() => new Promise { });
+            try
+            {
+                var promiseKeyHex = SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, id);
+                var promiseJsonHex = await _blockchain.GetStorage(NETWORK_TYPE.TESTNET, promiseKeyHex);
+                var promiseJson = SmartPromiseKeyGenerator.Hex2Str(promiseJsonHex);
+                return JsonConvert.DeserializeObject<Promise>(promiseJson);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

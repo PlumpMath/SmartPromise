@@ -68,9 +68,10 @@ var HELPERS = (function () {
                 .replace("__complicity__", promise.complicity)
                 .replace("__date__", promise.date)
         ,
-        GetCompletePromiseUrl: (id) => 
+        GetCompletePromiseUrl: (id, proof) => 
             _RAZOR_COMPLETE_PROMISE
                 .replace("__id__", id)
+                .replace("__proof__", proof)
         ,
         GetBalance: (addr, net, asset) => {
             return new Promise((resolve, reject) => {

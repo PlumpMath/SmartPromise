@@ -19,5 +19,6 @@ namespace Promises.Abstract
         Task<string> GetStorage(NETWORK_TYPE type, string key);
         Task<bool> VerifyAddress(string addr);
         Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string key, string data, int gasCost);
+        Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif, string key, string data, int index, int gasCost);
     }
 }

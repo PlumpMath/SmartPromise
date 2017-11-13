@@ -37,9 +37,10 @@
             FUNC_AFTER()
         }
 
-        function Init(ls_id) {
+        function Init() {
             $(STATUS_ID).removeClass().addClass("text-warning").html(BE_AWARE)
             FUNC_AFTER()
+            $(SUBMIT_ID).prop('disabled', false)
         }
 
         return {
@@ -52,7 +53,8 @@
 
     })(loader_id, status_id, submit_btn_id, after_processing)
 
-function InvokeContractByUrl(url, ProcessManager) {
+function InvokeContractByUrl(url, ProcessManager, Check) {
+    console.log("Invoking contract : " + url)
     ProcessManager.StartProcessing()
 
     $.get(_RAZOR_GET_MY_ADDRESS)
@@ -107,6 +109,7 @@ var ProfilePage = function () {
     
     const MODAL_FILL_PROMISE = TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
         SUMBIT_PROMISE_ID, EmptyFillPromiseForm)
+
     
     function EmptyFillPromiseForm() {
         $(TITLE_ID).val(EMPTY)
@@ -142,12 +145,16 @@ var ProfilePage = function () {
         const PROMISES_LIST_ID = "#_promises_id"
         const COMPLETED_RATING_ID = "#_completed_rating_id"
         const BUTTON_PREFIX = "BP"
+        const PROOF_ID = "#_promise_proof"
 
         let promises = 0
         let promises_completed = 0
 
-        const MODAL_COMPLETE_PROMISE = TransactionStatusManager("_modal_complete_promise_loader", "_modal_create_complete_result",
-            COMPLETE_PROMISE_ID, () => $('#_promise_proof').val(EMPTY))
+        const MODAL_COMPLETE_PROMISE = TransactionStatusManager("#_modal_complete_loader", "#_modal_complete_result",
+            COMPLETE_PROMISE_ID, () => {
+                $(PROOF_ID).val(EMPTY)
+                $(COMPLETE_PROMISE_ID).prop('disabled', true)
+            })
         
         function GetPromiseId(key) {
             return '#' + GetKey(key)
@@ -192,28 +199,33 @@ var ProfilePage = function () {
             UpdateStatistics()
         }
 
+        function Check(fund) {
+            let GasCost = 1
+            if (fund <= GasCost) {
+                MODAL_FILL_PROMISE.OnError(INSUFFICIENT_FUNDS)
+                return false
+            }
+
+            if ($(PROOF_ID).val() === "") {
+                MODAL_FILL_PROMISE.OnError("Please, fill the proof field.")
+                return false
+            }
+
+            return true
+        }
+
+        /*
+        
+                        `
+        $(comment).insertAfter(GetPromiseId(key))
+        UpdateAsCompleted(key)
+        */
         function AddButtonHandler(key) {
             $(GetCompleteButtonId(key)).click(() => {
                 $(MODAL_COMPLETE_PROMISE_ID).modal("toggle")
                 $(COMPLETE_PROMISE_ID).unbind('click').click(() => {
-                    $.post(HELPERS.GetCompletePromiseUrl(key)).then(() => {
-
-
-
-                        let comment = `
-                            <div class="promise-block promise-block-comment">
-                                <div class="row">
-                                    <div class="col-sm-9">
-                                        <div class="promise-block-title">` + "Promise completed!" + `</div>
-                                        <div class="promise-block-description">` + "Proof : " + "I made this" + `</div>                                
-                                    </div>
-                                    <div class="col-sm-3"></div>
-                                </div>
-                            </div>
-                        `
-                        $(comment).insertAfter(GetPromiseId(key))
-                        UpdateAsCompleted(key)
-                    })
+                    const url = HELPERS.GetCompletePromiseUrl(GetKey(key), $(PROOF_ID).val())
+                    InvokeContractByUrl(url, MODAL_COMPLETE_PROMISE, Check)
                 })
             })
         }
@@ -234,7 +246,7 @@ var ProfilePage = function () {
             AddItem: promise => {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
-                console.log(promise.id)
+                //console.log(promise.id)
                 let promiseStyle = GetPromiseStyle(promise)
                 let completeButton = (promise.status === PROMISE_STATUS.COMPLTED || promise.status === PROMISE_STATUS.ERROR) ?
                     "" : `
@@ -265,7 +277,23 @@ var ProfilePage = function () {
                         </div>
                     </div>`
 
+                if (promise.status === PROMISE_STATUS.COMPLTED) {
+                    let proofComment =
+                        `<div class="promise-block promise-block-comment">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="promise-block-title">` + "Promise completed!" + `</div>
+                                <div class="promise-block-description">` + promise.proof + "I made this" + `</div>                                
+                            </div>
+                            <div class="col-sm-3"></div>
+                        </div>
+                    </div>`
+                    $(PROMISES_LIST_ID).prepend(proofComment)
+                }
+
                 $(PROMISES_LIST_ID).prepend(element)
+
+                
                 AddButtonHandler(promiseKey)
                 if (promise.isCompleted)
                     ++promises_completed
@@ -363,7 +391,7 @@ var ProfilePage = function () {
         
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
-            InvokeContractByUrl(HELPERS.GetAddPromiseUrl(promise), MODAL_FILL_PROMISE)
+            InvokeContractByUrl(HELPERS.GetAddPromiseUrl(promise), MODAL_FILL_PROMISE, Check)
         })
     })
 }

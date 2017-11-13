@@ -53,11 +53,13 @@ namespace Promises.Controllers
             return new OkObjectResult(res);
         }
 
-        [HttpPost("{id}")]
-        public IActionResult Complete(int id)
+        [HttpPost("{id}/{proof}")]
+        public async Task<IActionResult> Complete(int id, string proof)
         {
-            _promiseRepository.Complete(id);
-            return Ok();
+            var user = await _userManager.GetUserAsync(User);
+            var res = await _promiseRepository.Complete(id, proof, user);
+
+            return new OkObjectResult(res);
         }
     }
 }

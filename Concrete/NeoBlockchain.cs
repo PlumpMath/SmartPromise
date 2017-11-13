@@ -80,7 +80,15 @@ namespace Promises.Concrete
             string key, string data, int gasCost)
         {
             var res = await _nodeServices.InvokeExportAsync<bool>(
-                GetScriptLocation(), "InvokeContractAdd", GetNetwork(net), wif, key, data, CONTRACT_HASH, gasCost);
+                GetScriptLocation(), "InvokeContractAdd", GetNetwork(net), wif, CONTRACT_HASH, gasCost, key, data);
+            return res;
+        }
+
+        public async Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif,
+            string key, string data, int index, int gasCost)
+        {
+            var res = await _nodeServices.InvokeExportAsync<bool>(
+                GetScriptLocation(), "InvokeContractReplace", GetNetwork(net), wif, CONTRACT_HASH, gasCost, key, data, index);
             return res;
         }
     }
