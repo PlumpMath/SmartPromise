@@ -199,7 +199,7 @@ var ProfilePage = function () {
             UpdateStatistics()
         }
 
-        function Check(fund) {
+        function CheckComplete(fund) {
             let GasCost = 1
             if (fund <= GasCost) {
                 MODAL_FILL_PROMISE.OnError(INSUFFICIENT_FUNDS)
@@ -213,19 +213,13 @@ var ProfilePage = function () {
 
             return true
         }
-
-        /*
         
-                        `
-        $(comment).insertAfter(GetPromiseId(key))
-        UpdateAsCompleted(key)
-        */
         function AddButtonHandler(key) {
             $(GetCompleteButtonId(key)).click(() => {
                 $(MODAL_COMPLETE_PROMISE_ID).modal("toggle")
                 $(COMPLETE_PROMISE_ID).unbind('click').click(() => {
                     const url = HELPERS.GetCompletePromiseUrl(GetKey(key), $(PROOF_ID).val())
-                    InvokeContractByUrl(url, MODAL_COMPLETE_PROMISE, Check)
+                    InvokeContractByUrl(url, MODAL_COMPLETE_PROMISE, CheckComplete)
                 })
             })
         }
@@ -283,7 +277,7 @@ var ProfilePage = function () {
                         <div class="row">
                             <div class="col-sm-9">
                                 <div class="promise-block-title">` + "Promise completed!" + `</div>
-                                <div class="promise-block-description">` + promise.proof + "I made this" + `</div>                                
+                                <div class="promise-block-description">` + promise.proof + `</div>                                
                             </div>
                             <div class="col-sm-3"></div>
                         </div>
