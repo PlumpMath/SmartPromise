@@ -75,7 +75,6 @@ let ModalPay = function () {
                 Init()
             })
             $.get(_RAZOR_GET_MY_ADDRESS, addr => {
-                //console.log(addr)
                 $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
                 $(NET_ID).change(() => net = $(NET_ID).val())
                 $(SEND_ID).click(() => {
@@ -83,23 +82,15 @@ let ModalPay = function () {
                     StartProcessing()
                     HELPERS.GetBalance(addr, net, asset).then(fund => {
                         let amount = $(AMOUNT_ID).val()
-                        /*console.log(asset)
-                        console.log("AMOUNT : " + amount)
-                        console.log("FUND : " + fund)*/
                         let isCorrect = IsAmountCorrect(amount, fund)
 
                         if (isCorrect == true) {
-                            /*console.log(asset)
-                            console.log(ADDR_TO_PAY)
-                            console.log(net)
-                            console.log(amount)*/
                             $.get(HELPERS.GetSendAssetUrl(asset, ADDR_TO_PAY, net, amount))
                                 .success(res => {
                                     (res == true) ? OnSuccess() : OnError("Probably you should wait till previous transaction get processed.")
                                     EndProcessing()
                                 })
                                 .error(err => {
-                                    //console.log(err)
                                     let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
                                     OnError(mes)
                                     EndProcessing()
@@ -109,7 +100,6 @@ let ModalPay = function () {
                             EndProcessing()
                         }
                     }).catch(err => {
-                        //console.log(err)
                         OnError(err)
                         EndProcessing()
                     })

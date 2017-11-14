@@ -29,8 +29,7 @@ var HELPERS = (function () {
             }
         })(loader_id)
     }
-
-    console.log("______________helpers.js______________")
+    
     return {
         GetAvatarImageUrl: (width, height, quality, userId) =>
             _RAZOR_URL_CABINET_GET_AVATAR
@@ -77,7 +76,6 @@ var HELPERS = (function () {
             return new Promise((resolve, reject) => {
                 $.get(HELPERS.GetBlockchainBalanceUrl(net, addr))
                     .success(res => {
-                        console.log(res)
                         resolve(res[asset])
                     })
                     .error(err => reject(err))

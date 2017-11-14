@@ -9,7 +9,6 @@
         const STATUS_ERROR = "Transaction failed: please, try again later. "
         const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
         const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
-        const INSUFFICIENT_FUNDS = "Insufficient funds."
         const EMPTY = ""
 
         function OnError(err) {
@@ -23,7 +22,6 @@
         function StartProcessing() {
             ClearStatus()
             $(SUBMIT_ID).prop('disabled', true)
-            console.log(LOADER_ID)
             HELPERS.Loader(LOADER_ID).Show()
         }
 
@@ -54,7 +52,6 @@
     })(loader_id, status_id, submit_btn_id, after_processing)
 
 function InvokeContractByUrl(url, ProcessManager, Check) {
-    console.log("Invoking contract : " + url)
     ProcessManager.StartProcessing()
 
     $.get(_RAZOR_GET_MY_ADDRESS)
@@ -90,7 +87,6 @@ function InvokeContractByUrl(url, ProcessManager, Check) {
 }
 
 var ProfilePage = function () {
-    console.log("______________profilePage.js______________")
     
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
@@ -99,6 +95,7 @@ var ProfilePage = function () {
     const CONTENT_ID = "#_promise_content"
     const LOADER_ID = '#_promises_loader'
     const EMPTY = ""
+    const INSUFFICIENT_FUNDS = "Insufficient funds."
 
     const PROMISE_STATUS = {
         ERROR: -1,
@@ -109,7 +106,6 @@ var ProfilePage = function () {
     
     const MODAL_FILL_PROMISE = TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
         SUMBIT_PROMISE_ID, EmptyFillPromiseForm)
-
     
     function EmptyFillPromiseForm() {
         $(TITLE_ID).val(EMPTY)
@@ -119,7 +115,7 @@ var ProfilePage = function () {
 
     function Check(fund) {
         let GasCost = 1
-        if (fund <= GasCost) {
+        if (fund < GasCost) {
             MODAL_FILL_PROMISE.OnError(INSUFFICIENT_FUNDS)
             return false
         }
@@ -201,16 +197,17 @@ var ProfilePage = function () {
 
         function CheckComplete(fund) {
             let GasCost = 1
-            if (fund <= GasCost) {
-                MODAL_FILL_PROMISE.OnError(INSUFFICIENT_FUNDS)
+            
+            if (fund < GasCost) {
+                MODAL_COMPLETE_PROMISE.OnError(INSUFFICIENT_FUNDS)
                 return false
             }
-
+            
             if ($(PROOF_ID).val() === "") {
-                MODAL_FILL_PROMISE.OnError("Please, fill the proof field.")
+                MODAL_COMPLETE_PROMISE.OnError("Please, fill the proof field.")
                 return false
             }
-
+            
             return true
         }
         
@@ -240,7 +237,6 @@ var ProfilePage = function () {
             AddItem: promise => {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
-                //console.log(promise.id)
                 let promiseStyle = GetPromiseStyle(promise)
                 let completeButton = (promise.status === PROMISE_STATUS.COMPLTED || promise.status === PROMISE_STATUS.ERROR) ?
                     "" : `

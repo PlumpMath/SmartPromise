@@ -1,12 +1,10 @@
 ﻿var Messages = function () {
-    console.log("______________messages.js______________")
     const CONTROLLER_NAME = '/api/Messages'
     const METHOD_GET_MY_USER_INFO = '/GetOwner/'
     const METHOD_GET_LAST_MESSAGES = '/GetLastMessagesHistory/'
 
     function main(owner) {
         const OWNER = owner
-        console.log(OWNER)
 
         let Loader = (function () {
             const LOADER_STYLE = "loader"
@@ -46,7 +44,6 @@
             }
 
             function HaveChatWithFriend(friendId, friendEmail) {
-                console.log("move")
                 window.location.href = _RAZOR_URL_CABINET_PRIVATE_CHAT
                     .replace('__id__', friendId).replace('__email__', friendEmail);
             }

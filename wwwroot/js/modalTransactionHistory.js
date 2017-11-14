@@ -32,7 +32,7 @@
             $.get(_RAZOR_GET_MY_ADDRESS)
                 .success(addr => {
                     $.get(HELPERS.GetTransactionHistoryUrl("testnet", addr))
-                        .success(ts => { console.log(ts); ts.forEach(t => AppendItem(t)) })
+                        .success(ts => ts.forEach(t => AppendItem(t)) )
                     End()
                 })
                 .error(err => {

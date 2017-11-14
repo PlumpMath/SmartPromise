@@ -130,7 +130,6 @@ var Notification = function () {
     function UpdateNavigator(new_amount) {
         let text = (new_amount == 0)? "" : new_amount
         $(MESSAGES_NAV_ID).html(text)
-        console.log(text)
     }
 
     _RAZOR_NOTIFICATION_CONNECTION.on("OnNewUnreadMessage", user => {

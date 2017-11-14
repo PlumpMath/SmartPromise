@@ -1,5 +1,4 @@
 ﻿var Friends = function () {
-    console.log("______________friends.js______________")
 
     const TYPE = {
         FRIEND: 0,
@@ -35,7 +34,6 @@
     }
 
     function HideFindInput() {
-        console.log(FIND_ID)
         $(FIND_ID).hide()
     }
 
@@ -157,7 +155,6 @@
             function AddItem(user) {
                 let style_presense = user.isOnline ? STYLE_ICON_ONLINE : STYLE_ICON_OFFLINE
                 let id = GetId(user)
-                console.log(HELPERS.GetUserProfileHref(user.id))
                 let element = `
                     <div class="col-12">
                         <div class="well well-sm">

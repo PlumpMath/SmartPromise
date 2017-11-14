@@ -17,7 +17,6 @@
 
     function OnMessage(msg) {
         MessagesListManager.AddItem(msg)
-        console.log("Scrolling")
         MessagesListManager.ScrollToBottom()
     }
 
