@@ -47,31 +47,35 @@
     transform: translate(-50%, -50%);
 }
 
+.qrcode {
+    margin: 6px;
+}
+
 /* xs < 768 */
 @media screen and (max-width: 767px) {
     body {
-        font-size: 1.2em;
+        font-size: 1.1em;
     }
 }
 
 /* sm */
 @media screen and (min-width: 768px) {
     body {
-        font-size: 1.3em;
+        font-size: 1.2em;
     }
 }
 
 /* md */
 @media screen and (min-width: 992px) {
     body {
-        font-size: 1.4em;
+        font-size: 1.2em;
     }
 }
 
 /* lg */
 @media screen and (min-width: 1200px) {
     body {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
 }
 
