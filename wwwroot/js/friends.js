@@ -34,11 +34,12 @@
     }
 
     function HideFindInput() {
-        $(FIND_ID).hide()
+        $("#_friend_find_input").html("")
     }
 
     function ShowFindInpit() {
-        $(FIND_ID).show()
+        $("#_friend_find_input")
+            .append('<input id="_find_input" class="form-control input-style" placeholder="Type email to find a person">')
     }
 
     function StartLoading() {

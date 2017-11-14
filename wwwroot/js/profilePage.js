@@ -239,7 +239,9 @@ var ProfilePage = function () {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
                 let promiseStyle = GetPromiseStyle(promise)
-                let completeButton = (promise.status === PROMISE_STATUS.COMPLETED || promise.status === PROMISE_STATUS.ERROR) ?
+                
+                let completeButton = (!(_RAZOR_IS_YOUR_OWN_PAGE == "true") ||
+                    promise.status === PROMISE_STATUS.COMPLETED || promise.status === PROMISE_STATUS.ERROR) ?
                     "" : `
                     <span class="pull-right">
                         <button id="` + buttonKey + `" type="button" class="btn btn-success">

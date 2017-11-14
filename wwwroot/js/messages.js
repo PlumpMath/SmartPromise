@@ -67,6 +67,10 @@
                 return str.toString().replace("T", " ").substr(0, i)
             }
 
+            function ReverseMesageAddresses(mes) {
+                return Object.assign({}, mes, { senderId: mes.receiverId, receiverId: mes.senderId })
+            }
+
             return {
                 GetItemId: mes => '#' + ITEM_PREFIX + GetId(mes)
                 ,
@@ -103,7 +107,10 @@
                     }
                 },
 
-                RemoveItem: mes => $(MessagesListManager.GetItemId(mes)).remove()
+                RemoveItem: mes => {
+                    $(MessagesListManager.GetItemId(ReverseMesageAddresses(mes))).remove()
+                    $(MessagesListManager.GetItemId(mes)).remove()
+                }
                 ,
 
                 UpdateItem: mes => {
