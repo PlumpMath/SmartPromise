@@ -1,12 +1,12 @@
 ﻿
 .btn-grey {
-    background-color: #D8D8D8;
+    background-color: #f6f1f1;
     color: #FFF;
 }
 
 .promise-stats-block {
-    background-color: #FAFAFa;
-    border: 1px solid #EFEFEF;
+    background-color: #f6f1f1;
+    border: 1px solid #e8dfdf;
     padding: 15px 15px 20px 15px;
     border-radius: 3px;
 }
@@ -21,8 +21,8 @@
 
 .promise-block {
     min-height: 100px;
-    background-color: #FAFAFA;
-    border: 1px solid #EFEFEF;
+    background-color: #f6f1f1;
+    border: 1px solid #e8dfdf;
     padding: 15px;
     border-radius: 3px;
     margin-bottom: 15px;
@@ -49,7 +49,7 @@
 }
 
 .promise-block-completed {
-    background-color: #7fc168;
+    background-color: #a4d593;
 }
 
 .promise-block-error {

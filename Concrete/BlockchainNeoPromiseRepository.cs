@@ -20,7 +20,7 @@ namespace Promises.Concrete
         {
             static string PROMISE_PREFIX_HEX = "50"; //P
             static string PROMISE_COUNT_PREFIX_HEX = "43"; //C
-
+            
             public static string Str2Hex(string str)
             {
                 byte[] ba = Encoding.UTF8.GetBytes(str);
@@ -35,7 +35,7 @@ namespace Promises.Concrete
                     .Where(x => x % 2 == 0)
                     .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                     .ToArray();
-                    
+
                 var str = Encoding.UTF8.GetString(da);
                 return str;
             }
@@ -52,28 +52,44 @@ namespace Promises.Concrete
                 return num;
             }
 
-            public static string GetPromiseKeyHex(string ownerKey, int i) =>
-                PROMISE_PREFIX_HEX + Str2Hex(ownerKey) + Num2Hex(i);
-            
+            private static string Reverse(string str)
+            {
+                var revSh = str.Reverse().ToArray();
+                for (int i = 0; i < revSh.Length; i += 2)
+                {
+                    var tmp = revSh[i];
+                    revSh[i] = revSh[i + 1];
+                    revSh[i + 1] = tmp;
+                }
+                return new string(revSh);
+            }
 
-            public static string GetPromiseCountKeyHex(string ownerKey) =>
-                PROMISE_COUNT_PREFIX_HEX + Str2Hex(ownerKey);
+            public static async Task<string> GetPromiseKeyHex(string address, int i, IBlockchain blockchain)
+            {
+                var sh = await blockchain.GetScriptHashFromAddress(address);
+                return PROMISE_PREFIX_HEX + Reverse(sh) + Num2Hex(i);
+            }
+
+
+            public static async Task<string> GetPromiseCountKeyHex(string address, IBlockchain blockchain)
+            {
+                var sh = await blockchain.GetScriptHashFromAddress(address);
+                return PROMISE_COUNT_PREFIX_HEX + Reverse(sh);
+            }
         }
 
+        private readonly int GAS_COST = 1;
         private readonly IBlockchain _blockchain;
-        private readonly UserManager<ApplicationUser> _userManager;
         public BlockchainNeoPromiseRepository(
             IBlockchain blockchain,
             UserManager<ApplicationUser> userManager)
         {
             _blockchain = blockchain;
-            _userManager = userManager;
         }
         
         private async Task<int> GetPromiseCount(ApplicationUser user)
         {
-
-            var key = SmartPromiseKeyGenerator.GetPromiseCountKeyHex(user.Address);
+            var key = await SmartPromiseKeyGenerator.GetPromiseCountKeyHex(user.Address, _blockchain);
             var count = await _blockchain.GetStorage(NETWORK_TYPE.TESTNET, key);
             return count == null? 0 : SmartPromiseKeyGenerator.Hex2Num(count);
         }
@@ -81,14 +97,15 @@ namespace Promises.Concrete
         public async Task<IEnumerable<Promise>> GetPromises(ApplicationUser user)
         {
             var count = await GetPromiseCount(user);
-
+           
             if (count == 0)
             {
                 return null;
             }
 
-            string[] keys = Enumerable.Range(0, count).Select(i => 
-                SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, i)).ToArray();
+            var keys = await Task.WhenAll(Enumerable.Range(1, count - 1)
+                .Select(i => SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, i, _blockchain)));
+            
             var promises = await LoadPromises(keys);
             
             return promises;
@@ -101,8 +118,7 @@ namespace Promises.Concrete
 
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
-            var addressHex = SmartPromiseKeyGenerator.Str2Hex(user.Address);
-            var res = await _blockchain.InvokeContractAdd(NETWORK_TYPE.TESTNET, user.Wif, addressHex, jsonHex, 1);
+            var res = await _blockchain.InvokeContractAdd(NETWORK_TYPE.TESTNET, user.Wif, jsonHex, GAS_COST);
             return res;
         }
 
@@ -141,9 +157,8 @@ namespace Promises.Concrete
             promise.Proof = proof;
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
-            var addressHex = SmartPromiseKeyGenerator.Str2Hex(user.Address);
 
-            var res = await _blockchain.InvokeContractReplace(NETWORK_TYPE.TESTNET, user.Wif, addressHex, jsonHex, id, 1);
+            var res = await _blockchain.InvokeContractReplace(NETWORK_TYPE.TESTNET, user.Wif, jsonHex, id, GAS_COST);
             return res;
         }
 
@@ -151,7 +166,7 @@ namespace Promises.Concrete
         {
             try
             {
-                var promiseKeyHex = SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, id);
+                var promiseKeyHex = await SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, id, _blockchain);
                 var promiseJsonHex = await _blockchain.GetStorage(NETWORK_TYPE.TESTNET, promiseKeyHex);
                 var promiseJson = SmartPromiseKeyGenerator.Hex2Str(promiseJsonHex);
                 return JsonConvert.DeserializeObject<Promise>(promiseJson);

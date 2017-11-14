@@ -2,7 +2,8 @@
     getAccountFromWIFKey, generatePrivateKey,
     getStorage, getTransactionHistory, doSendAsset,
     getWIFFromPrivateKey, getBalance, verifyAddress,
-    queryRPC, serializeTransaction, create, signTransaction
+    queryRPC, serializeTransaction, create, signTransaction,
+    getScriptHashFromAddress
 } from 'neon-js'
 
 const SC_OPERATIONS = {
@@ -89,26 +90,25 @@ module.exports = {
     }
     ,
 
-    GetStorage: (callback, net, scriptHash, key) => {
+    GetStorage: (callback, net, scriptHash, key) =>
         getStorage(net, scriptHash, key)
             .then(res => callback(null, res.result))
             .catch(err => callback(null, err))
-    }
     ,
 
-    VerifyAddress: (callback, addr) => {
+    VerifyAddress: (callback, addr) =>
         callback(null, verifyAddress(addr))
-    }
     ,
 
-    CalculateInvokeGas: (callback, operation, net, key, data, scriptHash) => {
+    CalculateInvokeGas: (callback, operation, net, key, scriptHash) =>
         callback(null, 2)
-    }
     ,
 
     InvokeContractAdd: InvokeContractFactory(SC_OPERATIONS.ADD)
     ,
 
     InvokeContractReplace: InvokeContractFactory(SC_OPERATIONS.REPLACE)
-    
+    ,
+
+    GetScriptHashFromAddress: (callback, address) => callback(null, getScriptHashFromAddress(address))
 }    

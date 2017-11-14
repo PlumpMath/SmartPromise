@@ -71,7 +71,7 @@ namespace Promises.Controllers
             var json = JsonConvert.SerializeObject(data);
             var user = await _userManager.GetUserAsync(User);
 
-            return await _blockchain.InvokeContractAdd(net, user.Wif, user.Email, json, 2);
+            return await _blockchain.InvokeContractAdd(net, user.Wif, json, 2);
         }
     }
 }
