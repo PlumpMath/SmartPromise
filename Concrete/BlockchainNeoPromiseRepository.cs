@@ -103,7 +103,7 @@ namespace Promises.Concrete
                 return null;
             }
 
-            var keys = await Task.WhenAll(Enumerable.Range(1, count - 1)
+            var keys = await Task.WhenAll(Enumerable.Range(1, count)
                 .Select(i => SmartPromiseKeyGenerator.GetPromiseKeyHex(user.Address, i, _blockchain)));
             
             var promises = await LoadPromises(keys);
@@ -115,7 +115,7 @@ namespace Promises.Concrete
         {
             //it's guaranteed it's unique by contract code
             var counter = await GetPromiseCount(user);
-            promise.Id = (counter == 0) ? 1 : counter;
+            promise.Id = (counter == 0) ? 1 : counter + 1;
 
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
