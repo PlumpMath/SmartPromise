@@ -92,7 +92,8 @@ var Notification = function () {
                                     </div>
                                 </div>
                                 <div class="media-body">
-                                    <strong class="notification-title">Friend request from <a href="#">` + user.email + `</a></strong>
+                                    <strong class="notification-title">Friend request from <a href="` + HELPERS.GetUserProfileHref(user.id) + `">` +
+                                        user.email + `</a></strong>
 
                                     <p>Would like to accept him as a friend?</p>
 

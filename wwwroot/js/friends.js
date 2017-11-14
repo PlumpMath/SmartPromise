@@ -39,7 +39,7 @@
 
     function ShowFindInpit() {
         $("#_friend_find_input")
-            .append('<input id="_find_input" class="form-control input-style" placeholder="Type email to find a person">')
+            .append('<input id="_find_input" class="form-control input-style" placeholder="Type email to find a person"/>')
     }
 
     function StartLoading() {
@@ -65,6 +65,10 @@
                 }
             }
         })(loader_id)
+    }
+
+    function LoadAllUsers() {
+        FindUsers("")
     }
 
     function UserListManager(list_id, type) {
@@ -94,7 +98,8 @@
                     () => {
                         ClearLists()
                         StartLoading()
-                        FindUsers($(FIND_INPUT_ID).val())
+
+                        LoadAllUsers()
                     })
                     .fail(err => console.log(err))
             }
@@ -104,7 +109,8 @@
                     () => {
                         ClearLists()
                         StartLoading()
-                        FindUsers($(FIND_INPUT_ID).val())
+
+                        LoadAllUsers()
                     })
                     .fail(err => console.log(err))
             }
@@ -160,7 +166,7 @@
                     <div class="col-12">
                         <div class="well well-sm">
                             <div class="row">
-                                <div class="col-sm-6 col-md-4">
+                                <div class="col-sm-4 col-md-4">
                                     <a href="` +  HELPERS.GetUserProfileHref(user.id) + `">
                                         <img width="100" height="100" alt="" src="` +
                                         HELPERS.GetAvatarImageUrl(100, 100, 100, user.id) +
@@ -168,7 +174,7 @@
                                     </a>
                                 </div>
                     
-                                <div class="col-sm-6 col-md-8 friend-element">
+                                <div class="col-sm-8 col-md-8 friend-element">
                                     <div id="` + ONLINE_INDICATOR_PREFIX + id + `" class="top-right-corner ` + style_presense +`"></div>
                                     <h4>` + user.email + `</h4>
                                     <div class="btn-group">
@@ -180,7 +186,7 @@
                                             <li><a id="` + MESSAGE_PREFIX + id + `">Message</a></li>
                                             <li><a id="` + USER_ACTION_PREFIX + id + `" >` + GetActionOption() + `</a></li>
                                             <li class="divider"></li>
-                                            <li><a href="#">Profile</a></li>
+                                            <li><a href="` + HELPERS.GetUserProfileHref(user.id) + `">Profile</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -223,7 +229,7 @@
         let friends_copy = [...friends]
         let others_copy = [...others]
         let pending_copy = [...pending]
-
+        
         return (findString, filtered) => {
             filtered.friends = friends_copy.filter(v => v.email.toLowerCase().startsWith(findString.toLowerCase()))
             filtered.others = others_copy.filter(v => v.email.toLowerCase().startsWith(findString.toLowerCase()))
@@ -242,6 +248,8 @@
     }
     
     function UpdateLabels(others, friends, pending) {
+        console.log(friends, others, pending)
+
         if (IsEmpty(others) && IsEmpty(friends) && IsEmpty(pending)) {
             console.log("Search result is empty")
         }
@@ -290,6 +298,6 @@
     })
     
     //requests for all records in database
-    FindUsers("")
+    LoadAllUsers()
 
 }

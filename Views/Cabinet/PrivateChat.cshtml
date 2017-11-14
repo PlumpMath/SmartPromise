@@ -23,8 +23,10 @@
                 </div>
                 <div class="col-md-offset-3 col-md-2">
                     <div id=@contactStyle>
-                        <img src="@Url.Action("GetAvatarImage", "Cabinet", new { width=33, height=33, quality=60, userId = @Model.Friend.Id})" 
-                            height="33" width="33" class="img-circle" alt="Avatar" />
+                        <a href="@Url.Action("Profile", "Cabinet", new { userId = Model.Friend.Id })">
+                            <img src="@Url.Action("GetAvatarImage", "Cabinet", new { width=33, height=33, quality=60, userId = @Model.Friend.Id})"
+                                 height="33" width="33" class="img-circle" alt="Avatar" />
+                        </a>
                     </div>
                     @Model.Friend.Email
                 </div>

@@ -185,7 +185,7 @@ var ProfilePage = function () {
 
         function UpdateStatistics() {
             //let rate = promises_completed === 0 ? 0 : ((promises_completed / promises) * 5).toFixed(2)
-            $(COMPLETED_RATING_ID).html(promises_completed + " <small>/" + promises + " completed</small>")
+            $(COMPLETED_RATING_ID).html(promises_completed + " <small>/ " + promises + " completed</small>")
         }
 
         function UpdateAsCompleted(key) {

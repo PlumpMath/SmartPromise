@@ -3,27 +3,27 @@
     const METHOD_GET_MY_USER_INFO = '/GetOwner/'
     const METHOD_GET_LAST_MESSAGES = '/GetLastMessagesHistory/'
 
-    function main(owner) {
-        const OWNER = owner
+    let Loader = (function () {
+        const LOADER_STYLE = "loader"
+        const LOADER_ID = "#_messages_loader_id"
 
-        let Loader = (function () {
-            const LOADER_STYLE = "loader"
-            const LOADER_ID = "#_messages_loader_id"
-
-            return {
-                Show: () => {
-                    if (!$(LOADER_ID).hasClass(LOADER_STYLE)) {
-                        $(LOADER_ID).addClass(LOADER_STYLE)
-                    }
-                },
-                Hide: () => {
-                    if ($(LOADER_ID).hasClass(LOADER_STYLE)) {
-                        $(LOADER_ID).removeClass(LOADER_STYLE)
-                    }
+        return {
+            Show: () => {
+                if (!$(LOADER_ID).hasClass(LOADER_STYLE)) {
+                    $(LOADER_ID).addClass(LOADER_STYLE)
+                }
+            },
+            Hide: () => {
+                if ($(LOADER_ID).hasClass(LOADER_STYLE)) {
+                    $(LOADER_ID).removeClass(LOADER_STYLE)
                 }
             }
-        })()
+        }
+    })()
 
+    function main(owner) {
+        const OWNER = owner
+        
         function AddIdPrefix(str) {
             return '#' + str
         }
@@ -87,12 +87,12 @@
                     <a id="` + ITEM_PREFIX + id + `" class="media message list-group-item clearfix ">
                         <span class="pull-left">
                             <img id="` + ITEM_PREFIX + id + `" src="` +
-                        HELPERS.GetAvatarImageUrl(70, 70, 100, GetFriendId(mes)) +
-                        `" id="` + IMAGE_PREFIX_RECEIVER + id + `" 
+                                HELPERS.GetAvatarImageUrl(70, 70, 100, GetFriendId(mes)) +
+                                `" id="` + IMAGE_PREFIX_RECEIVER + id + `" 
                                 alt="User Avatar" class="img-responsive img-circle" width="70" height="70"/>                        
                         </span>
                         <div>
-                            <small class="pull-right time">` + ParseDate(mes.userDateLocal) + `</small>
+                            <small class="pull-right time">` + ParseDate(mes.userDateLocal) + ` UTC </small>
 
                             <h4 class="mb-1">` + GetFriendEmail(mes) + `</h4>
                             <small class="col-lg-10 ` + (mes.isUnread ? "unread-message" : "") + `">` +
@@ -136,11 +136,13 @@
         _RAZOR_NOTIFICATION_CONNECTION.on("OnMessageAdded", mes => {
             MessagesListManager.UpdateItem(JSON.parse(mes))
         })
-
-        Loader.Show()
+        
         GetLastMessagesHistory()
     }
+
+    Loader.Show()
 
     $.get(CONTROLLER_NAME + METHOD_GET_MY_USER_INFO, res => main(res))
         .fail(err => console.log(err))
 }
+    //< a href= "` + HELPERS.GetUserProfileHref(GetFriendId(mes)) + `" >
