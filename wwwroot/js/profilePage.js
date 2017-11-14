@@ -90,7 +90,8 @@ var ProfilePage = function () {
     
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
-    
+    const HAVE_NO_RECORDS = `<div align="center"><h5 class="text-muted">You have no promises yet ;(</h5></div>`
+
     const TITLE_ID = "#_promise_title"
     const CONTENT_ID = "#_promise_content"
     const LOADER_ID = '#_promises_loader'
@@ -301,6 +302,9 @@ var ProfilePage = function () {
                 $(PROMISES_LIST_ID + "> div").remove()
             }
             ,
+            AddMessage: (mes) =>
+                $(PROMISES_LIST_ID).append(mes)
+            ,
             MODAL_COMPLETE_PROMISE_ID
             ,
             MODAL_COMPLETE_PROMISE
@@ -362,7 +366,11 @@ var ProfilePage = function () {
         $.get(_RAZOR_GET_PROMISES.replace("__address__", _RAZOR_PROFILE_VIEW_USER_ADDRESS))
             .success(ps => {
                 HELPERS.Loader(LOADER_ID).Hide()
-                ps.forEach(p => PromisesListManager.AddItem(p))
+                if (typeof ps == 'undefined' || ps.length == 0) {
+                    PromisesListManager.AddMessage(HAVE_NO_RECORDS)
+                } else {
+                    ps.forEach(p => PromisesListManager.AddItem(p))
+                }
             })
 
     }

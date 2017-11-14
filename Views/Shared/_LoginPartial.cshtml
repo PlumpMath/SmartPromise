@@ -25,7 +25,7 @@
                 <ul class="dropdown-menu">
                     <li class="container-fluid"><small class="text-muted">Logged in as <span class="bold">@user.Email</span></small></li>
                     <li class="divider"></li>
-                    <li><a href="@Url.Action("Profile", "Cabinet", new { userId = user.Id })" role="button"><span class="text-muted">Profile</span></a></li>
+                    <li><a href="@Url.Action("Profile", "Cabinet")" role="button"><span class="text-muted">Profile</span></a></li>
                     <li><a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage"><span class="text-muted">Settings</span></a></li>
                     <li class="divider"></li>
                     <li><a role="button" onclick="document.getElementById('logoutForm').submit()"><span class="text-muted">Log out</span></a></li>
