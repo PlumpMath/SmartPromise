@@ -15,9 +15,11 @@
         "gulp-sequence": "~0.4.6",
         "gulp-clean": "~0.3.2",
         "gulp-babel": "~7.0.0",
-        "babel-preset-es2015": "~6.24.1"
+        "babel-preset-es2015": "~6.24.1",
+        "babel-core": "^6.26.0",
+        "bower": "^1.8.2"
     },
     "scripts": {
-        "start": "bower install && dotnet clean && dotnet restore && dotnet build && gulp build && gulp minify && dotnet run"
+        "start": "npm install && bower install && dotnet clean && dotnet restore && dotnet build && gulp build && gulp minify && dotnet run"
     }
 }
