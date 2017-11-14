@@ -236,10 +236,18 @@
         UserListManager(PENDING_LIST_ID, TYPE.PENDING).Clear()
     }
 
+    function IsEmpty(ls) {
+        return !ls|| ls.length === 0
+    }
+    
     function UpdateLabels(others, friends, pending) {
-        (others && others.length !== 0) ? $(OTHERS_LABEL_ID).html(TITLE_OTHERS + "<br/>") : $(OTHERS_LABEL_ID).html("");
-        (friends && friends.length !== 0) ? $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS + "<br/>") : $(FRIENDS_LABEL_ID).html("");
-        (pending && pending.length !== 0) ? $(PENDING_LABEL_ID).html(TITLE_PENDING + "<br/>") : $(PENDING_LABEL_ID).html("");
+        if (IsEmpty(others) && IsEmpty(friends) && IsEmpty(pending)) {
+            console.log("Search result is empty")
+        }
+
+        !IsEmpty(others) ? $(OTHERS_LABEL_ID).html(TITLE_OTHERS + "<br/>") : $(OTHERS_LABEL_ID).html("");
+        !IsEmpty(friends) ? $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS + "<br/>") : $(FRIENDS_LABEL_ID).html("");
+        !IsEmpty(pending) ? $(PENDING_LABEL_ID).html(TITLE_PENDING + "<br/>") : $(PENDING_LABEL_ID).html("");
     }
     
     function FindUsers(param) {

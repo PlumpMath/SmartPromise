@@ -47,3 +47,31 @@
     transform: translate(-50%, -50%);
 }
 
+/* xs < 768 */
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 1.2em;
+    }
+}
+
+/* sm */
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 1.3em;
+    }
+}
+
+/* md */
+@media screen and (min-width: 992px) {
+    body {
+        font-size: 1.4em;
+    }
+}
+
+/* lg */
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 1.5em;
+    }
+}
+

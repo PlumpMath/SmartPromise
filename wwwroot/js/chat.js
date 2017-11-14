@@ -34,8 +34,8 @@
     let MessagesListManager = (() => {
         const MESSAGES_LIST_ID = "#_messages_list_id"
         const UNREAD_MESSAGE_STYLE = "unread"
-        const INPUT_MESSAGE_STYLE = "message-in pull-left"
-        const OUTPUT_MESSAGE_STYLE = "message-out pull-right"
+        const INPUT_MESSAGE_STYLE = "message-in pull-right"
+        const OUTPUT_MESSAGE_STYLE = "message-out pull-left"
 
         function AddBase64Prefix(byteArray, contentType) {
             return "data:" + contentType + ";base64," + byteArray

@@ -1,5 +1,4 @@
 ﻿.panel {
-    width: 500px;
     border: 1px #A0A0A0 solid;
 }
 
@@ -37,7 +36,7 @@
 }
 
 .panel-body {
-    height: 350px;
+    height: 400px;
     overflow-y: scroll;
 }
 
@@ -58,7 +57,7 @@
     min-width: 300px;
     border-radius: 15px;
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 4px;
 }
 
 .unread {
