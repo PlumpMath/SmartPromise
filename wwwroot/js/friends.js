@@ -7,17 +7,13 @@
     }
     
     const FIND_INPUT_ID = '#_find_input'
-    const FIND_ID = '#_friend_find_input'
+    const CONTENT_ID = '#_friends_content'
     const OTHERS_LIST_ID = '#_other_users_list'
     const FRIENDS_LIST_ID = '#_friends_list'
     const PENDING_LIST_ID = '#_pending_users_list'
     
-    const LOADER_ID = "#_loader_id"
-
-    const FRIENDS_LABEL_ID = '#_friends_label_id'
-    const OTHERS_LABEL_ID = '#_others_label_id'
-    const PENDING_LABEL_ID = '#_pending_label_id'
-
+    const LOADER_ID = "#_friends_loader"
+    
     const METHOD_REQUEST_FRIENDSHIP = '/RequestFriendship/'
     const METHOD_REMOVE_FRIEND = '/RemoveFriend/'
     const METHOD_FIND_BY_EMAIL = '/FindByEmail/'
@@ -27,23 +23,41 @@
     const TITLE_OTHERS = "Others"
     const TITLE_PENDING = "Pending"
     const TITLE_CLEAR = ""
-    
+
+
+    const FRIENDS = `
+        <div>
+            <h5 class="text-muted">Friends</h5>
+            <div class="list-group container-fluid" id="` + FRIENDS_LIST_ID.slice(1) + `"></div>
+        </div>
+    `
+    const OTHERS = `
+        <div>
+            <h5 class="text-muted">Others</h5>
+            <div id="` + OTHERS_LIST_ID.slice(1) + `" class="list-group container-fluid"></div>
+        </div>
+    `
+    const PENDING = `
+        <div>
+            <h5 class="text-muted">Pending</h5>
+            <div id="` + PENDING_LIST_ID.slice(1) +`" class="list-group container-fluid"></div>
+        </div>
+    `
+
+    const SEARCH = `
+        <input id="` + FIND_INPUT_ID.slice(1) + `" class="form-control input-style" placeholder="Type email to find a person"/>
+    `
+
+    const HAVE_NO_RECORDS = `<div align="center"><h5 class="text-muted">Search result is empty</h5></div>`
+
+
     function StopLoading() {
-        ShowFindInpit()
         Loader(LOADER_ID).Hide()
     }
-
-    function HideFindInput() {
-        $("#_friend_find_input").html("")
-    }
-
-    function ShowFindInpit() {
-        $("#_friend_find_input")
-            .append('<input id="_find_input" class="form-control input-style" placeholder="Type email to find a person"/>')
-    }
-
+    
     function StartLoading() {
-        HideFindInput()
+        $(FIND_INPUT_ID).remove()
+        Clear()
         Loader(LOADER_ID).Show()
     }
 
@@ -68,6 +82,7 @@
     }
 
     function LoadAllUsers() {
+        StartLoading()
         FindUsers("")
     }
 
@@ -95,23 +110,13 @@
 
             function RequestFriendship(param) {
                 $.get(CONTROLLER_NAME + METHOD_REQUEST_FRIENDSHIP + param,
-                    () => {
-                        ClearLists()
-                        StartLoading()
-
-                        LoadAllUsers()
-                    })
+                    () => LoadAllUsers())
                     .fail(err => console.log(err))
             }
 
             function RejectFriendship(param) {
                 $.get(CONTROLLER_NAME + METHOD_REMOVE_FRIEND + param,
-                    () => {
-                        ClearLists()
-                        StartLoading()
-
-                        LoadAllUsers()
-                    })
+                    () => LoadAllUsers())
                     .fail(err => console.log(err))
             }
 
@@ -237,33 +242,41 @@
         }
     }
 
-    function ClearLists() {
-        UserListManager(OTHERS_LIST_ID, TYPE.OTHER).Clear()
-        UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).Clear()
-        UserListManager(PENDING_LIST_ID, TYPE.PENDING).Clear()
+    function Clear() {
+        $(CONTENT_ID).html("")
     }
 
     function IsEmpty(ls) {
         return !ls|| ls.length === 0
     }
     
-    function UpdateLabels(others, friends, pending) {
-        console.log(friends, others, pending)
+    function Prepare(others, friends, pending) {
+        Clear()
 
         if (IsEmpty(others) && IsEmpty(friends) && IsEmpty(pending)) {
-            console.log("Search result is empty")
+            $(CONTENT_ID).append(HAVE_NO_RECORDS)
+        }
+        
+        if (!IsEmpty(friends)) {
+            $(CONTENT_ID).append(FRIENDS)
         }
 
-        !IsEmpty(others) ? $(OTHERS_LABEL_ID).html(TITLE_OTHERS + "<br/>") : $(OTHERS_LABEL_ID).html("");
-        !IsEmpty(friends) ? $(FRIENDS_LABEL_ID).html(TITLE_FRIENDS + "<br/>") : $(FRIENDS_LABEL_ID).html("");
-        !IsEmpty(pending) ? $(PENDING_LABEL_ID).html(TITLE_PENDING + "<br/>") : $(PENDING_LABEL_ID).html("");
+        if (!IsEmpty(others)) {
+            $(CONTENT_ID).append(OTHERS)
+        }
+        
+        if (!IsEmpty(pending)) {
+            $(CONTENT_ID).append(PENDING)
+        }
     }
     
     function FindUsers(param) {
         $.get(CONTROLLER_NAME + METHOD_FIND_BY_EMAIL + param,
             model => {
+                
                 let Find = ConstructFindFunction(model.friends, model.others, model.pending)
                 StopLoading()
+                $(SEARCH).insertBefore(CONTENT_ID)
 
                 $(FIND_INPUT_ID).on('input', function () {
                     
@@ -276,18 +289,18 @@
                     let pending = filtered.pending
 
                     $(document).ready(() => {
+                        Prepare(others, friends, pending)
                         UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
                         UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
                         UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(pending)
-                        UpdateLabels(others, friends, pending)
                     })
                 })
 
                 $(document).ready(() => {
+                    Prepare(model.others, model.friends, model.pending)
                     UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
                     UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
                     UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(model.pending)
-                    UpdateLabels(model.others, model.friends, model.pending)
                 })
             })
             .fail(err => console.log(err))
