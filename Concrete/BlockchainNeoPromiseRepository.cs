@@ -114,7 +114,8 @@ namespace Promises.Concrete
         public async Task<bool> Add(Promise promise, ApplicationUser user)
         {
             //it's guaranteed it's unique by contract code
-            promise.Id = await GetPromiseCount(user);
+            var counter = await GetPromiseCount(user);
+            promise.Id = (counter == 0) ? 1 : counter;
 
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);

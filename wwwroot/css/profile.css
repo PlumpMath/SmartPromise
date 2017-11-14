@@ -1,11 +1,11 @@
 ﻿
 .btn-grey {
-    background-color: #f6f1f1;
+    background-color: #D8D8D8;
     color: #FFF;
 }
 
 .promise-stats-block {
-    background-color: #f6f1f1;
+    background-color: #f9f8f8;
     border: 1px solid #e8dfdf;
     padding: 15px 15px 20px 15px;
     border-radius: 3px;
@@ -21,7 +21,7 @@
 
 .promise-block {
     min-height: 100px;
-    background-color: #f6f1f1;
+    background-color: #f9f8f8;
     border: 1px solid #e8dfdf;
     padding: 15px;
     border-radius: 3px;
@@ -53,7 +53,7 @@
 }
 
 .promise-block-error {
-    background-color:#cc3434
+    background-color:#d35555
 }
 
 .promise-block-description {
