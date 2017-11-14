@@ -9,19 +9,14 @@
 {
     var user = await UserManager.GetUserAsync(User);
     var balances = await BlockChain.GetBalance(NETWORK_TYPE.TESTNET, user.Address);
-    
+
     
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
+        <p class="navbar-text">TestNet </p>
+        <p class="navbar-text">NEO : @balances.NEO </p>
+        <p class="navbar-text">GAS : @balances.GAS </p>
+        
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <button id="_testnet_neo" type="button" class="btn btn-link navbar-btn"> TestNet </button>
-            </li>
-            <li>
-                <button id="_testnet_neo" type="button" class="btn btn-link navbar-btn"> NEO : @balances.NEO </button>
-            </li>
-            <li>
-                <button id="_testnet_gas" type="button" class="btn btn-link navbar-btn"> GAS : @balances.GAS </button>
-            </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     Menu
@@ -49,7 +44,7 @@
                         <!--<div class="dropdown-toolbar-actions">
                             <button class="btn btn-primary"><span href="#">Mark all as read</span></button>
                         </div>-->
-                        <h3 id="_noti_label_id" class="dropdown-toolbar-title">Notifications (0)</h3>
+                        <h3 id="_noti_label_id" class="dropdown-toolbar-title">You have no notifications</h3>
                     </div><!-- /dropdown-toolbar -->
 
 

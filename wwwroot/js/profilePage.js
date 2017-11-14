@@ -99,7 +99,7 @@ var ProfilePage = function () {
 
     const PROMISE_STATUS = {
         ERROR: -1,
-        COMPLTED: 1,
+        COMPLETED: 1,
         NOT_COMPLETED: 0
     }
 
@@ -185,7 +185,7 @@ var ProfilePage = function () {
 
         function UpdateStatistics() {
             //let rate = promises_completed === 0 ? 0 : ((promises_completed / promises) * 5).toFixed(2)
-            $(COMPLETED_RATING_ID).html(promises_completed + " <small>/" + promises + "</small>")
+            $(COMPLETED_RATING_ID).html(promises_completed + " <small>/" + promises + " completed</small>")
         }
 
         function UpdateAsCompleted(key) {
@@ -223,8 +223,9 @@ var ProfilePage = function () {
         
         function GetPromiseStyle(promise) {
             switch (promise.status) {
-                case PROMISE_STATUS.COMPLTED:
+                case PROMISE_STATUS.COMPLETED: {
                     return "promise-block promise-block-completed"
+                }
                 case PROMISE_STATUS.ERROR:
                     return "promise-block promise-block-error"
                 case PROMISE_STATUS.NOT_COMPLETED:
@@ -238,7 +239,7 @@ var ProfilePage = function () {
                 let promiseKey = GetKey(promise.id)
                 let buttonKey = BUTTON_PREFIX + GetKey(promise.id)
                 let promiseStyle = GetPromiseStyle(promise)
-                let completeButton = (promise.status === PROMISE_STATUS.COMPLTED || promise.status === PROMISE_STATUS.ERROR) ?
+                let completeButton = (promise.status === PROMISE_STATUS.COMPLETED || promise.status === PROMISE_STATUS.ERROR) ?
                     "" : `
                     <span class="pull-right">
                         <button id="` + buttonKey + `" type="button" class="btn btn-success">
@@ -267,13 +268,13 @@ var ProfilePage = function () {
                         </div>
                     </div>`
 
-                if (promise.status === PROMISE_STATUS.COMPLTED) {
+                if (promise.status === PROMISE_STATUS.COMPLETED) {
                     let proofComment =
                         `<div class="promise-block promise-block-comment">
                         <div class="row">
                             <div class="col-sm-9">
-                                <div class="promise-block-title">` + "Promise completed!" + `</div>
-                                <div class="promise-block-description">` + promise.proof + `</div>                                
+                                <div class="promise-block-title">` + "Completed!" + `</div>
+                                <div class="promise-block-description">` + '<span class="bold">Proof : </span> : ' + promise.proof + `</div>                                
                             </div>
                             <div class="col-sm-3"></div>
                         </div>
@@ -285,7 +286,7 @@ var ProfilePage = function () {
 
                 
                 AddButtonHandler(promiseKey)
-                if (promise.isCompleted)
+                if (promise.status == PROMISE_STATUS.COMPLETED)
                     ++promises_completed
                 ++promises
                 UpdateStatistics()

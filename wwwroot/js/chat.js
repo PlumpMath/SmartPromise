@@ -22,6 +22,8 @@
 
     function SendMessage() {
         let msg = $.trim($(INPUT_ID).val())
+        if (msg.length === 0)
+            return 
         connection.invoke('SendTo', FRIEND.id, msg, Date.now().toString())
     }
     
@@ -88,17 +90,21 @@
     
     function OnGetHistory(history) {
         let msgArr = JSON.parse(history)
-        msgArr.forEach(m => MessagesListManager.AddItem(m))
-        MessagesListManager.ScrollToBottom()
+        $(document).ready(() => {
+            msgArr.forEach(m => MessagesListManager.AddItem(m))
+            MessagesListManager.ScrollToBottom()
+        })
     }
 
     function SetMessageNavBarActive() {
         $('#_cabinet_nav_messages').addClass("active")
     }
-    
-    connection.start().then(() =>    
+
+    SetMessageNavBarActive()
+
+    connection.start().then(() => {
+        GetHistory(FRIEND.id)
         $(document).ready(() => {
-            SetMessageNavBarActive()
             $(INPUT_ID).keyup(event => {
                 if (event.keyCode === ENTER_BUTTON_KEY) {
                     $(SEND_BUTTON_ID).click()
@@ -107,14 +113,12 @@
 
             $(INPUT_ID).focus()
 
-            GetHistory(FRIEND.id)
-
             $(SEND_BUTTON_ID).click(() => {
                 SendMessage()
                 ClearInput()
             })
         })
-    ).catch(err => {
+    }).catch(err => {
         $(document).ready(() => SetMessageNavBarActive())
         console.log(err)
     })

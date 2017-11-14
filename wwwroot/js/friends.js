@@ -224,9 +224,9 @@
         let pending_copy = [...pending]
 
         return (findString, filtered) => {
-            filtered.friends = friends_copy.filter(v => v.email.startsWith(findString))
-            filtered.others = others_copy.filter(v => v.email.startsWith(findString))
-            filtered.pending = pending_copy.filter(v => v.email.startsWith(findString))
+            filtered.friends = friends_copy.filter(v => v.email.toLowerCase().startsWith(findString.toLowerCase()))
+            filtered.others = others_copy.filter(v => v.email.toLowerCase().startsWith(findString.toLowerCase()))
+            filtered.pending = pending_copy.filter(v => v.email.toLowerCase().startsWith(findString.toLowerCase()))
         }
     }
 
@@ -257,17 +257,21 @@
                     let others = filtered.others
                     let friends = filtered.friends
                     let pending = filtered.pending
-                    
-                    UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
-                    UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
-                    UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(pending)
-                    UpdateLabels(others, friends, pending)
+
+                    $(document).ready(() => {
+                        UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(others)
+                        UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(friends)
+                        UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(pending)
+                        UpdateLabels(others, friends, pending)
+                    })
                 })
-                
-                UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
-                UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
-                UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(model.pending)
-                UpdateLabels(model.others, model.friends, model.pending)
+
+                $(document).ready(() => {
+                    UserListManager(OTHERS_LIST_ID, TYPE.OTHER).FillList(model.others)
+                    UserListManager(FRIENDS_LIST_ID, TYPE.FRIEND).FillList(model.friends)
+                    UserListManager(PENDING_LIST_ID, TYPE.PENDING).FillList(model.pending)
+                    UpdateLabels(model.others, model.friends, model.pending)
+                })
             })
             .fail(err => console.log(err))
     }
