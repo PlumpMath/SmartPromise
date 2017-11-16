@@ -40,6 +40,7 @@
 
 @await Html.PartialAsync("_ModalPaymentsDetails", profileViewModel)
 @await Html.PartialAsync("_ModalTransactionHistory", profileViewModel)
+@await Html.PartialAsync("_ModalMintToken", profileViewModel)
 
 <div class="container">
     <div class="row row-offcanvas row-offcanvas-left">
@@ -90,6 +91,7 @@
         Notification()
         GenerateQrAddressCode()
         ModalTransactionHistory()
+        ModalMint()
     </script>
 
 

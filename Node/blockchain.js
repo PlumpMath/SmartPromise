@@ -3,13 +3,29 @@
     getStorage, getTransactionHistory, doSendAsset,
     getWIFFromPrivateKey, getBalance, verifyAddress,
     queryRPC, serializeTransaction, create, signTransaction,
-    getScriptHashFromAddress
+    getScriptHashFromAddress, ASSETS
 } from 'neon-js'
 
 const SC_OPERATIONS = {
     ADD: "add",
-    REPLACE: "replace"
+    REPLACE: "replace",
+    MINT: "mintTokens"
 }
+
+function ReverseHex(hex) {
+    if (hex.length % 2 !== 0)
+        throw new Error(`Incorrect Length: ${hex}`)
+    let out = ''
+    for (let i = hex.length - 2; i >= 0; i -= 2) {
+        out += hex.substr(i, 2)
+    }
+    return out
+}
+
+function Fixed82num(fixed8) {
+    return parseInt(ReverseHex(fixed8), 16)
+}
+
 
 const MAIN_NET = "MainNet"
 const TEST_NET = "TestNet"
@@ -92,8 +108,14 @@ module.exports = {
 
     GetStorage: (callback, net, scriptHash, key) =>
         getStorage(net, scriptHash, key)
-            .then(res => callback(null, res.result))
+            .then(res => callback(null, res.result.toString()))
             .catch(err => callback(null, err))
+    ,
+
+    GetTokenBalance: (callback, net, scriptHash, key) =>
+        getStorage(net, scriptHash, key)
+            .then(res => callback(null, Fixed82num(res.result)))
+            .catch(err => err.result == null? callback(null, 0) : callback(null, err))
     ,
 
     VerifyAddress: (callback, addr) =>
@@ -101,13 +123,34 @@ module.exports = {
     ,
 
     CalculateInvokeGas: (callback, operation, net, key, scriptHash) =>
-        callback(null, 2)
+        callback(null, 2) //not implemented yet
     ,
 
     InvokeContractAdd: InvokeContractFactory(SC_OPERATIONS.ADD)
     ,
 
     InvokeContractReplace: InvokeContractFactory(SC_OPERATIONS.REPLACE)
+    ,
+    InvokeContractMintToken: (callback, net, wif, scriptHash, gasCost, ...args) => {
+        const account = getAccountFromWIFKey(wif)
+
+        getBalance(net, account.address)
+            .then((balances) => {
+                const intents = [
+                    { assetId: ASSETS['NEO'], value: args[0], scriptHash }
+                ]
+
+                const invoke = { operation, scriptHash }
+                const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
+                const signedTx = signTransaction(unsignedTx, account.privateKey)
+
+                const hexTx = serializeTransaction(signedTx)
+                queryRPC(net, 'sendrawtransaction', [hexTx])
+                    .then(res => callback(null, res.result))
+                    .catch(err => callback(null, err))
+            })
+            .catch(err => callback(null, err))
+    }
     ,
 
     GetScriptHashFromAddress: (callback, address) => callback(null, getScriptHashFromAddress(address))

@@ -97,5 +97,26 @@ namespace Promises.Concrete
             var res = await _nodeServices.InvokeExportAsync<string>(GetScriptLocation(), "GetScriptHashFromAddress", address);
             return res;
         }
+
+        public async Task<int> GetTokenBalance(NETWORK_TYPE net, string revSh)
+        {
+            try
+            {
+                var res = await _nodeServices.InvokeExportAsync<string>(GetScriptLocation(), 
+                    "GetTokenBalance", GetNetwork(net), CONTRACT_HASH, revSh);
+                var a = Int32.Parse(res);
+                return a;
+            }
+            catch (Exception err) {
+                return 0;
+            }
+        }
+
+        public async Task<bool> InvokeContractMintToken(NETWORK_TYPE net, string wif, int neoAmount, int gasCost)
+        {
+            var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), 
+                "InvokeContractMintToken", GetNetwork(net), wif, CONTRACT_HASH, gasCost, neoAmount);
+            return res;
+        }
     }
 }

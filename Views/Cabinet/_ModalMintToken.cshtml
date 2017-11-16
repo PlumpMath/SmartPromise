@@ -1,0 +1,29 @@
+﻿<div class="modal fade" id="_mint_modal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Mint Smart Coin token</h4>
+                <div align="right" id="_modal_mint_loader"></div>
+                <h4 class="text-success" id="_modal_mint_result"></h4>
+                <h5 class="text-muted">The exhange rate is <span class="bold">1 to 1</span></h5>
+            </div>
+            <div class="container-fluid">
+                <form>
+                    <div class="form-group">
+                        <label>Neo</label>
+                        <input min="0" class="form-control" type="number" id="_mint_controller" placeholder="Enter amount of neo you want tp spend">
+                        <small id="_mint_output" class="text-muted">You'll get 0 smart coins</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="_mint_button" type="button" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

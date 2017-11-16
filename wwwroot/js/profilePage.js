@@ -1,92 +1,4 @@
-﻿let TransactionStatusManager = (loader_id, status_id, submit_btn_id,
-    after_processing) => ((lid, sid, bid, ap) => {
-
-        const LOADER_ID = lid
-        const STATUS_ID = sid
-        const SUBMIT_ID = bid
-        const FUNC_AFTER = ap
-
-        const STATUS_ERROR = "Transaction failed: please, try again later. "
-        const STATUS_SUCCESS = "Transaction complete: your balance will automatically update when the blockchain has processed it. "
-        const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
-        const EMPTY = ""
-
-        function OnError(err) {
-            $(STATUS_ID).removeClass().addClass("text-danger").html(STATUS_ERROR + err)
-        }
-
-        function OnSuccess() {
-            $(STATUS_ID).removeClass().addClass("text-success").html(STATUS_SUCCESS)
-        }
-
-        function StartProcessing() {
-            ClearStatus()
-            $(SUBMIT_ID).prop('disabled', true)
-            HELPERS.Loader(LOADER_ID).Show()
-        }
-
-        function ClearStatus() {
-            $(STATUS_ID).html(EMPTY)
-        }
-
-        function EndProcessing() {
-            $(SUBMIT_ID).prop('disabled', false)
-            HELPERS.Loader(LOADER_ID).Hide()
-            FUNC_AFTER()
-        }
-
-        function Init() {
-            $(STATUS_ID).removeClass().addClass("text-warning").html(BE_AWARE)
-            FUNC_AFTER()
-            $(SUBMIT_ID).prop('disabled', false)
-        }
-
-        return {
-            Init,
-            StartProcessing,
-            EndProcessing,
-            OnSuccess,
-            OnError,
-        }
-
-    })(loader_id, status_id, submit_btn_id, after_processing)
-
-function InvokeContractByUrl(url, ProcessManager, Check) {
-    ProcessManager.StartProcessing()
-
-    $.get(_RAZOR_GET_MY_ADDRESS)
-        .success(addr => {
-            HELPERS.GetBalance(addr, "TestNet", "gas")
-                .then(fund => {
-                    if (Check(fund) === true) {
-                        $.post(url)
-                            .success(res => {
-                                (res == true) ?
-                                    ProcessManager.OnSuccess() :
-                                    ProcessManager.OnError("Probably you should wait till previous transaction get processed.")
-                                ProcessManager.EndProcessing()
-                            })
-                            .error(err => {
-                                let mes = (typeof err.statusText !== 'undefined') ? err.statusText : "Internal error."
-                                ProcessManager.OnError(mes)
-                                ProcessManager.EndProcessing()
-                            })
-                    } else {
-                        ProcessManager.EndProcessing()
-                    }
-                })
-                .catch(err => {
-                    ProcessManager.OnError(err)
-                    ProcessManager.EndProcessing()
-                })
-        })
-        .error(err => {
-            ProcessManager.OnError(err)
-            ProcessManager.EndProcessing()
-        })
-}
-
-var ProfilePage = function () {
+﻿let ProfilePage = function () {
     
     const SUMBIT_PROMISE_ID = '#_create_promise_button'
     const MODAL_PROMISE_ID = '#_fill_promise_modal'
@@ -105,7 +17,7 @@ var ProfilePage = function () {
     }
 
     
-    const MODAL_FILL_PROMISE = TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
+    const MODAL_FILL_PROMISE = HELPERS.TransactionStatusManager("#_modal_create_promise_loader", '#_modal_create_promise_result',
         SUMBIT_PROMISE_ID, EmptyFillPromiseForm)
     
     function EmptyFillPromiseForm() {
@@ -147,7 +59,7 @@ var ProfilePage = function () {
         let promises = 0
         let promises_completed = 0
 
-        const MODAL_COMPLETE_PROMISE = TransactionStatusManager("#_modal_complete_loader", "#_modal_complete_result",
+        const MODAL_COMPLETE_PROMISE = HELPERS.TransactionStatusManager("#_modal_complete_loader", "#_modal_complete_result",
             COMPLETE_PROMISE_ID, () => {
                 $(PROOF_ID).val(EMPTY)
                 $(COMPLETE_PROMISE_ID).prop('disabled', true)
@@ -217,7 +129,7 @@ var ProfilePage = function () {
                 $(MODAL_COMPLETE_PROMISE_ID).modal("toggle")
                 $(COMPLETE_PROMISE_ID).unbind('click').click(() => {
                     const url = HELPERS.GetCompletePromiseUrl(GetKey(key), $(PROOF_ID).val())
-                    InvokeContractByUrl(url, MODAL_COMPLETE_PROMISE, CheckComplete)
+                    HELPERS.InvokeContractByUrl(url, MODAL_COMPLETE_PROMISE, CheckComplete)
                 })
             })
         }
@@ -374,7 +286,6 @@ var ProfilePage = function () {
             })
 
     }
-    
 
     $(document).ready(() => {
         ComplicityManager.AddHandlers()
@@ -392,7 +303,7 @@ var ProfilePage = function () {
         
         $(SUMBIT_PROMISE_ID).click(() => {
             let promise = GetPromise()
-            InvokeContractByUrl(HELPERS.GetAddPromiseUrl(promise), MODAL_FILL_PROMISE, Check)
+            HELPERS.InvokeContractByUrl(HELPERS.GetAddPromiseUrl(promise), MODAL_FILL_PROMISE, Check)
         })
     })
 }

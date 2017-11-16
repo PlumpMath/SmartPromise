@@ -20,6 +20,9 @@ namespace Promises.Abstract
         Task<bool> VerifyAddress(string addr);
         Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string sh, string data, int gasCost);
         Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif, string sh, string data, int index, int gasCost);
+        Task<bool> InvokeContractMintToken(NETWORK_TYPE net, string wif, int neoAmount, int gasCost);
         Task<string> GetScriptHashFromAddress(string address);
+        Task<int> GetTokenBalance(NETWORK_TYPE net, string revSh);
+        
     }
 }

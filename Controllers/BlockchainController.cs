@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
+using Promises.Utils;
 
 namespace Promises.Controllers
 {
@@ -65,16 +66,13 @@ namespace Promises.Controllers
             return await _blockchain.VerifyAddress(addr);
         }
 
-        [HttpGet("{net}/{data}")]
-        public async Task<bool> ContractInvokeAddPromise(NETWORK_TYPE net, Promise data)
+        [HttpPost("{neoAmount}")]
+        public async Task<bool> ContractInvokeMintToken(int neoAmount)
         {
-            /*
-            var json = JsonConvert.SerializeObject(data);
             var user = await _userManager.GetUserAsync(User);
-            var revSh = await SmartCon
-
-            return await _blockchain.InvokeContractAdd(net, user.Wif, json, 2);*/
-            return false;
+            var res = await _blockchain.InvokeContractMintToken(NETWORK_TYPE.TESTNET, user.Wif, neoAmount, 1);
+            return res;
         }
+        
     }
 }

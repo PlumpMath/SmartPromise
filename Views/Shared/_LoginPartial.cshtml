@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Promises.Models
 
+@using Promises.Utils;
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IBlockchain BlockChain
@@ -9,10 +10,12 @@
 {
     var user = await UserManager.GetUserAsync(User);
     var balances = await BlockChain.GetBalance(NETWORK_TYPE.TESTNET, user.Address);
+    var revSh = await SmartPromiseConverter.GetScriptHashReversed(user.Address, BlockChain);
+    var tokenBalance = await BlockChain.GetTokenBalance(NETWORK_TYPE.TESTNET, revSh);
 
-    
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <p class="navbar-text">TestNet </p>
+        <p class="navbar-text">Sc : @tokenBalance </p>
         <p class="navbar-text">NEO : @balances.NEO </p>
         <p class="navbar-text">GAS : @balances.GAS </p>
         
