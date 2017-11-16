@@ -1,4 +1,8 @@
 # SmartPromise
+
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/mH9kZ2O7yJ8/0.jpg)](https://www.youtube.com/watch?v=mH9kZ2O7yJ8 "Introduction")
+
 SmartPromise is an electronic journal of smart promises developed through Blockchain. 
 User of such an environment receives a reward for each of his fulfilled promises. 
 The concept of the idea contains the possibility to get a strong motivation to action that user pointed in promise. 
@@ -14,5 +18,3 @@ wants to start running in the morning, but he lacks motivation, our project can 
 
 In future, we plan to develop our idea by expanding SmartPromise concept to SmartContract which 
 will allow to keep transparency of business deals between participants.
-
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/mH9kZ2O7yJ8/0.jpg)](https://www.youtube.com/watch?v=mH9kZ2O7yJ8 "Introduction")
