@@ -70,6 +70,12 @@ namespace Promises.Concrete
                 return PROMISE_PREFIX_HEX + Reverse(sh) + Num2Hex(i);
             }
 
+            public static async Task<string> GetScriptHashReversed(string address, IBlockchain blockchain)
+            {
+                var sh = await blockchain.GetScriptHashFromAddress(address);
+                return Reverse(sh);
+            }
+
 
             public static async Task<string> GetPromiseCountKeyHex(string address, IBlockchain blockchain)
             {
@@ -119,7 +125,8 @@ namespace Promises.Concrete
 
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
-            var res = await _blockchain.InvokeContractAdd(NETWORK_TYPE.TESTNET, user.Wif, jsonHex, GAS_COST);
+            var revSh = await SmartPromiseKeyGenerator.GetScriptHashReversed(user.Address, _blockchain);
+            var res = await _blockchain.InvokeContractAdd(NETWORK_TYPE.TESTNET, user.Wif, revSh, jsonHex, GAS_COST);
             return res;
         }
 
@@ -158,8 +165,8 @@ namespace Promises.Concrete
             promise.Proof = proof;
             var json = JsonConvert.SerializeObject(promise);
             var jsonHex = SmartPromiseKeyGenerator.Str2Hex(json);
-
-            var res = await _blockchain.InvokeContractReplace(NETWORK_TYPE.TESTNET, user.Wif, jsonHex, id, GAS_COST);
+            var revSh = await SmartPromiseKeyGenerator.GetScriptHashReversed(user.Address, _blockchain);
+            var res = await _blockchain.InvokeContractReplace(NETWORK_TYPE.TESTNET, user.Wif, revSh, jsonHex, id, GAS_COST);
             return res;
         }
 

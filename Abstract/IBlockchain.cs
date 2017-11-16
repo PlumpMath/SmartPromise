@@ -18,8 +18,8 @@ namespace Promises.Abstract
         Task<Account> GenerateAccount();
         Task<string> GetStorage(NETWORK_TYPE type, string key);
         Task<bool> VerifyAddress(string addr);
-        Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string data, int gasCost);
-        Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif, string data, int index, int gasCost);
+        Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string sh, string data, int gasCost);
+        Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif, string sh, string data, int index, int gasCost);
         Task<string> GetScriptHashFromAddress(string address);
     }
 }

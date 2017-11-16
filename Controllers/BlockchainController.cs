@@ -68,10 +68,13 @@ namespace Promises.Controllers
         [HttpGet("{net}/{data}")]
         public async Task<bool> ContractInvokeAddPromise(NETWORK_TYPE net, Promise data)
         {
+            /*
             var json = JsonConvert.SerializeObject(data);
             var user = await _userManager.GetUserAsync(User);
+            var revSh = await SmartCon
 
-            return await _blockchain.InvokeContractAdd(net, user.Wif, json, 2);
+            return await _blockchain.InvokeContractAdd(net, user.Wif, json, 2);*/
+            return false;
         }
     }
 }
