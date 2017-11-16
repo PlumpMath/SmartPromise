@@ -14,3 +14,5 @@ wants to start running in the morning, but he lacks motivation, our project can 
 
 In future, we plan to develop our idea by expanding SmartPromise concept to SmartContract which 
 will allow to keep transparency of business deals between participants.
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/mH9kZ2O7yJ8/0.jpg)](https://www.youtube.com/watch?v=mH9kZ2O7yJ8 "Introduction")
