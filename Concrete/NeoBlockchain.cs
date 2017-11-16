@@ -13,7 +13,7 @@ namespace Promises.Concrete
     public class NeoBlockchain : IBlockchain
     {
 
-        private readonly string CONTRACT_HASH = "6439c5b9610fbdc5294fe8f3e9835e2fbb0e62d6";
+        private readonly string CONTRACT_HASH = "994d4b6cec1fde9d3fa93a41a09c271fc7f975fd";
         private readonly INodeServices _nodeServices;
         private readonly IHostingEnvironment _hostingEnvironment;
 
