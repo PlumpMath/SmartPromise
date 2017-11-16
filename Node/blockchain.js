@@ -9,7 +9,8 @@
 const SC_OPERATIONS = {
     ADD: "add",
     REPLACE: "replace",
-    MINT: "mintTokens"
+    MINT: "mintTokens",
+    TRANSFER: "transfer"
 }
 
 function ReverseHex(hex) {
@@ -128,7 +129,9 @@ module.exports = {
 
     InvokeContractAdd: InvokeContractFactory(SC_OPERATIONS.ADD)
     ,
-
+    
+    InvokeContractTransfer: InvokeContractFactory(SC_OPERATIONS.TRANSFER)
+    ,
     InvokeContractReplace: InvokeContractFactory(SC_OPERATIONS.REPLACE)
     ,
     InvokeContractMintToken: (callback, net, wif, scriptHash, gasCost, ...args) => {

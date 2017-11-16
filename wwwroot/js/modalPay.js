@@ -14,6 +14,7 @@ let ModalPay = function () {
     const LOADER_ID = "#_modal_pay_loader"
     const ADDRESS_TO_PAY_ID = '#_address_to_pay_label'
     const MODAL_ID = "#_modal_pay"
+    const BE_AWARE = "Beware! This transaction would cost you 1 gas! "
 
     const ADDR_TO_PAY = $(ADDRESS_TO_PAY_ID).text()
 
@@ -41,16 +42,20 @@ let ModalPay = function () {
 
     function OnSuccess() {
         $(STATUS_ID)
+            .removeClass()
             .addClass('text-success')
-            .removeClass('text-danger')
             .html(STATUS_SUCCESS)
     }
 
     function OnError(err) {
         $(STATUS_ID)
+            .removeClass()
             .addClass('text-danger')
-            .removeClass('text-success')
             .html(STATUS_ERROR + " " + err)
+    }
+
+    function OnWarning() {
+        $(STATUS_ID).removeClass().addClass("text-warning").text(BE_AWARE)
     }
 
     function ClearMessage() {
@@ -75,12 +80,28 @@ let ModalPay = function () {
                 Init()
             })
             $.get(_RAZOR_GET_MY_ADDRESS, addr => {
-                $(ASSET_ID).change(() => asset = $(ASSET_ID).val())
+                $(ASSET_ID).change(() => {
+                    asset = $(ASSET_ID).val()
+                    if (asset == "sc") {
+                        OnWarning()
+                    } else {
+                        $(STATUS_ID).html("")
+                    }
+                })
                 $(NET_ID).change(() => net = $(NET_ID).val())
                 $(SEND_ID).click(() => {
+
+                    let token
+                    if (asset.toLowerCase() == "sc") {
+                        token = parseInt($("#_token_balance").html())
+                    }
+
                     ClearMessage()
                     StartProcessing()
                     HELPERS.GetBalance(addr, net, asset).then(fund => {
+                        if (asset.toLowerCase() == "sc") 
+                            fund = token
+
                         let amount = $(AMOUNT_ID).val()
                         let isCorrect = IsAmountCorrect(amount, fund)
 

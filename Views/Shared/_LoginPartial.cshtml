@@ -15,7 +15,7 @@
 
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
         <p class="navbar-text">TestNet </p>
-        <p class="navbar-text">Sc : @tokenBalance </p>
+        <p class="navbar-text">SC : <span id="_token_balance">@tokenBalance</span> </p>
         <p class="navbar-text">NEO : @balances.NEO </p>
         <p class="navbar-text">GAS : @balances.GAS </p>
         

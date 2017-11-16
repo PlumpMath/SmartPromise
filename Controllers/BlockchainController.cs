@@ -51,7 +51,16 @@ namespace Promises.Controllers
         public async Task<bool> SendAsset(NETWORK_TYPE type, ASSET_NAME assetName, string addr, int amount)
         {
             var user = await _userManager.GetUserAsync(User);
-            return await _blockchain.SendAsset(type, user.Wif, assetName, addr, amount);
+            if (assetName == ASSET_NAME.SC)
+            {
+                var toSh = await SmartPromiseConverter.GetScriptHashReversed(addr, _blockchain);
+                var fromSh = await SmartPromiseConverter.GetScriptHashReversed(user.Address, _blockchain);
+                var res = await _blockchain.InvokeContractTransfer(type, user.Wif, fromSh, toSh, amount, 1);
+                return res;
+            } else
+            {
+                return await _blockchain.SendAsset(type, user.Wif, assetName, addr, amount);
+            }
         }
         
         [HttpGet("{network}/{scriptHash}/{key}")]
@@ -73,6 +82,5 @@ namespace Promises.Controllers
             var res = await _blockchain.InvokeContractMintToken(NETWORK_TYPE.TESTNET, user.Wif, neoAmount, 1);
             return res;
         }
-        
     }
 }

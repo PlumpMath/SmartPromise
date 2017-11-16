@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Promises.Abstract
 {
     public enum NETWORK_TYPE { TESTNET = 0, MAINNET = 1 };
-    public enum ASSET_NAME { NEO = 0, GAS = 1 };
+    public enum ASSET_NAME { NEO = 0, GAS = 1, SC = 2 };
     
     public interface IBlockchain
     {
@@ -21,6 +21,7 @@ namespace Promises.Abstract
         Task<bool> InvokeContractAdd(NETWORK_TYPE net, string wif, string sh, string data, int gasCost);
         Task<bool> InvokeContractReplace(NETWORK_TYPE net, string wif, string sh, string data, int index, int gasCost);
         Task<bool> InvokeContractMintToken(NETWORK_TYPE net, string wif, int neoAmount, int gasCost);
+        Task<bool> InvokeContractTransfer(NETWORK_TYPE net, string wif, string fromSh, string toSh, int amount, int gasCost);
         Task<string> GetScriptHashFromAddress(string address);
         Task<int> GetTokenBalance(NETWORK_TYPE net, string revSh);
         

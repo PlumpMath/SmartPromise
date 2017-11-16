@@ -126,5 +126,13 @@ namespace Promises.Concrete
             }
                 
         }
+
+        public async Task<bool> InvokeContractTransfer(NETWORK_TYPE net, string wif, string fromSh, string toSh, int amount, int gasCost)
+        {
+            var res = await _nodeServices.InvokeExportAsync<bool>(
+                GetScriptLocation(), "InvokeContractTransfer", GetNetwork(net), wif, CONTRACT_HASH, gasCost, fromSh, toSh, amount);
+
+            return res;
+        }
     }
 }

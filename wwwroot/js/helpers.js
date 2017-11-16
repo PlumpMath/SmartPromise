@@ -96,7 +96,8 @@ var HELPERS = (function () {
 
     const ASSETS = {
         "neo": 0,
-        "gas": 1
+        "gas": 1,
+        "sc" : 2
     }
 
     function Loader(loader_id) {
