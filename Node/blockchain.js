@@ -140,7 +140,7 @@ module.exports = {
                     { assetId: ASSETS['NEO'], value: args[0], scriptHash }
                 ]
 
-                const invoke = { operation, scriptHash }
+                const invoke = { operation: SC_OPERATIONS.MINT, scriptHash }
                 const unsignedTx = create.invocation(account.publicKeyEncoded, balances, intents, invoke, gasCost, { version: 1 })
                 const signedTx = signTransaction(unsignedTx, account.privateKey)
 

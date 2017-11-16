@@ -44,8 +44,9 @@
 
     $(document).ready(() => {
    
-        $(MINT_CONTROLLER_ID).bind('keyup', () => UpdateOutput())
+        $(MINT_CONTROLLER_ID).bind('keyup mouseup', () => UpdateOutput())
 
-        $(SUMBIT_ID).click(() => HELPERS.InvokeContractByUrl("", MODAL_MINT, Check))
+        $(SUMBIT_ID).click(() => HELPERS.InvokeContractByUrl(
+            _RAZOR_MINT_TOKEN_URL.replace("__neoAmount__", $(MINT_CONTROLLER_ID).val()), MODAL_MINT, Check))
     })
 }

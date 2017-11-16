@@ -13,7 +13,7 @@ namespace Promises.Concrete
     public class NeoBlockchain : IBlockchain
     {
 
-        private readonly string CONTRACT_HASH = "ea1945077dd871428d83ff2bbf54b40bcad6f538";
+        private readonly string CONTRACT_HASH = "2fc57e9f92119c6b883fe0851b8a6525cc3895cb";
         private readonly INodeServices _nodeServices;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -114,9 +114,17 @@ namespace Promises.Concrete
 
         public async Task<bool> InvokeContractMintToken(NETWORK_TYPE net, string wif, int neoAmount, int gasCost)
         {
-            var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(), 
-                "InvokeContractMintToken", GetNetwork(net), wif, CONTRACT_HASH, gasCost, neoAmount);
-            return res;
+            try
+            {
+                var res = await _nodeServices.InvokeExportAsync<bool>(GetScriptLocation(),
+                    "InvokeContractMintToken", GetNetwork(net), wif, CONTRACT_HASH, gasCost, neoAmount);
+                return res;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+                
         }
     }
 }

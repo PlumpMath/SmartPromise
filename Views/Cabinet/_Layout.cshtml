@@ -80,6 +80,7 @@
         let _RAZOR_GET_PROMISES = '@Url.Action("Get", "Promises", new { address = "__address__" })'
         let _RAZOR_COMPLETE_PROMISE = '@Url.Action("Complete", "Promises", new { id = "__id__", proof = "__proof__"})'
         let _RAZOR_IS_YOUR_OWN_PAGE = '@Html.Raw(Json.Serialize(profileViewModel.IsYourProfile))'
+        let _RAZOR_MINT_TOKEN_URL = '@Url.Action("ContractInvokeMintToken", "Blockchain", new {  neoAmount = "__neoAmount__" })'
 
         let _RAZOR_PROFILE_VIEW_USER_ADDRESS = '@profileViewModel.Address'
 
