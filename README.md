@@ -1,7 +1,7 @@
 # SmartPromise
 
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/mH9kZ2O7yJ8/0.jpg)](https://www.youtube.com/watch?v=mH9kZ2O7yJ8 "Introduction")
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/eCpQqc3TAmQ/0.jpg)](https://www.youtube.com/watch?v=eCpQqc3TAmQ "Introduction")
 
 SmartPromise is an electronic journal of smart promises developed through Blockchain. 
 User of such an environment receives a reward for each of his fulfilled promises. 
@@ -18,3 +18,28 @@ wants to start running in the morning, but he lacks motivation, our project can 
 
 In future, we plan to develop our idea by expanding SmartPromise concept to SmartContract which 
 will allow to keep transparency of business deals between participants.
+# How to use
+There are two ways use this
+
+# Visit published azure website (https://smartpromise.azurewebsites.net)
+The simplest way, but currently we are using student free azure subscribtions so there are some limitations 
+like database size or limited websocket connections (5, actually), so site can work not properly if there are more then
+2 users (maximum two web connections are possible per user)
+
+# Build (mac os, windows, linux)
+Hosting on localhost, so there is no limit on web connections
+Before building you have to install 
+ - .net core sdk (https://www.microsoft.com/net/learn/get-started/windows)
+ - nodejs (https://nodejs.org/en/)
+ - git (https://git-scm.com/downloads)
+ 
+ Download source files from the repository
+ 
+ Go to root directory and type these commands 
+  - npm install
+  - bower install
+  - npm start
+  
+  If there are some questions, don't hesitate and email me! 
+  ankarenkosergey@gmail.com
+ 
