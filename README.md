@@ -18,19 +18,22 @@ wants to start running in the morning, but he lacks motivation, our project can 
 
 In future, we plan to develop our idea by expanding SmartPromise concept to SmartContract which 
 will allow to keep transparency of business deals between participants.
+
 # How to use
 There are two ways use this
 
 # Azure website 
 https://smartpromise.azurewebsites.net
 
-The simplest way, but currently we are using student free azure subscribtions so there are some limitations 
-like database size or limited websocket connections (5, actually), so site can work not properly if there are more then
-2 users (maximum two web connections are possible per user)
+There are limitations on database size (32 mb) and web-socket connections (only 5) 
+due to student free azure subscribtion, so it can be used only for introducing.
+As there are only 5 websocket connnections are available, only two users are able to 
+use the resource properly, without connection closing and etc. I reccomend you to build the web site manually. 
+Intsructions are placed below.
 
 # Manual build 
 (mac os, windows, linux)
-Hosting on localhost, so there is no limit on web connections
+There is no limitations on web connections
 Before building you have to install 
  - .net core sdk (https://www.microsoft.com/net/learn/get-started/windows)
  - nodejs (https://nodejs.org/en/)
