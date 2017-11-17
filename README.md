@@ -23,6 +23,7 @@ There are two ways use this
 
 # Azure website 
 https://smartpromise.azurewebsites.net
+
 The simplest way, but currently we are using student free azure subscribtions so there are some limitations 
 like database size or limited websocket connections (5, actually), so site can work not properly if there are more then
 2 users (maximum two web connections are possible per user)
