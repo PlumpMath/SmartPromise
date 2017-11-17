@@ -21,12 +21,14 @@ will allow to keep transparency of business deals between participants.
 # How to use
 There are two ways use this
 
-# Visit published azure website (https://smartpromise.azurewebsites.net)
+# Azure website 
+https://smartpromise.azurewebsites.net
 The simplest way, but currently we are using student free azure subscribtions so there are some limitations 
 like database size or limited websocket connections (5, actually), so site can work not properly if there are more then
 2 users (maximum two web connections are possible per user)
 
-# Build (mac os, windows, linux)
+# Manual build 
+(mac os, windows, linux)
 Hosting on localhost, so there is no limit on web connections
 Before building you have to install 
  - .net core sdk (https://www.microsoft.com/net/learn/get-started/windows)
