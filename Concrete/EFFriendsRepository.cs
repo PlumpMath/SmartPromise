@@ -17,7 +17,7 @@ namespace Promises.Concrete
         public event Action<User, User> OnFriendshipRejected;
         public event Action<User, User> OnFriendshipRequested;
 
-        private IEnumerable<Friend> Friends
+        public IEnumerable<Friend> Friends
         {
             get
             {

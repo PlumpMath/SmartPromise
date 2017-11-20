@@ -12,7 +12,8 @@ namespace Promises.Abstract
         event Action<User, User> OnFriendshipAccepted;
         event Action<User, User> OnFriendshipRejected;
         event Action<User, User> OnFriendshipRequested;
-        
+
+        IEnumerable<Friend> Friends { get; }
         IEnumerable<string> GetFriends(string UserId);
         IEnumerable<string> GetPendingFriends(string UserId);
         void RemoveFriend(string UserId, string UserFriendId);
