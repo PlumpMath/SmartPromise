@@ -19,8 +19,10 @@ wants to start running in the morning, but he lacks motivation, our project can 
 In future, we plan to develop our idea by expanding SmartPromise concept to SmartContract which 
 will allow to keep transparency of business deals between participants.
 
+[Full description you can find there](https://vk.com/doc197649082_454653914?hash=90cc7eb16cf556831b&dl=f4df5db422f65d0a8d)
+
 # How to use
-There are two ways use this
+There are to options to do this
 
 # Azure website 
 https://smartpromise.azurewebsites.net
@@ -28,7 +30,7 @@ https://smartpromise.azurewebsites.net
 There are limitations on database size (32 mb) and web-socket connections (only 5) 
 due to student free azure subscribtion, so it can be used only for introducing.
 As there are only 5 websocket connnections are available, only two users are able to 
-use the resource properly, without connection closing and etc. I reccomend you to build the web site manually. 
+use the resource properly, without connection closing and etc. I recommend you to build the web site manually. 
 Intsructions are placed below.
 
 # Manual build 
@@ -37,7 +39,7 @@ There is no limitations on web connections
 Before building you have to install 
  - .net core sdk (https://www.microsoft.com/net/learn/get-started/windows)
  - nodejs (https://nodejs.org/en/)
- - git (https://git-scm.com/downloads)
+ - git (https://git-scm.com/downloads) 
  
  Download source files from the repository
  
@@ -46,6 +48,6 @@ Before building you have to install
   - bower install
   - npm start
   
-  If there are some questions, don't hesitate and email me! 
+  If there are some questions, don't be hesitated and email me! 
   ankarenkosergey@gmail.com
  
